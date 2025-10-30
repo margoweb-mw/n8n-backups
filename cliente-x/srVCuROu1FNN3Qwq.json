@@ -1,0 +1,28 @@
+{
+  "createdAt": "2025-07-31T14:34:19.934Z",
+  "updatedAt": "2025-08-26T23:39:51.305Z",
+  "id": "srVCuROu1FNN3Qwq",
+  "name": "Testando",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "8559da78-a99b-45e2-ac8d-485ab85aeab8",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-07-31T14:34:19.934Z",
+      "updatedAt": "2025-07-31T14:34:19.934Z",
+      "role": "workflow:owner",
+      "workflowId": "srVCuROu1FNN3Qwq",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
