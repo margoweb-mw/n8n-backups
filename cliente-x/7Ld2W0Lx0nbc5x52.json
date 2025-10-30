@@ -1,0 +1,121 @@
+{
+  "createdAt": "2025-09-18T16:03:43.982Z",
+  "updatedAt": "2025-10-08T13:47:00.871Z",
+  "id": "7Ld2W0Lx0nbc5x52",
+  "name": "TESTE WEBHOOK",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "45057eb7-caf1-46d0-8b0e-1b6f22ddb29e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-todos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -224
+      ],
+      "id": "73785305-ad70-41f0-aeaa-c61aceb4ba9a",
+      "name": "Webhook",
+      "webhookId": "e5ddd0ce-029f-4dfb-b0b7-bb69f7212bbe"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vhsys.com/v2/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "https://webhook.margoauto.com.br/webhook/webhook-todos"
+            },
+            {
+              "name": "user",
+              "value": "margoweb"
+            },
+            {
+              "name": "password",
+              "value": "/5WU]0-5Z9>p"
+            },
+            {
+              "name": "entidade",
+              "value": "todos"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c7daf5b7-effe-4756-8edf-775fc600bcbb",
+      "name": "Req cadastro webhook"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Req cadastro webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "5dc11726-bfde-460e-9f3d-fffbf37c2e68",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-18T16:03:43.982Z",
+      "updatedAt": "2025-09-18T16:03:43.982Z",
+      "role": "workflow:owner",
+      "workflowId": "7Ld2W0Lx0nbc5x52",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
