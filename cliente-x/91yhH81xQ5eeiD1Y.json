@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-08-26T23:40:37.566Z",
-  "updatedAt": "2025-10-30T20:42:46.351Z",
+  "updatedAt": "2025-10-30T20:57:14.662Z",
   "id": "91yhH81xQ5eeiD1Y",
   "name": "Backups",
   "active": false,
@@ -18,10 +18,17 @@
         128
       ],
       "id": "90bf9815-d8cf-4921-ae31-94edd05392c4",
-      "name": "n8n"
+      "name": "n8n",
+      "credentials": {
+        "n8nApi": {
+          "id": "di3APntsfRZ2TJQ9",
+          "name": "n8n account"
+        }
+      }
     },
     {
       "parameters": {
+        "authentication": "oAuth2",
         "resource": "file",
         "operation": "get",
         "owner": {
@@ -48,9 +55,9 @@
       "alwaysOutputData": true,
       "webhookId": "0070831e-5bd6-43e9-b726-f2c12c744202",
       "credentials": {
-        "githubApi": {
-          "id": "CZfWBOqyFoxfC4FR",
-          "name": "GitHub account"
+        "githubOAuth2Api": {
+          "id": "Xm1uOGoeNL0gHFj4",
+          "name": "GitHub account OAuth"
         }
       },
       "onError": "continueRegularOutput"
@@ -62,7 +69,7 @@
             {
               "id": "804390ad-9f59-4db5-b2e6-e30a7bc453f9",
               "name": "owner",
-              "value": "sociostech",
+              "value": "margoweb-mw",
               "type": "string"
             },
             {
@@ -188,7 +195,13 @@
       ],
       "id": "f6d113c7-a7a8-4e30-8cd4-0a4db5f8a5c2",
       "name": "GitHub Create File",
-      "webhookId": "49528eb2-6834-4ae9-9799-95955316be51"
+      "webhookId": "49528eb2-6834-4ae9-9799-95955316be51",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "Xm1uOGoeNL0gHFj4",
+          "name": "GitHub account OAuth"
+        }
+      }
     },
     {
       "parameters": {
@@ -250,7 +263,13 @@
       ],
       "id": "10f351d0-76a0-497c-b66b-ad37519f2dac",
       "name": "GitHub Edit File",
-      "webhookId": "9f52e3cb-664a-4ac5-ba30-9e4276b93a7d"
+      "webhookId": "9f52e3cb-664a-4ac5-ba30-9e4276b93a7d",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "Xm1uOGoeNL0gHFj4",
+          "name": "GitHub account OAuth"
+        }
+      }
     },
     {
       "parameters": {
@@ -280,8 +299,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -864,
-        128
+        -960,
+        -192
       ],
       "id": "4562c584-23af-4897-91b4-d095b6b052cb",
       "name": "Schedule Trigger"
@@ -291,8 +310,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -528,
-        -128
+        -912,
+        128
       ],
       "id": "94792e94-06ff-4807-a820-7325cf47ddde",
       "name": "When clicking ‘Execute workflow’"
@@ -304,20 +323,22 @@
         "operation": "get",
         "owner": {
           "__rl": true,
-          "value": "https://github.com/margoweb-dev",
-          "mode": "url"
+          "value": "margoweb-mw",
+          "mode": "name"
         },
         "repository": {
           "__rl": true,
-          "value": "=n8n-backups",
-          "mode": "url"
+          "value": "n8n-backups",
+          "mode": "list",
+          "cachedResultName": "n8n-backups",
+          "cachedResultUrl": "https://github.com/margoweb-mw/n8n-backups"
         }
       },
       "type": "n8n-nodes-base.github",
       "typeVersion": 1,
       "position": [
-        -304,
-        -176
+        -368,
+        -224
       ],
       "id": "f6bd1049-cf4a-4c9d-924d-15528f4c9424",
       "name": "GitHub1",
@@ -459,20 +480,14 @@
     },
     "Schedule Trigger": {
       "main": [
-        [
-          {
-            "node": "Informações gerais",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
-            "node": "GitHub1",
+            "node": "Informações gerais",
             "type": "main",
             "index": 0
           }
@@ -488,7 +503,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3b34cf87-3b8c-408f-bd08-42a913109447",
+  "versionId": "7e7971c0-06ad-4e1d-b6e0-cad99a2971da",
   "triggerCount": 0,
   "shared": [
     {
