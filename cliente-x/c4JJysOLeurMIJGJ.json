@@ -1,0 +1,95 @@
+{
+  "createdAt": "2025-09-19T20:28:10.911Z",
+  "updatedAt": "2025-09-19T20:42:08.373Z",
+  "id": "c4JJysOLeurMIJGJ",
+  "name": "Tiro no escuro",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/ordens-servico/12650595/servicos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "=NXNZYRBgTgMYXWTHgDeBdUBeIQYVNS"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "=RsC8vTAdq6Wg06IH3RBKgfNvQtCqmUO"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n     \"horas_servico\": \"3\",\n      \"id_servico\": 72057646,\n      \"valor_unit_servico\": \"80.00\",\n      \"desc_servico\": \"TROCA PIVO\"\n  }\n] \n",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "9daf6187-e2fe-47c9-b5be-1a14eddc0e58",
+      "name": "Add Serviço1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        16
+      ],
+      "id": "040dd576-bd16-4938-8afb-0f32a981c154",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Add Serviço1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "78d97751-77d8-467e-8ae2-78cc0b6c7971",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-19T20:28:10.911Z",
+      "updatedAt": "2025-09-19T20:28:10.911Z",
+      "role": "workflow:owner",
+      "workflowId": "c4JJysOLeurMIJGJ",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
