@@ -1,0 +1,127 @@
+{
+  "createdAt": "2025-10-15T17:38:39.127Z",
+  "updatedAt": "2025-10-16T20:46:51.594Z",
+  "id": "IT7ttMB7t8pUOLY7",
+  "name": "Workflow de teste",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "leads-que-responderam",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -496,
+        -96
+      ],
+      "id": "09e11911-171a-48df-a7d8-a378b306d952",
+      "name": "Webhook",
+      "webhookId": "76f48380-0311-49f6-b7f9-7e91dff8580c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution.margoauto.com.br/message/sendPoll/Checkllix",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "<api-key>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"number\": \"<string>\",\n  \"options\": {\n    \"delay\": 123,\n    \"presence\": \"composing\"\n  },\n  \"pollMessage\": {\n    \"name\": \"<string>\",\n    \"selectableCount\": 2,\n    \"values\": [\n      \"<string>\"\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -128
+      ],
+      "id": "50a8a70f-8ce2-4f29-a848-5019ab220912",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        64
+      ],
+      "id": "c26a6c29-1588-4b15-bce3-5d92d1f67a52",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendPoll/Checkllix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"number\": \"553499753498\",\n  \"options\": {\n    \"delay\": 123,\n    \"presence\": \"composing\"\n  },\n  \"name\": \"Qual desses temas você gostaria que fosse mais abordado no dia do evento?\",\n  \"selectableCount\": 7,\n  \"values\": [\n    \"Processos de Imigração e Vistos\",\n    \"Educação Internacional\",\n    \"Trabalho e Carreira\",\n    \"Qualidade de Vida e Adaptação\",\n    \"Finanças e Investimentos\",\n    \"Instituições e Organizações Participantes\",\n    \"Experiências reais e Networking\"\n  ]\n}",
+        "options": {}
+      },
+      "id": "d0f5f6f6-8d32-4c13-b618-7cae236760f7",
+      "name": "Enviar Imagem [Evolution]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        64
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Enviar Imagem [Evolution]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "06059f22-fdf7-4970-8732-7809e6b8c9d9",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-15T17:38:39.127Z",
+      "updatedAt": "2025-10-15T17:38:39.127Z",
+      "role": "workflow:owner",
+      "workflowId": "IT7ttMB7t8pUOLY7",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
