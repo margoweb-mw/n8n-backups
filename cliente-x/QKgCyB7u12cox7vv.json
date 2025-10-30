@@ -1,0 +1,1325 @@
+{
+  "createdAt": "2025-09-17T21:02:46.134Z",
+  "updatedAt": "2025-09-25T14:24:24.964Z",
+  "id": "QKgCyB7u12cox7vv",
+  "name": "Pega todos serviços",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico/{{$json.id_ordem}}/servicos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "19943a09-d39d-4db6-a746-09d2e3f606e4",
+      "name": "3. Pegar Serviços da Ordem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        208
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "\n# Lembrar de verificar clientes que foram excluidos e tratar de acordo\n",
+        "height": 112,
+        "width": 616
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2512,
+        -80
+      ],
+      "id": "8e9c3747-d898-43cb-9c15-e250753ea0ca",
+      "name": "Sticky Note",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('When Executed by Another Workflow').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        208
+      ],
+      "id": "6eed6461-b3ec-4669-b8ee-1e3e74731c26",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "servicos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        208
+      ],
+      "id": "5af50da0-5d2b-4ebb-acce-a18dd8abddde",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "226a8d05-7ed9-446b-a9af-ff4213e6b23e",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        208
+      ],
+      "id": "42abcad4-91e8-47d3-a8fa-360c69136ff0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega todos os itens que vêm do nó '3. Pegar Serviços da Ordem'\nconst allItems = $('3. Pegar Serviços da Ordem').all();\n\n// 1. Junta os arrays 'data' de todos os itens em um só\nconst todosOsServicos = allItems.flatMap(item => item.json.data);\n\n// 2. Mapeia para o formato { nome, id }\nconst servicosMapeados = todosOsServicos.map(servico => ({\n  nome: servico.desc_servico,\n  id: servico.id_servico,\n  valor_unit_servico: servico.valor_unit_servico,\n  horas_servico: servico.horas_servico\n}));\n\n// 3. Filtra para obter apenas os serviços com ID único\nconst servicosUnicos = servicosMapeados.filter((servico, index, self) =>\n  index === self.findIndex(s => s.id === servico.id)\n);\n\n// 4. Retorna um único item com a lista final dentro da chave \"servicos\"\nreturn [{\n  json: {\n    servicos: servicosUnicos\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        208
+      ],
+      "id": "f2dc5067-ea85-4694-a31c-98fcc80bb8bf",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id",
+              "type": "number"
+            },
+            {
+              "name": "tipo"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2496,
+        208
+      ],
+      "id": "e9686649-21d0-4ce5-82af-41887309c24b",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "741c69e9-13ee-470e-bb7f-cab8f226144b",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "atualizacao",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2288,
+        208
+      ],
+      "id": "9bb6beb0-7c03-4e03-ae91-29f19c0a2466",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "43e67188-c593-410c-8c6e-f19f4eed46a8",
+              "name": "queryTipo",
+              "value": "={{ $now.minus({ hours: 24 }).toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1968,
+        336
+      ],
+      "id": "af88d0c2-a7a0-4ec4-900d-5f5c5b7db693",
+      "name": "Atualizacao"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "837c5a38-3a13-483f-9d7e-f2540dd3ddca",
+              "name": "queryTipo",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1968,
+        96
+      ],
+      "id": "0ea7a3ff-3e28-4a23-82a5-6cae87185c67",
+      "name": "Pull inicial pós cadastro"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5a4e9bce-7d23-4e57-928a-c4da00a19b2f",
+              "name": "ultimas_24hrs",
+              "value": "={{  $json.queryTipo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1712,
+        208
+      ],
+      "id": "d5ae23f7-b3c1-47b6-83eb-a3bdac1aa862",
+      "name": "Final"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?order&sort&limit=1000000offset&nome_cliente&vendedor&status&lixeira=Nao&data_modificacao&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f2179833-a522-4544-8fb2-1ebce722429f",
+      "name": "1. Pegar todas Ordens de Serviço2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1232,
+        208
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        336,
+        208
+      ],
+      "id": "b0339dc0-6ce1-46e8-a7b7-7eb5077015c6",
+      "name": "2. Divide todo o JSON2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=250&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8fe569fb-7bd3-4398-96cd-232326c8502b",
+      "name": "Puxa clientes 250-501",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "54db9974-01ae-407d-94d6-3f22ce9c98c0",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 1250,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1000 até 2000"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3939df6b-ad36-4447-9f17-2c3d444b40a0",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 750,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "750-1000"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "97da8a5f-9f69-4730-9554-4df84e67d4a4",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 500,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "500-750"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 250,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    },
+                    "id": "59edac6a-309b-4595-b44c-719ffa5266a6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "250-500"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e3d1bbb8-6dfb-41f5-8516-f4625559f7f2",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 250,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0-250"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1008,
+        176
+      ],
+      "id": "dd3fb59a-e9e8-4895-ac5b-0cfddf6f8eb9",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=750&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b90d166b-7329-41b6-90b0-e427fce7f870",
+      "name": "Puxa clientes 750-1001",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=1000&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "910bdb2d-f0a5-4931-b360-0a3423349594",
+      "name": "Puxa clientes 1000-1251",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -784,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=1250&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2c5fb0d4-5fd5-4de6-ab6d-66cfa0f8bf10",
+      "name": "Puxa clientes 1250-1501",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=1500&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7a36e47c-9c68-4e3a-99c9-9ad02c0043de",
+      "name": "Puxa clientes 1500-1751",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=1750&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a0d062d0-c6d8-46e4-979f-2659b333bc10",
+      "name": "Puxa clientes 1750-2001",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=250&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b601b36b-4960-4838-a3ec-7d1edad85f5c",
+      "name": "Puxa clientes 250-500 B2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2f51151-d563-489d-ba4b-eeb2619de95b",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 250-500 B2').item.json.data, $('Puxa clientes').item.json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        112
+      ],
+      "id": "bf98af80-b856-49d0-98d1-bced026173f1",
+      "name": "Edit Fields11"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "47902f8b-f051-40da-a237-522f01499e96",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 250-500 C2').item.json.data, $('Puxa clientes').item.json.data), $('Puxa clientes 500-750 B2').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        304
+      ],
+      "id": "9a167e24-6006-4530-8d40-8c553f9f7e8b",
+      "name": "Edit Fields12"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89114cf4-4738-4052-9c89-c0b1b445d331",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 1500-1751').item.json.data, $('Puxa clientes 1250-1501').item.json.data), $('Puxa clientes 1000-1251').item.json.data, $('Puxa clientes').item.json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        496
+      ],
+      "id": "4700c04b-dcb4-4570-a538-a5ee584ef67f",
+      "name": "Edit Fields13"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=500&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "318b2f63-a860-44d4-a390-d1c1a9da699b",
+      "name": "Puxa clientes 500-750 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=500&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b75f609c-f016-4dd9-89a6-252c21afd263",
+      "name": "Puxa clientes 500-750 B2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?limit=1000&sort=desc&offset=250&data_modificacao={{ $('Final').item.json.ultimas_24hrs }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "27a44a3e-8c4a-4290-b7f7-1a369912081f",
+      "name": "Puxa clientes 250-500 C2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85bd1380-0426-461b-986e-c430407b830f",
+              "name": "=data",
+              "value": "={{ $json.data.concat($('1. Pegar todas Ordens de Serviço2').item.json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -80
+      ],
+      "id": "32b74e41-9c9c-418d-ac21-9aecc556474b",
+      "name": "Edit Fields14"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85bd1380-0426-461b-986e-c430407b830f",
+              "name": "=data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -272
+      ],
+      "id": "a47230ab-84ac-455e-9e0d-857f88148d61",
+      "name": "Edit Fields15"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ff4294be-7fd3-48b8-8988-0a0a7e987a85",
+              "name": "userId",
+              "value": "={{ $('Get a row').first().json.userId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        112
+      ],
+      "id": "4dfe6d28-d147-4aeb-a4ea-a81da15ffd14",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "3. Pegar Serviços da Ordem": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "1. Pegar todas Ordens de Serviço2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Pull inicial pós cadastro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualizacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizacao": {
+      "main": [
+        [
+          {
+            "node": "Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pull inicial pós cadastro": {
+      "main": [
+        [
+          {
+            "node": "Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Pegar todas Ordens de Serviço2": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-501": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1000-1251",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-500 C2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-500 B2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-501",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 750-1001": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1000-1251": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1250-1501",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1250-1501": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1500-1751",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1500-1751": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1750-2001",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1750-2001": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-500 B2": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 500-750 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields11": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields12": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields13": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 500-750 2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 500-750 B2": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 750-1001",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-500 C2": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 500-750 B2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields14": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields15": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Divide todo o JSON2": {
+      "main": [
+        [
+          {
+            "node": "3. Pegar Serviços da Ordem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "id": 1,
+          "tipo": "atualizacao"
+        }
+      }
+    ]
+  },
+  "versionId": "15e822bd-869e-40a0-91b8-4f68b0243e08",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-17T21:02:46.134Z",
+      "updatedAt": "2025-09-17T21:02:46.134Z",
+      "role": "workflow:owner",
+      "workflowId": "QKgCyB7u12cox7vv",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
