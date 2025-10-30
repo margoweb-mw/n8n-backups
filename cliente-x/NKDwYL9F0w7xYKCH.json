@@ -1,0 +1,216 @@
+{
+  "createdAt": "2025-10-09T18:45:01.876Z",
+  "updatedAt": "2025-10-09T19:18:22.019Z",
+  "id": "NKDwYL9F0w7xYKCH",
+  "name": "Atualizaçao de leads EXPOCanada",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        272
+      ],
+      "id": "291273e3-b85f-4d08-8b14-b269a42faace",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bf683bb-19e6-4a7c-b80e-0d28f73e4402",
+              "name": "data",
+              "value": "id,first_name,last_name,email,gender,ip_address\n1,Shelly,Peinke,speinke0@dagondesign.com,Female,117.216.17.140\n2,Marley,Midson,mmidson1@smh.com.au,Female,247.233.66.28\n3,Rabbi,Volcker,rvolcker2@marketwatch.com,Genderfluid,238.71.24.76\n4,Tommie,Whittam,twhittam3@rediff.com,Male,55.137.85.20\n5,Winny,Bezant,wbezant4@ucla.edu,Female,129.58.178.198\n6,Stephie,Mullin,smullin5@nifty.com,Agender,236.203.145.59\n7,Nicoline,Gerardin,ngerardin6@fda.gov,Female,123.185.27.22\n8,Frank,Durnford,fdurnford7@github.com,Male,129.146.86.148\n9,Maribel,McAster,mmcaster8@shop-pro.jp,Female,242.245.86.195\n10,Fredrick,Venour,fvenour9@independent.co.uk,Male,126.132.57.75\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        272
+      ],
+      "id": "295d0f55-323b-4c54-a141-ccf87f7c2232",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o item que chega no nó.\n// Assumimos que o texto CSV está num campo chamado 'textoCsv' no item anterior.\nconst csvTexto = $input.first().json.data\n\n// Quebra o texto em linhas, removendo espaços em branco no início/fim.\nconst linhas = csvTexto.trim().split('\\n');\n\n// Pega a primeira linha (cabeçalho) e quebra pelas vírgulas para ter os nomes das chaves.\nconst cabecalho = linhas[0].split(',');\n\n// Pega todas as outras linhas (os dados).\nconst linhasDeDados = linhas.slice(1);\n\n// Mapeia cada linha de dados para um objeto JSON.\nconst resultadoJson = linhasDeDados.map(linha => {\n  const valores = linha.split(',');\n  \n  // Usa 'reduce' para construir o objeto dinamicamente.\n  // Para cada item do cabeçalho, cria uma chave no objeto com o valor correspondente.\n  return cabecalho.reduce((objeto, chave, index) => {\n    objeto[chave.trim()] = valores[index].trim();\n    return objeto;\n  }, {});\n});\n\n// Retorna o array de objetos JSON.\n// Este será o output do nó Code e poderá ser usado nos próximos nós.\nreturn resultadoJson;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        272
+      ],
+      "id": "fb96d8fd-7da4-4c8f-9bbc-05a673038455",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "telefone",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        64,
+        0
+      ],
+      "id": "82299c90-d7ad-4120-a442-eb268c4be399",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads_expo_canada"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        160,
+        272
+      ],
+      "id": "50db52b0-23b2-4b51-9bb0-11a42ac63e8f",
+      "name": "Get many rows1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "933012f8-e979-46a8-9c61-b0ef5c148dd4",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "788435ea-f1b7-4eb3-8484-8cd33aa3543b",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "6d364640-e3b2-4f7b-b8cb-655f66c9c996",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        272
+      ],
+      "id": "45c7baf7-6294-4f7c-9705-f0c79ec7c276",
+      "name": "Filter"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "6b1c009b-45b8-4742-b551-2e6f022b027a",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-09T18:45:01.876Z",
+      "updatedAt": "2025-10-09T18:45:01.876Z",
+      "role": "workflow:owner",
+      "workflowId": "NKDwYL9F0w7xYKCH",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
