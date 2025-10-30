@@ -1,0 +1,2165 @@
+{
+  "createdAt": "2025-10-02T14:32:27.977Z",
+  "updatedAt": "2025-10-24T21:57:44.616Z",
+  "id": "zA2nKyyslxNF6DOP",
+  "name": "💫 Automação PRINCIPAL EXPO CANADA",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "=GET",
+        "url": "=https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=1ec991bd-9412-450c-a72e-49ae24414a2e",
+        "options": {}
+      },
+      "id": "acfa81fe-d9ad-4136-8550-b06e411bf5af",
+      "name": "Generate QR Code",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1808,
+        496
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "836147db-a975-44ec-8d47-7935159a4da7",
+      "name": "Respond with QR Code",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        -1360,
+        496
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        752,
+        1776
+      ],
+      "id": "f536c0ea-496a-472c-b2b1-4cb774bb1aee",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "# GERAÇÃO QR CODE INDIVIDUAL\n",
+        "height": 272,
+        "width": 800,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1936,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "7faf063d-e7d9-4b81-8839-4264369de057",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "tableId": "leads_expo_canada",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $('Webhook').item.json.body.nome }}"
+            },
+            {
+              "fieldId": "telefone",
+              "fieldValue": "={{ $('Webhook').item.json.body.telefone.includes('@') || $('Webhook').item.json.body.telefone.includes('.com') ? $('Webhook').item.json.body.email.replace(\"+55\", \"\") : $('Webhook').item.json.body.telefone.replace(\"+55\", \"\") }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Webhook').item.json.body.email.includes('+55') ? $('Webhook').item.json.body.telefone: $('Webhook').item.json.body.email }}"
+            },
+            {
+              "fieldId": "id_evento",
+              "fieldValue": "={{ $('Edit Fields1').item.json.id_evento }}"
+            },
+            {
+              "fieldId": "origem",
+              "fieldValue": "={{ $('Webhook').item.json.body.origem }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        800
+      ],
+      "id": "4e4d6500-a32a-445b-8aa5-31561162556e",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "# CRON JOB PRINCIPAL\n",
+        "height": 368,
+        "width": 1808,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "106694a9-f9df-4066-ae7a-99dd010eaa91",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads_expo_canada"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        64,
+        448
+      ],
+      "id": "11370f9f-4ddb-49e0-9c58-d4b0276aabd7",
+      "name": "Get many rows",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "datas_evento",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.id_evento }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        256,
+        448
+      ],
+      "id": "b0e5dc28-ab6b-4e8f-9057-bdccb23d73c3",
+      "name": "Get a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6de285fc-bf2f-4df3-9981-e9e176e289f8",
+              "name": "lead",
+              "value": "={{ $('Get many rows').item.json }}",
+              "type": "object"
+            },
+            {
+              "id": "fb04164c-8900-40b0-ab52-6e55c9e6de61",
+              "name": "local",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        448
+      ],
+      "id": "5b5bdbf1-cba8-4a1f-8b24-51b5830fc59f",
+      "name": "Jutando dados"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// O node anterior se chama \"Juntando dados\", então os dados estão em $json\nconst leadData = $json.lead;\nconst localData = $json.local;\n\n// --- DADOS DE ENTRADA ---\nconst eventDateString = localData.data;\nconst registrationDateString = leadData.created_at;\n\n// --- LÓGICA DO CÓDIGO ---\nconst eventTimestamp = new Date(eventDateString).getTime();\nconst registrationTimestamp = new Date(registrationDateString).getTime();\nconst nowTimestamp = $now.toMillis(); // Usando $now do n8n para precisão\n\nconst twoHoursMs = 7200000;\nconst oneDayMs = 86400000;\n\n// Variáveis para armazenar o resultado final\nlet status = \"Nenhum Gatilho Ativo\";\nlet campoDB = null; // Começa como nulo\n\nconst isInWindow = (windowStart) => {\n  const windowEnd = windowStart + twoHoursMs;\n  return nowTimestamp >= windowStart && nowTimestamp < windowEnd;\n};\n\n// --- VERIFICAÇÕES ---\n\n// 1. Pós-Inscrição\n// MODIFICADO: Checa se a coluna JSONB é nula em vez de booleana\nif (isInWindow(registrationTimestamp + oneDayMs) && leadData.disp_dia_pos_inscricao == null) {\n  status = \"Pós-Inscrição\";\n  campoDB = \"disp_dia_pos_inscricao\";\n}\n// 2. Pré-Evento\nelse {\n  if (isInWindow(eventTimestamp - (30 * oneDayMs)) && leadData.disp_30_dias_antes == null) {\n    status = \"Faltam 30 dias\";\n    campoDB = \"disp_30_dias_antes\";\n  }\n  else if (isInWindow(eventTimestamp - (7 * oneDayMs)) && leadData.disp_1_semana_antes == null) {\n    status = \"Falta 1 semana\";\n    campoDB = \"disp_1_semana_antes\";\n  }\n  else if (isInWindow(eventTimestamp - (3 * oneDayMs)) && leadData.disp_3_dias_antes == null) {\n    status = \"Faltam 3 dias\";\n    campoDB = \"disp_3_dias_antes\";\n  }\n  else if (isInWindow(eventTimestamp - (1 * oneDayMs)) && leadData.disp_1_dia_antes == null) {\n    status = \"É Amanhã\";\n    campoDB = \"disp_1_dia_antes\";\n  }\n  else if (isInWindow(eventTimestamp) && leadData.disp_dia_evento == null) {\n    status = \"É Hoje\";\n    campoDB = \"disp_dia_evento\";\n  }\n}\n\n// Retorna o status e o nome do campo correspondente\nreturn { \n  status: status,\n  campoDB: campoDB\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        448
+      ],
+      "id": "d85abe96-2657-4a34-8ee0-59022042e8de",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "873031c8-2c5b-430f-b5db-87b751d7182f",
+              "name": "msg",
+              "value": "Mensagem de pós inscrição",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        64
+      ],
+      "id": "25abf937-829b-43f5-a9b6-6da456992367",
+      "name": "MSG Pós Inscrição"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "873031c8-2c5b-430f-b5db-87b751d7182f",
+              "name": "msg",
+              "value": "Mensagem 30 dias antes",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        256
+      ],
+      "id": "4838b5b4-4793-4711-9f16-b30f4077b114",
+      "name": "MSG 30 dias antes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "873031c8-2c5b-430f-b5db-87b751d7182f",
+              "name": "msg",
+              "value": "Mensagem 1 semana antes",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        448
+      ],
+      "id": "5e767d49-4af9-409a-87be-95f6c31e7815",
+      "name": "MSG 1 Semana antes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "873031c8-2c5b-430f-b5db-87b751d7182f",
+              "name": "msg",
+              "value": "Mensagem 3 dias antes",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        640
+      ],
+      "id": "83118f90-c702-480a-9753-ae2fc4fc05e3",
+      "name": "MSG 3 dias antes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "873031c8-2c5b-430f-b5db-87b751d7182f",
+              "name": "msg",
+              "value": "Mensagem dia do evento",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        848
+      ],
+      "id": "aa53d326-973d-4ecf-b688-e68378fcce58",
+      "name": "MSG Dia do evento"
+    },
+    {
+      "parameters": {
+        "content": "# USE CASES\n",
+        "height": 1136,
+        "width": 352,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "02c356d3-f25f-4eaf-bab2-72b2bf686bb0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Get many rows').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "={{ $('Decide o use case').item.json.campoDB }}",
+              "fieldValue": "={\"status\":true,\"created_at\":\"{{ $now }}\"}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        448
+      ],
+      "id": "8bc36cfd-c9b7-4c9d-a8c1-b53c7547c4e1",
+      "name": "Atualiza o campo booleano",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Pós-Inscrição",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ad130bbb-729a-41cc-8784-6aa38d07e05e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pós-Inscrição"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5050930-f768-4ad9-a5d4-7f4c0ced703f",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Faltam 30 dias",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Faltam 30 dias"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "60ceb12e-811a-4a53-9bb0-6c69278df2c2",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Falta 1 semana",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Falta 1 semana"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4ff2c7b7-7343-43b7-8605-def464dc656e",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "Faltam 3 dias",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Faltam 3 dias"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "015fdcdd-ed50-4b88-92cc-70a895320248",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "É Hoje",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "É Hoje"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        400
+      ],
+      "id": "736f0db9-53ca-4cf6-a06d-42f06dd15971",
+      "name": "Decide o use case"
+    },
+    {
+      "parameters": {
+        "content": "# SALVA LEAD NO DB & GERA QR CODE PRO MESMO\n\n",
+        "height": 624,
+        "width": 1760,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "56368701-e69e-4890-b6d3-9fc8ab17f98f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.disp_dia_pos_inscricao }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1536,
+        448
+      ],
+      "id": "551d4a30-e6ec-4e21-b815-12a2f407e1a1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        496
+      ],
+      "id": "af08f1a9-a05b-4f4d-a802-5b80e5a180fb",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "# MUDANÇA DE STATUS \n\n",
+        "height": 336,
+        "width": 1120,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1952,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "c2e08622-4700-431a-b9c0-6d82784f6548",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Receive Data Webhook2').item.json.body.uuid }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "={\n \"status\": true,\n \"created_at\": \"{{ $now }}\"\n}"
+            },
+            {
+              "fieldId": "qtd_scan",
+              "fieldValue": "={{ $json.qtd_scan + 1 }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        784
+      ],
+      "id": "bbacc71d-1f80-4d37-89bf-899f5b816b50",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "=GET",
+        "url": "=https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ $json.id }}",
+        "options": {}
+      },
+      "id": "e4beb848-4ab0-42f0-a346-817afee74468",
+      "name": "Generate QR Code1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        432,
+        800
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        656,
+        800
+      ],
+      "id": "092f811e-acf5-4cde-9f2e-d1aa89541059",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Create a row').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "qr_base64",
+              "fieldValue": "={{ $json.data }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        1024
+      ],
+      "id": "416e1da5-3468-4ab2-be32-752604e5976c",
+      "name": "Update a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.body.uuid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1680,
+        784
+      ],
+      "id": "e2742582-b44b-45fb-9489-c26d6b074727",
+      "name": "Get a row3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"usado\",\n  \"n_vezes_uso\": {{ $('Update a row').item.json.qtd_scan }},\n  \"dados-lead\": {\n   \"nome\": \"{{ $('Get a row3').item.json.nome }}\",\n   \"telefone\": \"{{ $('Get a row3').item.json.telefone }}\"\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1056,
+        720
+      ],
+      "id": "327ad21e-264d-467a-ae54-c3935c1ae718",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "command": "=echo \"[{{ $now.setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd HH:mm:ss') }}] O QR CODE de  {{ $('Get a row3').item.json.nome }} foi escaneado\" >> /var/log/n8n/qr_scans.log"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        1072
+      ],
+      "id": "ee9a434a-bb55-468b-a0b6-3990d4baa316",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a12ae89d-07cf-4832-af6d-001607e656c8",
+              "leftValue": "={{ $json.qtd_scan }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1296,
+        784
+      ],
+      "id": "4a1a7ae4-d44c-4fda-8df5-6bf506ceee76",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "validacao-usuario",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0bd8c5ff-c42e-4774-86f5-b7dc3706091b",
+      "name": "Receive Data Webhook2",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -1888,
+        784
+      ],
+      "webhookId": "6960391c-83cf-49b3-aa8d-761cd8263d76-unique-id",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"dados-lead\": {\n   \"nome\": \"{{ $('Get a row3').item.json.nome }}\",\n   \"telefone\": \"{{ $('Get a row3').item.json.telefone }}\"\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1056,
+        864
+      ],
+      "id": "b2e9b2a6-94d2-4288-b83a-8f2bba57eb29",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expo-canada-dados-leads",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://expocanada.org,https://n8n.margoauto.com.br",
+          "ignoreBots": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -768,
+        800
+      ],
+      "id": "99dba83e-4430-47e2-aa5b-e75e3e9da771",
+      "name": "Webhook",
+      "webhookId": "c9473c4c-525c-405c-a336-a0040b6c9f21"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields1').item.json.cidade }}",
+                    "rightValue": "=Goiânia - GO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e108446a-53d2-44fe-af1a-1f7a13374943"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Goiânia - GO"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c8e16387-3838-41a7-af81-b5dbfdd2d00d",
+                    "leftValue": "={{ $('Edit Fields1').item.json.cidade }}",
+                    "rightValue": "Uberaba - MG",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Uberaba - MG"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9d708c65-bd70-433a-9cda-5e4ce671f4c7",
+                    "leftValue": "={{ $('Edit Fields1').item.json.cidade }}",
+                    "rightValue": "Uberlândia - MG",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Uberlândia - MG"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -224,
+        1008
+      ],
+      "id": "ab71ebb3-bac0-44e8-b5ef-ac0541a408c7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendMedia/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $json.telefone }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "=image"
+            },
+            {
+              "name": "media",
+              "value": "={{ $('Get a row2').item.json.img_disparo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a6e6220b-e977-48cd-a6c1-10ee15837e3b",
+      "name": "Enviar Imagem [Evolution]6",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        1024
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Create a row').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "disp_inscricao",
+              "fieldValue": "={\"status_wpp\":{{$('Msg de inscrição confirmada').item.json.error || $('Enviar Imagem [Evolution]6').item.json.error  ? false : true }},\"status_email\": {{$json.response?.includes('250') ? true : false }},\"created_at\":\"{{ $now }}\"}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        464,
+        1024
+      ],
+      "id": "d90b5c84-8a3f-45ed-a8e0-3347d67033df",
+      "name": "Update a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7cf4443-23fa-4765-aadd-9bf58a362008",
+              "name": "url",
+              "value": "https://expocanada.org/aut-imgs/boas-vindas-goiania.png",
+              "type": "string"
+            },
+            {
+              "id": "63f38a9d-a07a-4c3d-ba29-d012ef17913e",
+              "name": "data",
+              "value": "29 de Novembro de 2025",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        1024
+      ],
+      "id": "e3e35eab-ce1b-4b8c-ac99-2183ff69f2b0",
+      "name": "URL Goiânia"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7cf4443-23fa-4765-aadd-9bf58a362008",
+              "name": "url",
+              "value": "https://expocanada.org/aut-imgs/boas-vindas-uberaba.png",
+              "type": "string"
+            },
+            {
+              "id": "06b13670-0830-45ea-9df7-47c681e86eb9",
+              "name": "data",
+              "value": "26 de Novembro de 2025",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        1184
+      ],
+      "id": "a4f2c831-47ff-4cc0-afab-d51f0e9866b3",
+      "name": "URL Uberaba"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7cf4443-23fa-4765-aadd-9bf58a362008",
+              "name": "url",
+              "value": "https://expocanada.org/aut-imgs/boas-vindas-uberlandia.png",
+              "type": "string"
+            },
+            {
+              "id": "27c2545e-8e2b-4b04-9c50-4764d3cad20b",
+              "name": "data",
+              "value": "27 de Novembro de 2025",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        1360
+      ],
+      "id": "e5eb8074-800b-4e70-9fdd-5c0b3e2e594e",
+      "name": "URL Uberlândia"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 336,
+        "width": 384,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        1232
+      ],
+      "typeVersion": 1,
+      "id": "3cf43108-21d9-400c-a70e-ada1fb57ede4",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "fromEmail": "EXPOCanada <no-reply@expocanada.org>",
+        "toEmail": "={{ $('Create a row').item.json.email }}",
+        "subject": "Bem-vindo(a) a maior feira de imigração e estudo no Brasil!",
+        "html": "=<html><head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no\">\n<title>EXPOCanada 2025</title>\n<style>\n  .imageye-selected {\n    outline: 2px solid black !important;\n    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;\n  }\n</style></head>\n<body cz-shortcut-listen=\"true\">\n<div style=\"margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4; min-height: 100%; align-content: center;\">\n  <div style=\"width: calc(100% - 15%); max-width: 820px; background-color: #ffffff; border: 1px solid #e0e0e0; padding: 10px; margin: 5% auto; margin-top: 40px;\">\n    <div style=\"background-color: #ffffff; text-align: center; padding: 0 0 20px 0;\"> <a href=\"https://expocanada.org\" target=\"_blank\"><img src=\"{{ $json.url }}\" style=\"width: 100%;\" alt=\"Seja bem-vindo(a)\"></a> </div>\n    <div style=\"padding: 5%; color: #333333; line-height: 22px;\"><span style=\"font-size: 20px; color: #3a466c; font-size:1.3em;\"><b>EXPOCanada 2025.</b><br> Sua jornada começa agora!</span><br><br><h2 style=\"margin-bottom: 30px; font-size:1.2em;\">Olá {{ $('Create a row').item.json.nome.split(' ')[0] }}, tudo bem?</h2><p style=\"margin-bottom: 30px;\">É com grande entusiasmo que damos as boas-vindas a você à <b>EXPOCanada 2025</b>, o principal evento voltado para carreira, imigração e estudo no Canadá!<br><br>\n\n\t\t<b>Data:</b> {{ $json.data }}<br>\n\t\t<b>Local:</b> {{ $('Get a row2').item.json.endereco }}<br><br>Prepare-se para explorar palestras exclusivas, workshops práticos e conexões diretas com especialistas e instituições canadenses.<br><br>Em breve, você receberá mais informações sobre a programação completa e instruções para acesso ao evento.<br><br>\n\nEstamos muito felizes por estar conosco nessa jornada rumo a novas oportunidades!<br><br>\n\nAtenciosamente,<br>\n\t\t<b>Equipe EXPOCanada</b><br>\n\t\t<a href=\"mailto:edsantos@imigrarparaocanada.com.br\">edsantos@imigrarparaocanada.com.br</a><br><br>\n\n\t\texpocanada.org<br>\n\t  </p>\n\n      </div>\n    <div style=\"background-color: #eeeeee; text-align: center; padding: 20px;\">\n\t  <p style=\"font-size: 12px; color: #777777;\"><a style=\"color: #777777; text-decoration: none;\" href=\"https://expocanada.org\" target=\"_blank\"><img src=\"https://expocanada.org/aut-imgs/expocanada_registro.png\" alt=\"Logo\" width=\"100\"></a></p>\n      <div class=\"social-icons\">\n                    <ul class='medium-icon dark' style='list-style: none; padding: 0; text-align: center;'><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='facebook' href='https://www.facebook.com/ExpoCanadaBRA/' target='_blank'><img src=\"https://expocanada.org/aut-imgs/fb-ico.png\" width=\"25\" alt=\"Ícone do Facebook\"></a></li> <li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='instagram' href='https://www.instagram.com/expocanadabra/' target='_blank'><img src=\"https://expocanada.org/aut-imgs/ig-ico-2.png\" width=\"25\" alt=\"Ícone do Instagram\"></a></li><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='youtube' href='https://www.youtube.com/watch?v=SXIRle8FvnU' target='_blank'><img src=\"https://expocanada.org/aut-imgs/yt-ico-2.png\" width=\"25\" alt=\"Ícone do YouTube\"></a></li><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='whatsapp' href='https://wa.me/16478183011' target='_blank'><img src=\"https://expocanada.org/aut-imgs/wpp-ico.png\" width=\"25\" alt=\"Ícone do WhatsApp\"></a></li></ul></div><p style=\"font-size: 12px; color: #777777;\">© 2025 by EXPOCanada®. Proudly created in Canada.</p></div></div></div></body></html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        1024
+      ],
+      "id": "da8c76f4-9928-44df-871a-0d024dd00c6f",
+      "name": "Send email",
+      "webhookId": "63ad0ef3-4ebd-4361-91af-914c24260bef",
+      "credentials": {
+        "smtp": {
+          "id": "BH5VZb5rhWzgLIbR",
+          "name": "IMAP ExpoCanada"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bf683bb-19e6-4a7c-b80e-0d28f73e4402",
+              "name": "data",
+              "value": "id,first_name,last_name,email,gender,ip_address\n1,Barrie,Domenge,bdomenge0@virginia.edu,Male,50.145.241.102\n2,Karine,Pochet,kpochet1@taobao.com,Female,229.234.142.254\n3,Devina,O'Duilleain,doduilleain2@nih.gov,Female,8.104.14.175\n4,Daphna,Ranfield,dranfield3@topsy.com,Female,71.33.30.165\n5,Veronique,Gabitis,vgabitis4@abc.net.au,Female,74.122.254.4\n6,Georgeanna,Langston,glangston5@sina.com.cn,Female,187.84.54.43\n7,Georgie,Crawforth,gcrawforth6@timesonline.co.uk,Genderqueer,89.103.226.141\n8,Swen,Gaskin,sgaskin7@cargocollective.com,Male,63.76.15.132\n9,Arron,Roussell,aroussell8@quantcast.com,Male,77.76.5.244\n10,Elissa,Wiltsher,ewiltsher9@google.co.jp,Female,128.234.8.249\n11,Dalt,Glencross,dglencrossa@edublogs.org,Male,113.36.214.169\n12,Garrard,Bauldrey,gbauldreyb@feedburner.com,Male,123.11.150.254\n13,Gan,Dirkin,gdirkinc@cafepress.com,Male,118.225.2.67\n14,Kali,Buckland,kbucklandd@odnoklassniki.ru,Female,189.190.187.255\n15,Elinor,Whitwell,ewhitwelle@hugedomains.com,Female,19.207.181.178\n16,Ashia,Orbine,aorbinef@hugedomains.com,Female,151.42.163.3\n17,Robenia,Cullingford,rcullingfordg@sbwire.com,Polygender,111.237.86.89\n18,Nevil,Teas,nteash@ox.ac.uk,Male,66.139.249.159\n19,Junette,Wither,jwitheri@economist.com,Female,186.224.192.142\n20,Dick,Jory,djoryj@ifeng.com,Male,227.55.41.62\n21,Maxy,Koba,mkobak@utexas.edu,Female,135.128.147.144\n22,Korey,Yurmanovev,kyurmanovevl@bing.com,Male,240.193.225.46\n23,Lucien,Murdy,lmurdym@livejournal.com,Male,33.244.58.95\n24,Rita,Livings,rlivingsn@mozilla.com,Female,216.218.97.52\n25,Doralynne,Tayler,dtaylero@t.co,Female,25.129.226.181\n26,Mikol,Crippen,mcrippenp@devhub.com,Male,28.224.115.55\n27,Hally,Blazej,hblazejq@marriott.com,Female,87.255.134.213\n28,Audi,Khomin,akhominr@addtoany.com,Female,228.159.175.5\n29,Crystie,Lavender,clavenders@google.cn,Agender,77.186.111.138\n30,Barnabas,Turbefield,bturbefieldt@slate.com,Male,193.122.23.99\n31,Karel,Conn,kconnu@youtube.com,Genderfluid,160.8.222.55\n32,Joelly,Battlestone,jbattlestonev@ibm.com,Female,244.252.224.133\n33,Klement,Blease,kbleasew@weibo.com,Male,38.221.117.149\n34,Wiley,Fosdick,wfosdickx@ezinearticles.com,Male,99.253.2.68\n35,Pippa,Rumming,prummingy@businesswire.com,Female,232.74.95.184\n36,Gardner,Farloe,gfarloez@artisteer.com,Male,248.162.248.252\n37,Junina,Battlestone,jbattlestone10@google.com.br,Female,17.218.102.54\n38,Erv,Jeffcock,ejeffcock11@odnoklassniki.ru,Male,145.15.154.247\n39,Melvyn,Mower,mmower12@europa.eu,Male,97.220.48.173\n40,Meredith,Huckfield,mhuckfield13@ucoz.com,Bigender,21.133.118.55\n41,Reider,Momford,rmomford14@thetimes.co.uk,Male,88.113.87.102\n42,Adolph,Jockle,ajockle15@cdbaby.com,Male,24.122.124.108\n43,Frederich,Baillie,fbaillie16@loc.gov,Male,211.174.28.35\n44,Gabi,Garley,ggarley17@hud.gov,Male,40.5.208.224\n45,Adolf,Scutchin,ascutchin18@va.gov,Male,62.93.208.76\n46,Clerkclaude,Gontier,cgontier19@purevolume.com,Male,201.176.250.142\n47,Agna,Cavilla,acavilla1a@apache.org,Female,200.71.99.135\n48,Rudy,Ringer,rringer1b@answers.com,Male,52.248.115.95\n49,Yardley,Woodfin,ywoodfin1c@bloomberg.com,Male,153.94.217.65\n50,Thaddeus,Fabbri,tfabbri1d@123-reg.co.uk,Male,196.180.145.172\n51,Daveen,Grummitt,dgrummitt1e@barnesandnoble.com,Female,192.124.56.38\n52,Ardelia,Flipek,aflipek1f@studiopress.com,Female,94.53.229.205\n53,Eddie,Powner,epowner1g@rambler.ru,Female,24.121.237.113\n54,Adrianne,Suthren,asuthren1h@whitehouse.gov,Female,8.225.5.182\n55,Ximenez,Vasichev,xvasichev1i@godaddy.com,Male,193.72.220.157\n56,Renie,Rubie,rrubie1j@psu.edu,Female,248.218.88.252\n57,Yoko,Ambrosoni,yambrosoni1k@nifty.com,Female,33.252.178.237\n58,Andriana,Ten Broek,atenbroek1l@dyndns.org,Female,130.52.204.144\n59,Anita,Klich,aklich1m@paginegialle.it,Female,183.37.103.110\n60,Bethany,Espinas,bespinas1n@ihg.com,Female,91.137.162.187\n61,Mara,Scutter,mscutter1o@free.fr,Female,88.89.217.147\n62,Meggy,Briance,mbriance1p@canalblog.com,Female,90.204.90.154\n63,Reidar,Deroche,rderoche1q@arstechnica.com,Male,209.191.90.202\n64,Arlene,Bustin,abustin1r@smh.com.au,Female,251.24.1.97\n65,Shirley,Krolle,skrolle1s@digg.com,Female,40.175.147.65\n66,Junette,Kenworthey,jkenworthey1t@microsoft.com,Female,18.78.13.7\n67,Zollie,Ricart,zricart1u@weebly.com,Genderqueer,46.254.30.214\n68,Sheila,Towell,stowell1v@reddit.com,Polygender,107.103.106.12\n69,Thadeus,Nolli,tnolli1w@house.gov,Male,64.17.88.113\n70,Vidovik,Lewer,vlewer1x@bloomberg.com,Male,96.112.218.177\n71,Jarvis,Whales,jwhales1y@wix.com,Male,128.66.47.161\n72,Chloe,Stafford,cstafford1z@wufoo.com,Female,37.179.89.186\n73,Eldridge,Mazzey,emazzey20@about.com,Male,143.104.29.199\n74,Shana,Sidebotton,ssidebotton21@t.co,Female,217.171.32.64\n75,Henrieta,FitzGeorge,hfitzgeorge22@t-online.de,Bigender,157.156.142.11\n76,Dore,Rosas,drosas23@furl.net,Male,212.2.15.69\n77,Sissy,Yankishin,syankishin24@exblog.jp,Female,17.241.150.156\n78,Phedra,Simmgen,psimmgen25@miibeian.gov.cn,Female,161.59.139.142\n79,Dwayne,Kinnaird,dkinnaird26@over-blog.com,Male,172.100.135.122\n80,Marys,Sergison,msergison27@independent.co.uk,Female,12.140.114.30\n81,Kyle,Ind,kind28@xrea.com,Male,98.210.17.83\n82,Corina,Geri,cgeri29@cyberchimps.com,Female,215.103.118.8\n83,Ezra,Bluschke,ebluschke2a@bigcartel.com,Male,40.17.42.17\n84,Gauthier,Poundford,gpoundford2b@ucoz.ru,Male,70.189.168.240\n85,Grady,Bartlett,gbartlett2c@yolasite.com,Male,178.193.60.218\n86,Juana,MacEveley,jmaceveley2d@whitehouse.gov,Female,123.250.196.10\n87,Tracey,Longmate,tlongmate2e@google.cn,Female,231.125.210.19\n88,Blondell,Bodker,bbodker2f@theglobeandmail.com,Female,76.8.19.248\n89,Waldemar,Ridsdole,wridsdole2g@ftc.gov,Male,124.206.35.248\n90,Terrye,Goodayle,tgoodayle2h@devhub.com,Female,192.209.70.39\n91,Daisi,Jendrys,djendrys2i@pagesperso-orange.fr,Female,240.47.102.227\n92,Redford,Videan,rvidean2j@whitehouse.gov,Agender,100.24.153.236\n93,Jobi,Danson,jdanson2k@mediafire.com,Female,18.195.140.91\n94,Tabatha,Comber,tcomber2l@guardian.co.uk,Female,19.17.91.220\n95,Kennie,Heindle,kheindle2m@webnode.com,Male,153.193.124.140\n96,Sheffy,Penkethman,spenkethman2n@phpbb.com,Male,19.117.254.36\n97,Lee,Langwade,llangwade2o@go.com,Female,217.13.230.229\n98,Millisent,Duplan,mduplan2p@dmoz.org,Female,1.170.210.141\n99,Anabel,Yerby,ayerby2q@google.com.au,Female,253.119.71.45\n100,Carmela,Greig,cgreig2r@hatena.ne.jp,Female,179.187.46.28\n101,Ambrosio,Grimble,agrimble2s@hhs.gov,Male,53.2.223.29\n102,Doretta,Nassi,dnassi2t@spotify.com,Female,224.57.111.61\n103,Charline,Ticic,cticic2u@jiathis.com,Female,16.51.58.9\n104,Sari,Ferreres,sferreres2v@cdc.gov,Agender,189.159.44.64\n105,Emmott,Goldby,egoldby2w@smugmug.com,Male,250.126.151.237\n106,Cesar,Ethersey,cethersey2x@bravesites.com,Male,101.82.162.123\n107,Maxy,Foggo,mfoggo2y@forbes.com,Female,109.236.97.164\n108,Smitty,Motto,smotto2z@constantcontact.com,Male,6.85.176.235\n109,Delainey,Stilling,dstilling30@blinklist.com,Male,14.175.202.26\n110,Lane,Kenefick,lkenefick31@ustream.tv,Female,41.199.230.234\n111,Freddy,Suart,fsuart32@patch.com,Female,57.98.205.70\n112,Adolph,Overington,aoverington33@devhub.com,Male,159.232.143.163\n113,Latashia,Summerrell,lsummerrell34@deviantart.com,Female,167.15.100.204\n114,Phaidra,Castelain,pcastelain35@typepad.com,Female,30.99.43.141\n115,Gery,Brownlea,gbrownlea36@ihg.com,Male,51.24.140.58\n116,Davin,Marxsen,dmarxsen37@samsung.com,Male,236.201.224.106\n117,Frazer,MacNelly,fmacnelly38@nyu.edu,Male,29.209.108.180\n118,Boyd,Aleevy,baleevy39@ning.com,Male,79.119.13.216\n119,Clare,Ellam,cellam3a@amazon.co.uk,Male,156.178.10.189\n120,Kerry,Faulds,kfaulds3b@ca.gov,Male,202.94.66.56\n121,Genovera,Sazio,gsazio3c@google.it,Female,95.75.0.1\n122,Gherardo,Bohan,gbohan3d@hostgator.com,Male,11.139.71.158\n123,Giuditta,Dabbes,gdabbes3e@github.com,Female,30.77.160.126\n124,Elie,Kynder,ekynder3f@deviantart.com,Female,251.122.213.36\n125,Bordie,Jones,bjones3g@mashable.com,Male,116.241.174.125\n126,Kimmy,Ygo,kygo3h@illinois.edu,Female,198.144.98.238\n127,Ileana,Brixey,ibrixey3i@macromedia.com,Female,234.207.238.232\n128,Paolina,Skirving,pskirving3j@si.edu,Genderqueer,189.191.103.121\n129,Bennie,Lavallin,blavallin3k@bizjournals.com,Female,119.48.210.76\n130,Aila,Cisco,acisco3l@time.com,Bigender,126.68.167.232\n131,Patrizio,Bridle,pbridle3m@army.mil,Male,153.145.93.251\n132,Blinny,Regglar,bregglar3n@theglobeandmail.com,Female,237.55.6.223\n133,Bogey,Fildes,bfildes3o@w3.org,Male,55.187.8.230\n134,Chiquita,Axby,caxby3p@clickbank.net,Female,106.234.157.211\n135,Tailor,le Keux,tlekeux3q@mediafire.com,Male,234.11.33.38\n136,Suzanna,Mitrovic,smitrovic3r@freewebs.com,Female,245.205.202.228\n137,Mathilde,Tabert,mtabert3s@upenn.edu,Female,244.139.193.173\n138,Lazare,Cumine,lcumine3t@ning.com,Male,253.238.194.49\n139,Miran,Dome,mdome3u@nifty.com,Agender,202.58.53.191\n140,Daffie,Lesurf,dlesurf3v@miitbeian.gov.cn,Female,85.47.15.113\n141,Bell,Blewett,bblewett3w@github.com,Agender,218.198.1.70\n142,Fabian,Corbally,fcorbally3x@va.gov,Male,5.56.15.151\n143,Gunther,Blinkhorn,gblinkhorn3y@ehow.com,Agender,43.31.41.253\n144,Stanislas,Marquiss,smarquiss3z@miitbeian.gov.cn,Male,225.219.149.44\n145,Becky,Frickey,bfrickey40@delicious.com,Female,241.23.76.7\n146,Rodrick,Wiffield,rwiffield41@economist.com,Genderqueer,30.18.22.212\n147,Birgitta,O'Hogertie,bohogertie42@smugmug.com,Female,0.91.122.232\n148,Leigha,Nusche,lnusche43@livejournal.com,Female,112.190.3.94\n149,Richart,Dekeyser,rdekeyser44@macromedia.com,Male,46.247.100.186\n150,Carley,Kirwan,ckirwan45@toplist.cz,Female,120.236.29.58\n151,Liam,Raft,lraft46@issuu.com,Male,201.71.71.192\n152,Dwight,Constance,dconstance47@slashdot.org,Male,177.225.66.119\n153,Hilary,Handaside,hhandaside48@sakura.ne.jp,Female,144.212.82.27\n154,Lauree,Gresly,lgresly49@163.com,Female,163.169.53.200\n155,Natalie,Donnan,ndonnan4a@google.es,Female,17.236.15.58\n156,Catie,Botterill,cbotterill4b@webmd.com,Female,206.148.27.110\n157,Tana,Emblem,temblem4c@cdc.gov,Female,113.60.244.148\n158,Ginger,Laxon,glaxon4d@surveymonkey.com,Female,255.36.70.175\n159,Christyna,O'Bradain,cobradain4e@odnoklassniki.ru,Female,93.235.178.187\n160,Doug,Graith,dgraith4f@slate.com,Male,1.82.237.251\n161,Silvano,Gatward,sgatward4g@netscape.com,Polygender,161.91.22.139\n162,Brendis,Ellwand,bellwand4h@webmd.com,Male,59.235.226.208\n163,Odessa,Cornforth,ocornforth4i@t.co,Female,166.30.227.152\n164,Ripley,Rameau,rrameau4j@freewebs.com,Male,25.119.226.78\n165,Zebedee,Cloney,zcloney4k@independent.co.uk,Male,108.71.225.4\n166,Griffith,Skitterel,gskitterel4l@toplist.cz,Non-binary,227.190.118.253\n167,Lefty,Chismon,lchismon4m@google.ca,Male,135.125.186.206\n168,Claybourne,Sextone,csextone4n@si.edu,Male,191.221.3.172\n169,Yovonnda,Blackborn,yblackborn4o@google.de,Female,119.68.194.153\n170,Nikita,Gonnely,ngonnely4p@answers.com,Male,63.210.29.236\n171,Coral,Durie,cdurie4q@privacy.gov.au,Female,110.180.3.67\n172,Allie,Ventam,aventam4r@xinhuanet.com,Male,174.159.16.18\n173,Rodd,Jedrys,rjedrys4s@chicagotribune.com,Male,163.174.209.8\n174,Hilarius,Sperling,hsperling4t@discovery.com,Male,156.100.221.224\n175,Erek,Weld,eweld4u@nature.com,Male,62.75.55.62\n176,Catharina,Lochet,clochet4v@newsvine.com,Female,162.78.213.23\n177,Bernhard,Crouse,bcrouse4w@hao123.com,Male,234.208.20.53\n178,Nessa,Pellissier,npellissier4x@newsvine.com,Female,142.179.249.28\n179,Sandy,Keford,skeford4y@dedecms.com,Female,19.122.237.245\n180,Eleonore,Cheley,echeley4z@mapquest.com,Female,237.74.227.6\n181,Liana,Eagland,leagland50@huffingtonpost.com,Female,227.57.118.169\n182,Randell,Dodd,rdodd51@imdb.com,Male,120.63.9.177\n183,Ewen,Hollibone,ehollibone52@google.it,Male,43.96.74.136\n184,Benjie,Iacovaccio,biacovaccio53@umn.edu,Male,152.63.102.221\n185,Shana,Tregidgo,stregidgo54@cmu.edu,Female,66.90.75.68\n186,Astrid,Yesipov,ayesipov55@intel.com,Female,148.194.66.252\n187,Filippa,Moreno,fmoreno56@aol.com,Female,125.122.75.233\n188,Clair,Marthen,cmarthen57@vk.com,Male,235.28.246.30\n189,Bertram,d'Arcy,bdarcy58@usa.gov,Male,197.252.200.143\n190,Warner,Brickett,wbrickett59@discovery.com,Male,210.232.146.157\n191,Hillary,Rickasse,hrickasse5a@yahoo.co.jp,Male,189.249.169.124\n192,Linc,Edleston,ledleston5b@hexun.com,Male,108.114.159.227\n193,Stinky,Cogdon,scogdon5c@bravesites.com,Male,159.70.195.4\n194,Wolfgang,Thornley,wthornley5d@stanford.edu,Male,247.178.185.26\n195,Karly,Heritege,kheritege5e@ustream.tv,Female,171.25.17.246\n196,Mario,Teas,mteas5f@sina.com.cn,Male,82.241.151.248\n197,Alair,Stenyng,astenyng5g@princeton.edu,Genderfluid,254.185.218.125\n198,Rem,Laingmaid,rlaingmaid5h@china.com.cn,Male,227.174.101.161\n199,Georgy,Norcop,gnorcop5i@ftc.gov,Male,44.167.112.127\n200,Pearce,Garlinge,pgarlinge5j@netlog.com,Male,49.36.96.48\n201,Barr,Cawsy,bcawsy5k@icq.com,Male,158.29.223.218\n202,Keary,Sigg,ksigg5l@ow.ly,Male,116.242.119.29\n203,Jayson,Coatts,jcoatts5m@apache.org,Male,101.218.202.174\n204,Madeleine,Sanchiz,msanchiz5n@statcounter.com,Female,220.51.219.196\n205,Hodge,Schultes,hschultes5o@ucoz.com,Male,155.17.69.236\n206,Edlin,Apdell,eapdell5p@tinypic.com,Male,209.66.229.222\n207,Kora,Lipman,klipman5q@ehow.com,Female,205.30.120.145\n208,Syd,Vaud,svaud5r@nifty.com,Male,39.21.70.247\n209,Johnnie,Bloomer,jbloomer5s@technorati.com,Male,101.219.168.197\n210,Madelin,Januszkiewicz,mjanuszkiewicz5t@princeton.edu,Female,208.137.238.248\n211,Whitney,Tickel,wtickel5u@usgs.gov,Male,98.12.140.84\n212,Ilyse,Fitchell,ifitchell5v@auda.org.au,Female,13.229.189.46\n213,Burl,Broxap,bbroxap5w@theatlantic.com,Polygender,194.101.52.173\n214,Petra,Shera,pshera5x@cisco.com,Female,93.96.108.134\n215,Annalise,Reast,areast5y@bing.com,Female,142.134.148.95\n216,Janifer,Tootin,jtootin5z@moonfruit.com,Female,120.191.245.73\n217,Phillip,Schroter,pschroter60@csmonitor.com,Male,15.253.30.4\n218,Hobey,Venton,hventon61@jalbum.net,Male,208.22.238.142\n219,Clifford,Thumnel,cthumnel62@toplist.cz,Male,10.166.32.3\n220,Silvan,Fillis,sfillis63@sina.com.cn,Non-binary,58.199.111.224\n221,Lusa,Carlan,lcarlan64@exblog.jp,Female,101.53.130.188\n222,Shanda,Haffenden,shaffenden65@blogspot.com,Female,55.70.154.215\n223,Regine,Capron,rcapron66@github.io,Female,206.30.220.162\n224,Romonda,Colgan,rcolgan67@google.com.br,Polygender,57.29.144.171\n225,Jerri,Penreth,jpenreth68@apple.com,Male,26.66.240.143\n226,Juline,Vella,jvella69@prweb.com,Female,164.55.182.140\n227,Kaine,Laterza,klaterza6a@miibeian.gov.cn,Male,125.189.155.234\n228,Millisent,Davitti,mdavitti6b@163.com,Female,23.96.213.140\n229,Colette,Konke,ckonke6c@indiegogo.com,Female,110.122.146.236\n230,Laurie,Winsley,lwinsley6d@dell.com,Female,161.35.20.60\n231,Dirk,Beggio,dbeggio6e@google.it,Non-binary,235.85.255.172\n232,Gerhardt,Woodrow,gwoodrow6f@linkedin.com,Male,149.0.207.59\n233,Grayce,Sporner,gsporner6g@list-manage.com,Female,160.13.219.133\n234,Brigg,Haycox,bhaycox6h@salon.com,Male,219.81.161.102\n235,Halley,Baroch,hbaroch6i@mac.com,Female,39.76.133.161\n236,Amble,Bindley,abindley6j@vk.com,Male,25.242.147.103\n237,Sophronia,Barthram,sbarthram6k@nationalgeographic.com,Female,250.125.247.104\n238,Hulda,Pharo,hpharo6l@goo.gl,Female,251.192.35.250\n239,Cherice,Birrel,cbirrel6m@homestead.com,Female,197.209.6.74\n240,Matty,Gerrit,mgerrit6n@indiegogo.com,Non-binary,166.158.243.17\n241,Waldemar,Dillon,wdillon6o@twitter.com,Male,152.242.255.163\n242,Helen,Jakubovits,hjakubovits6p@nasa.gov,Female,120.243.226.48\n243,Saw,Salisbury,ssalisbury6q@cbsnews.com,Male,160.134.47.230\n244,Susette,Sinkinson,ssinkinson6r@reuters.com,Female,58.143.15.18\n245,Tobe,Van Oord,tvanoord6s@e-recht24.de,Genderfluid,34.167.16.25\n246,Gerri,Lumbley,glumbley6t@independent.co.uk,Male,128.48.140.75\n247,Jami,Rounding,jrounding6u@tumblr.com,Female,127.182.218.158\n248,Antonella,Bakey,abakey6v@google.ca,Female,209.189.138.232\n249,Hildagard,Wheble,hwheble6w@opensource.org,Female,178.62.246.211\n250,Renado,Ronchetti,rronchetti6x@prweb.com,Male,36.27.251.229\n251,Trixy,Dales,tdales6y@bloglines.com,Female,223.88.118.46\n252,Gusty,Commings,gcommings6z@blogs.com,Non-binary,251.24.129.122\n253,Albie,Moyer,amoyer70@exblog.jp,Male,99.62.80.214\n254,Sammie,Smiths,ssmiths71@wordpress.org,Male,180.226.100.88\n255,Bonny,Ogborne,bogborne72@mozilla.org,Non-binary,153.54.156.131\n256,Sheridan,Jeeves,sjeeves73@cdbaby.com,Male,215.12.111.179\n257,Latrina,McElwee,lmcelwee74@sbwire.com,Female,9.14.94.144\n258,Harmon,Keene,hkeene75@bing.com,Male,51.37.81.0\n259,Buddie,Alenichicov,balenichicov76@pbs.org,Male,35.243.32.159\n260,Swen,Palphramand,spalphramand77@flickr.com,Male,212.140.28.8\n261,Davon,Skehan,dskehan78@reuters.com,Male,19.56.157.65\n262,Sibyl,McLafferty,smclafferty79@google.com.au,Male,149.81.243.50\n263,Stillman,Szimoni,sszimoni7a@ovh.net,Male,89.125.180.31\n264,Ofella,Prall,oprall7b@globo.com,Female,37.90.97.136\n265,Maribelle,Pickworth,mpickworth7c@acquirethisname.com,Female,238.247.200.221\n266,Ciro,Bodechon,cbodechon7d@networkadvertising.org,Male,102.0.209.121\n267,Aleece,Hedgeman,ahedgeman7e@netscape.com,Female,201.68.22.13\n268,Chaddy,Salvador,csalvador7f@parallels.com,Male,224.148.86.200\n269,Beatrisa,Norvill,bnorvill7g@istockphoto.com,Female,163.164.179.67\n270,Emlyn,Laird,elaird7h@addthis.com,Male,231.58.70.174\n271,Delaney,Delgua,ddelgua7i@ted.com,Male,209.51.189.82\n272,Deonne,Ropars,dropars7j@dedecms.com,Female,214.122.137.219\n273,Agatha,Sillwood,asillwood7k@foxnews.com,Polygender,228.171.37.179\n274,Powell,Camoletto,pcamoletto7l@slate.com,Male,194.217.228.152\n275,Tess,Philpots,tphilpots7m@moonfruit.com,Female,142.193.70.204\n276,Row,Dacres,rdacres7n@java.com,Female,36.211.199.180\n277,Megan,Juleff,mjuleff7o@eventbrite.com,Female,194.27.131.123\n278,Binny,De la Yglesia,bdelayglesia7p@dailymail.co.uk,Female,185.39.112.85\n279,Renee,Suddell,rsuddell7q@pcworld.com,Female,43.154.117.244\n280,Lena,Raine,lraine7r@reuters.com,Female,124.135.202.27\n281,Maggi,Bodell,mbodell7s@theatlantic.com,Female,38.98.48.250\n282,Cameron,Carless,ccarless7t@illinois.edu,Male,43.114.27.33\n283,Alexine,Simcoe,asimcoe7u@umich.edu,Female,217.140.7.164\n284,Crissie,Astin,castin7v@taobao.com,Female,191.118.216.96\n285,Fraser,Burgett,fburgett7w@fc2.com,Male,246.120.209.93\n286,Fanni,Ivers,fivers7x@hhs.gov,Female,96.36.124.219\n287,Lammond,Woollin,lwoollin7y@pinterest.com,Male,222.211.107.61\n288,Hildagard,McCarney,hmccarney7z@fotki.com,Female,87.0.145.55\n289,Dianna,Barlthrop,dbarlthrop80@uol.com.br,Female,251.116.124.109\n290,Lydia,Scanterbury,lscanterbury81@opensource.org,Female,126.37.221.16\n291,Odille,McAw,omcaw82@soundcloud.com,Female,192.13.106.76\n292,Reina,Dufoure,rdufoure83@is.gd,Female,122.220.102.232\n293,Olympia,Coffey,ocoffey84@weebly.com,Female,32.152.103.49\n294,Jessamyn,Summerside,jsummerside85@ow.ly,Female,29.161.152.156\n295,Raquela,McComiskey,rmccomiskey86@marketwatch.com,Female,134.54.170.142\n296,Giraud,Perham,gperham87@meetup.com,Male,167.140.6.92\n297,Ella,Handley,ehandley88@apache.org,Female,8.145.152.153\n298,Blanch,Drinkhall,bdrinkhall89@princeton.edu,Female,220.184.68.143\n299,Trevar,Tanser,ttanser8a@discovery.com,Male,101.23.203.89\n300,Fabiano,Cahan,fcahan8b@ning.com,Male,162.232.115.77\n301,Bendick,Freak,bfreak8c@sphinn.com,Male,227.16.192.146\n302,Bartholemy,Leftbridge,bleftbridge8d@netscape.com,Male,146.5.197.203\n303,Borg,De la Perrelle,bdelaperrelle8e@home.pl,Male,245.177.16.26\n304,Nicholas,Carnilian,ncarnilian8f@china.com.cn,Male,97.109.138.65\n305,Ceciley,Euesden,ceuesden8g@myspace.com,Female,64.166.174.122\n306,Standford,Spurriar,sspurriar8h@twitpic.com,Agender,44.187.92.247\n307,Gustavus,Van Rembrandt,gvanrembrandt8i@blogs.com,Male,166.215.203.186\n308,Tybalt,Arstall,tarstall8j@princeton.edu,Male,157.38.95.113\n309,Hiram,Attenborough,hattenborough8k@cyberchimps.com,Male,95.31.202.131\n310,Cleopatra,Jimpson,cjimpson8l@blog.com,Female,92.56.207.151\n311,Norma,McCall,nmccall8m@go.com,Female,27.26.105.45\n312,Catha,Menhenitt,cmenhenitt8n@census.gov,Female,159.198.84.170\n313,Hedvige,Neesam,hneesam8o@angelfire.com,Female,183.136.115.207\n314,Terrel,Lawly,tlawly8p@europa.eu,Male,24.193.61.52\n315,Alisander,Poupard,apoupard8q@addthis.com,Male,216.199.221.246\n316,Weidar,Sweatland,wsweatland8r@ameblo.jp,Male,55.144.25.96\n317,Haskell,Edyson,hedyson8s@wordpress.com,Male,74.110.234.220\n318,Karna,Philot,kphilot8t@youku.com,Female,252.37.6.188\n319,Nicole,McGarrie,nmcgarrie8u@seesaa.net,Female,144.253.88.235\n320,Annabelle,Shellcross,ashellcross8v@cornell.edu,Genderqueer,171.154.251.241\n321,Freedman,Merrett,fmerrett8w@clickbank.net,Male,96.153.48.151\n322,Margy,Brevetor,mbrevetor8x@ezinearticles.com,Female,141.154.58.13\n323,Golda,Bricknall,gbricknall8y@unc.edu,Female,157.203.234.191\n324,Karlik,Garaway,kgaraway8z@slideshare.net,Male,197.167.49.147\n325,Blinni,Dorian,bdorian90@blog.com,Female,229.135.169.88\n326,Joete,Malenfant,jmalenfant91@vk.com,Female,68.11.185.87\n327,Petronella,Pead,ppead92@npr.org,Female,186.97.236.255\n328,Pamela,Leadston,pleadston93@skyrock.com,Female,187.43.65.144\n329,Reeva,Folomin,rfolomin94@time.com,Female,95.69.6.162\n330,Binnie,Rusted,brusted95@sciencedirect.com,Bigender,165.227.5.48\n331,Pansy,Matyukon,pmatyukon96@chron.com,Female,98.51.181.91\n332,Cart,Simone,csimone97@adobe.com,Male,109.75.128.113\n333,Malchy,Aps,maps98@vistaprint.com,Male,231.112.95.179\n334,Jacintha,Bartleet,jbartleet99@oakley.com,Female,204.180.197.166\n335,Star,Ellesworth,sellesworth9a@google.es,Female,137.12.39.245\n336,Adriano,Danilchev,adanilchev9b@newyorker.com,Male,237.148.232.119\n337,Dareen,Ibbitt,dibbitt9c@istockphoto.com,Genderfluid,49.72.3.45\n338,Hewie,Hearsey,hhearsey9d@edublogs.org,Male,93.150.228.193\n339,Clementia,Watters,cwatters9e@vk.com,Female,104.33.103.244\n340,Robbie,Carrodus,rcarrodus9f@time.com,Female,45.229.203.168\n341,Bastien,Spittal,bspittal9g@networkadvertising.org,Male,176.57.44.43\n342,Lil,Saurat,lsaurat9h@imageshack.us,Bigender,238.40.54.176\n343,Ettore,Axell,eaxell9i@newsvine.com,Male,36.149.139.156\n344,Costa,Muggeridge,cmuggeridge9j@kickstarter.com,Male,191.140.206.60\n345,Ira,Steen,isteen9k@psu.edu,Male,52.64.55.126\n346,Honor,Hubbins,hhubbins9l@imgur.com,Female,159.66.206.224\n347,Anthea,Woodwin,awoodwin9m@europa.eu,Female,86.97.185.195\n348,Ethelbert,Jills,ejills9n@toplist.cz,Male,129.234.195.214\n349,Ezequiel,Frie,efrie9o@4shared.com,Male,125.193.24.226\n350,Pavlov,Hanshawe,phanshawe9p@rambler.ru,Male,92.11.7.112\n351,Tessa,Boule,tboule9q@slideshare.net,Female,147.80.156.40\n352,Doralynne,Matteini,dmatteini9r@chicagotribune.com,Female,205.241.69.206\n353,Cristionna,Antonnikov,cantonnikov9s@wufoo.com,Female,92.142.58.79\n354,Essy,Schieferstein,eschieferstein9t@tripadvisor.com,Female,120.225.42.147\n355,Goldy,Mahedy,gmahedy9u@plala.or.jp,Female,252.156.210.171\n356,Tabbie,Pheasey,tpheasey9v@amazon.com,Male,93.116.255.183\n357,Tannie,Gabbatt,tgabbatt9w@reddit.com,Male,186.30.131.10\n358,Adler,Gentile,agentile9x@furl.net,Male,167.73.191.100\n359,Dani,Forrester,dforrester9y@cdbaby.com,Male,66.92.23.18\n360,Petronille,Sheen,psheen9z@mediafire.com,Female,4.71.129.155\n361,Bailie,Borthe,bborthea0@merriam-webster.com,Male,64.24.146.255\n362,Sada,Van Bruggen,svanbruggena1@mtv.com,Female,84.20.141.2\n363,Nikaniki,Hellicar,nhellicara2@domainmarket.com,Female,107.146.182.65\n364,Stanfield,Westwater,swestwatera3@dailymail.co.uk,Male,157.15.20.166\n365,Cart,Slogrove,cslogrovea4@privacy.gov.au,Male,164.182.23.79\n366,Lowrance,Ivankov,livankova5@apache.org,Male,244.42.96.109\n367,Dina,Avard,davarda6@wix.com,Female,157.9.176.173\n368,Roxine,Connochie,rconnochiea7@youtube.com,Female,248.150.124.133\n369,Herrick,Courtes,hcourtesa8@soundcloud.com,Male,134.63.150.73\n370,Gerrilee,Winskill,gwinskilla9@qq.com,Female,168.164.147.125\n371,Alix,Blindmann,ablindmannaa@huffingtonpost.com,Male,169.174.180.145\n372,Maridel,Norgate,mnorgateab@unblog.fr,Female,125.67.178.59\n373,Flory,Tyrwhitt,ftyrwhittac@si.edu,Polygender,55.71.131.117\n374,Hercule,Cisneros,hcisnerosad@uiuc.edu,Male,87.118.254.116\n375,Griz,Grouse,ggrouseae@bravesites.com,Male,181.61.78.190\n376,Marthe,Barthel,mbarthelaf@google.nl,Female,78.46.149.86\n377,Eadith,Tregunnah,etregunnahag@ebay.com,Genderfluid,76.28.43.69\n378,Garik,Schultheiss,gschultheissah@shop-pro.jp,Male,169.102.146.88\n379,Gav,Concannon,gconcannonai@51.la,Male,219.118.27.208\n380,Corette,Pryor,cpryoraj@boston.com,Bigender,127.228.183.60\n381,Hammad,Gloyens,hgloyensak@linkedin.com,Agender,68.52.245.75\n382,Zed,Philippou,zphilippoual@hugedomains.com,Male,158.164.167.146\n383,Lowe,Lunk,llunkam@feedburner.com,Male,143.159.109.178\n384,Terry,Vlasov,tvlasovan@w3.org,Bigender,125.23.237.222\n385,Theressa,Blyde,tblydeao@bbc.co.uk,Female,176.56.95.12\n386,Terrel,Kleinschmidt,tkleinschmidtap@chronoengine.com,Male,116.244.105.187\n387,Tawsha,Kleinzweig,tkleinzweigaq@dion.ne.jp,Female,20.203.17.254\n388,Kaylil,Perryman,kperrymanar@last.fm,Female,234.223.48.43\n389,Haywood,Gonsalo,hgonsaloas@amazon.co.uk,Male,205.108.100.230\n390,Christoforo,Coen,ccoenat@bloglovin.com,Male,168.210.117.223\n391,Heather,Werndley,hwerndleyau@macromedia.com,Female,190.118.168.41\n392,Garold,Blanpein,gblanpeinav@nytimes.com,Male,39.42.54.171\n393,Jamie,Gatenby,jgatenbyaw@twitpic.com,Male,243.10.190.32\n394,Chic,Lamonby,clamonbyax@china.com.cn,Male,237.126.233.128\n395,Chaunce,Chaters,cchatersay@ovh.net,Male,128.129.82.205\n396,Guilbert,Mardell,gmardellaz@wiley.com,Male,154.25.232.245\n397,Abbi,Blaisdell,ablaisdellb0@a8.net,Female,66.216.102.33\n398,Kennett,Bett,kbettb1@wikispaces.com,Male,86.246.55.10\n399,Trent,Rudman,trudmanb2@techcrunch.com,Genderqueer,94.176.167.201\n400,Friedrich,Drakes,fdrakesb3@auda.org.au,Male,47.78.6.232\n401,Milly,Wolton,mwoltonb4@rambler.ru,Agender,36.29.229.143\n402,Todd,Gecks,tgecksb5@networkadvertising.org,Male,196.191.246.86\n403,Sophey,Snaith,ssnaithb6@friendfeed.com,Female,177.25.239.95\n404,Daveta,Walters,dwaltersb7@independent.co.uk,Female,174.236.13.9\n405,Moses,Buckles,mbucklesb8@ucoz.com,Male,151.113.231.182\n406,Faun,Povah,fpovahb9@europa.eu,Female,152.40.228.128\n407,Charil,Heighway,cheighwayba@alexa.com,Female,57.245.231.239\n408,Greggory,Genny,ggennybb@buzzfeed.com,Male,210.251.162.43\n409,Flint,MacDermot,fmacdermotbc@google.com.br,Male,36.117.14.9\n410,Nicolina,Golsworthy,ngolsworthybd@mac.com,Female,168.47.32.139\n411,Saleem,Bovey,sboveybe@mail.ru,Male,146.199.160.37\n412,Jenifer,Windows,jwindowsbf@ameblo.jp,Female,246.98.18.128\n413,Benson,Hannent,bhannentbg@trellian.com,Male,32.120.152.28\n414,Ashla,McRamsey,amcramseybh@stumbleupon.com,Female,27.179.220.169\n415,Jodee,Fellis,jfellisbi@msn.com,Female,21.235.237.171\n416,Doti,Goby,dgobybj@rakuten.co.jp,Female,120.87.73.253\n417,Urbain,Iorizzi,uiorizzibk@merriam-webster.com,Male,159.2.162.147\n418,Nolana,Bresnen,nbresnenbl@so-net.ne.jp,Female,156.11.20.37\n419,Tracey,Banes,tbanesbm@people.com.cn,Genderfluid,4.201.153.159\n420,Sharity,Mallaby,smallabybn@bing.com,Female,25.83.235.92\n421,Ewell,Brewett,ebrewettbo@devhub.com,Non-binary,64.201.154.90\n422,Loella,McDunlevy,lmcdunlevybp@ox.ac.uk,Female,190.167.0.80\n423,Mayne,Wiper,mwiperbq@baidu.com,Male,111.194.19.244\n424,Mollee,Pressnell,mpressnellbr@stumbleupon.com,Female,191.65.62.241\n425,Collette,Rens,crensbs@utexas.edu,Female,106.24.184.2\n426,Gregoire,Kimmings,gkimmingsbt@apache.org,Male,225.49.211.119\n427,Anett,Maidens,amaidensbu@ft.com,Female,240.123.115.240\n428,Maryl,Stollenhof,mstollenhofbv@weibo.com,Polygender,211.7.40.139\n429,Salmon,Dudenie,sdudeniebw@163.com,Agender,139.185.105.87\n430,Didi,Giddy,dgiddybx@wikispaces.com,Female,68.17.248.208\n431,Nobe,Le feaver,nlefeaverby@privacy.gov.au,Male,98.242.253.0\n432,Titos,Petyt,tpetytbz@4shared.com,Male,1.53.243.98\n433,Milt,Dimmer,mdimmerc0@pen.io,Male,121.79.224.31\n434,Morse,Zanotti,mzanottic1@fema.gov,Male,145.24.120.25\n435,Elizabeth,Youster,eyousterc2@nature.com,Female,98.108.194.201\n436,Darbie,Spleving,dsplevingc3@yellowpages.com,Female,64.45.138.93\n437,Agnese,Heinrich,aheinrichc4@chron.com,Female,156.230.38.79\n438,Lucienne,Clayworth,lclayworthc5@symantec.com,Female,49.9.96.21\n439,Faulkner,Brimilcombe,fbrimilcombec6@cdc.gov,Male,34.172.154.180\n440,Denys,De Giorgis,ddegiorgisc7@delicious.com,Male,211.243.55.236\n441,Wilfred,Hobbing,whobbingc8@bloomberg.com,Male,140.188.50.254\n442,Monika,Philipp,mphilippc9@about.me,Female,252.136.153.233\n443,Felizio,Jacqueminot,fjacqueminotca@ow.ly,Male,46.41.15.208\n444,Osbourne,Crippen,ocrippencb@shareasale.com,Male,222.148.40.238\n445,Melodee,Slater,mslatercc@example.com,Female,228.23.156.109\n446,Bellanca,Leavey,bleaveycd@tmall.com,Female,43.175.59.210\n447,Kain,Enoch,kenochce@technorati.com,Male,173.117.124.222\n448,Marjie,Norridge,mnorridgecf@loc.gov,Female,180.57.206.3\n449,Keelia,Chaman,kchamancg@adobe.com,Genderfluid,137.236.144.187\n450,Adriana,Lattos,alattosch@scribd.com,Genderqueer,254.240.153.153\n451,Kati,Streat,kstreatci@mashable.com,Female,90.130.106.231\n452,Cornelia,MacAiline,cmacailinecj@springer.com,Female,230.178.247.116\n453,Maryjane,Fetherston,mfetherstonck@cam.ac.uk,Female,109.181.46.134\n454,Thadeus,Dixsee,tdixseecl@wsj.com,Male,9.53.167.23\n455,Perla,Itzhaki,pitzhakicm@guardian.co.uk,Non-binary,99.246.154.101\n456,Jon,Ianelli,jianellicn@ovh.net,Male,28.81.138.132\n457,Bealle,Kitney,bkitneyco@elpais.com,Male,225.16.239.110\n458,Ebonee,Werrett,ewerrettcp@ehow.com,Female,213.132.41.106\n459,Jae,Stearns,jstearnscq@blogtalkradio.com,Male,225.35.188.208\n460,Tracee,Loachhead,tloachheadcr@chronoengine.com,Female,30.238.221.52\n461,Christal,Dalman,cdalmancs@xrea.com,Female,82.108.88.46\n462,Odelinda,Haylor,ohaylorct@yahoo.co.jp,Genderfluid,76.187.223.93\n463,Spense,Galvan,sgalvancu@pinterest.com,Male,112.215.223.122\n464,Arielle,Eate,aeatecv@usgs.gov,Female,15.74.8.81\n465,Isa,Burgot,iburgotcw@shinystat.com,Female,18.131.78.15\n466,Marthe,Grassot,mgrassotcx@is.gd,Non-binary,180.220.106.169\n467,Ethel,Dougal,edougalcy@alibaba.com,Female,64.149.203.245\n468,Aguie,Guesford,aguesfordcz@smh.com.au,Male,66.0.63.52\n469,Karyn,Auguste,kaugusted0@answers.com,Female,164.94.39.113\n470,Jethro,Ibel,jibeld1@nasa.gov,Genderqueer,236.193.53.127\n471,Niccolo,Renahan,nrenahand2@sourceforge.net,Male,40.152.235.88\n472,Tyrus,Mainz,tmainzd3@php.net,Male,44.70.223.92\n473,Fernando,Geffen,fgeffend4@webs.com,Male,209.244.123.137\n474,Alick,Bythway,abythwayd5@disqus.com,Male,60.139.10.136\n475,Annabell,Secombe,asecombed6@narod.ru,Female,155.12.121.88\n476,Othilie,Yarwood,oyarwoodd7@va.gov,Female,21.30.199.224\n477,Sheri,Fardell,sfardelld8@networksolutions.com,Female,162.59.64.30\n478,Pollyanna,Lewerenz,plewerenzd9@timesonline.co.uk,Female,83.91.185.110\n479,Teddie,Grane,tgraneda@nbcnews.com,Male,7.57.87.60\n480,Erin,Vodden,evoddendb@ucoz.com,Female,239.103.185.91\n481,Aguie,Deighan,adeighandc@mozilla.org,Male,59.123.172.193\n482,Johnathon,Gaynsford,jgaynsforddd@slate.com,Male,114.108.244.122\n483,Lurlene,Sandyford,lsandyfordde@harvard.edu,Female,156.11.45.146\n484,Garwood,MacIlhagga,gmacilhaggadf@upenn.edu,Male,243.96.122.214\n485,Cris,Padden,cpaddendg@washingtonpost.com,Male,33.136.152.69\n486,Orton,Godwyn,ogodwyndh@ftc.gov,Male,196.214.149.200\n487,Gaultiero,Clemendot,gclemendotdi@google.es,Male,245.177.24.238\n488,Hartwell,De Domenici,hdedomenicidj@bing.com,Male,47.193.71.34\n489,Wye,Augustin,waugustindk@upenn.edu,Male,79.3.209.48\n490,Annamarie,Kellen,akellendl@shareasale.com,Female,53.72.8.105\n491,Wini,Tidbold,wtidbolddm@gizmodo.com,Female,16.230.252.187\n492,Liz,Crannis,lcrannisdn@alexa.com,Female,151.205.157.60\n493,Stesha,Weddell,sweddelldo@army.mil,Female,150.45.146.195\n494,Amos,Arnaudet,aarnaudetdp@furl.net,Male,238.216.224.179\n495,Anabelle,Bromby,abrombydq@hao123.com,Bigender,29.153.6.174\n496,Judd,Oswick,joswickdr@networkadvertising.org,Male,21.60.133.78\n497,Arlette,Bolles,abollesds@twitter.com,Female,205.170.108.177\n498,Errol,Franzonello,efranzonellodt@pinterest.com,Male,27.7.88.115\n499,Gerry,Shelley,gshelleydu@bloglines.com,Female,140.77.235.160\n500,Meta,Tredgold,mtredgolddv@soundcloud.com,Female,215.205.206.57\n501,Katha,Spybey,kspybeydw@who.int,Female,119.107.102.254\n502,Elenore,Applin,eapplindx@about.com,Female,154.250.166.7\n503,Kalie,Sonley,ksonleydy@latimes.com,Female,94.178.112.55\n504,Skippie,Piatkow,spiatkowdz@bloomberg.com,Male,149.127.50.186\n505,Brandise,Gannon,bgannone0@marriott.com,Female,44.56.105.127\n506,Jere,Barnaclough,jbarnacloughe1@mit.edu,Polygender,45.74.24.42\n507,Marge,Fealty,mfealtye2@reverbnation.com,Agender,130.32.123.137\n508,Yancey,Tinan,ytinane3@ebay.com,Male,12.167.167.196\n509,Witty,Nafziger,wnafzigere4@biglobe.ne.jp,Male,119.227.242.28\n510,Gaston,Van Giffen,gvangiffene5@pen.io,Male,207.201.17.241\n511,Wade,Cockshut,wcockshute6@fema.gov,Male,95.86.239.194\n512,Winona,Enrich,wenriche7@example.com,Female,83.150.131.27\n513,Phaedra,Whereat,pwhereate8@soup.io,Non-binary,90.205.182.9\n514,Rod,Rosenau,rrosenaue9@arizona.edu,Male,165.108.215.175\n515,Nickolai,Dorre,ndorreea@nsw.gov.au,Male,173.211.107.41\n516,Lynnea,Fogden,lfogdeneb@accuweather.com,Female,70.45.30.246\n517,Osborne,Wing,owingec@netlog.com,Male,4.84.228.37\n518,Kelly,Kubczak,kkubczaked@moonfruit.com,Male,158.40.249.140\n519,Demott,Galliver,dgalliveree@pcworld.com,Male,163.134.16.86\n520,Fanchette,Mawby,fmawbyef@google.de,Female,133.161.166.143\n521,Andy,Skellington,askellingtoneg@google.nl,Female,81.73.63.96\n522,Netti,Morhall,nmorhalleh@hatena.ne.jp,Female,249.215.76.167\n523,Rosy,De Lisle,rdelisleei@vimeo.com,Female,122.199.227.165\n524,Lucius,Albrighton,lalbrightonej@chron.com,Male,203.228.104.24\n525,Gwenette,Lardiner,glardinerek@desdev.cn,Female,216.65.210.2\n526,Alf,Konneke,akonnekeel@wisc.edu,Male,182.254.37.77\n527,Aristotle,Gepson,agepsonem@opera.com,Male,238.25.63.227\n528,Avram,Thornbarrow,athornbarrowen@myspace.com,Bigender,124.216.140.122\n529,Ettore,Milsted,emilstedeo@mlb.com,Male,132.10.127.18\n530,Jackelyn,Roulston,jroulstonep@nsw.gov.au,Female,48.252.163.182\n531,Kassey,Keaveney,kkeaveneyeq@opensource.org,Female,78.100.93.170\n532,Hanna,Mebes,hmebeser@wikipedia.org,Female,210.96.130.242\n533,Christalle,Chestney,cchestneyes@gizmodo.com,Female,210.164.191.23\n534,Lucina,Keetley,lkeetleyet@tinypic.com,Female,101.16.189.102\n535,Lidia,Ridulfo,lridulfoeu@boston.com,Female,27.182.151.24\n536,Alard,Stegers,astegersev@csmonitor.com,Male,252.29.164.206\n537,Stafford,Tanby,stanbyew@phoca.cz,Male,242.203.220.73\n538,Fraze,Nowakowski,fnowakowskiex@google.com.au,Male,190.215.253.34\n539,Sibel,Tortice,storticeey@hibu.com,Bigender,37.234.102.225\n540,Dionisio,Geroldini,dgeroldiniez@dedecms.com,Male,187.221.127.94\n541,Phylis,Harron,pharronf0@guardian.co.uk,Female,160.229.155.196\n542,Ignatius,Beeston,ibeestonf1@360.cn,Male,192.113.51.146\n543,Flor,Brosius,fbrosiusf2@businesswire.com,Bigender,203.234.41.152\n544,Travers,Dalston,tdalstonf3@bizjournals.com,Polygender,0.162.121.246\n545,Bertina,Glossop,bglossopf4@blogspot.com,Female,243.29.161.34\n546,Cahra,Sheals,cshealsf5@hugedomains.com,Female,162.226.134.12\n547,Janith,Capnerhurst,jcapnerhurstf6@elegantthemes.com,Female,4.68.107.106\n548,Carolan,Ivankin,civankinf7@facebook.com,Female,27.222.88.34\n549,Elayne,Wardale,ewardalef8@google.ru,Female,245.200.215.3\n550,Gerardo,Bohea,gboheaf9@xing.com,Male,77.115.33.37\n551,Darin,Crehan,dcrehanfa@51.la,Male,116.63.33.90\n552,Thelma,Kupec,tkupecfb@drupal.org,Female,95.200.134.76\n553,Francklyn,Mathouse,fmathousefc@webs.com,Non-binary,132.115.220.168\n554,Willis,Rayburn,wrayburnfd@dailymail.co.uk,Genderqueer,86.96.160.152\n555,Kristofor,Cornelleau,kcornelleaufe@mozilla.org,Male,225.177.255.92\n556,Howie,Allder,hallderff@homestead.com,Male,189.64.237.152\n557,Gayle,Bloomfield,gbloomfieldfg@google.it,Female,81.84.254.38\n558,Philippe,Wagge,pwaggefh@gov.uk,Female,6.186.216.112\n559,Cornie,Bowman,cbowmanfi@ft.com,Female,39.243.164.195\n560,Sibby,Asaaf,sasaaffj@nyu.edu,Female,149.48.12.199\n561,Elias,Durward,edurwardfk@constantcontact.com,Male,14.151.183.172\n562,Gisella,Jacks,gjacksfl@google.com.hk,Female,112.185.122.149\n563,Aeriela,Byass,abyassfm@intel.com,Non-binary,144.62.9.136\n564,Kamillah,Ligertwood,kligertwoodfn@ezinearticles.com,Female,118.179.84.109\n565,Taryn,Covet,tcovetfo@webeden.co.uk,Female,192.130.236.98\n566,Woody,Moyser,wmoyserfp@wordpress.com,Male,195.50.132.62\n567,Baldwin,O' Flaherty,boflahertyfq@odnoklassniki.ru,Male,151.229.38.62\n568,Addison,Woodnutt,awoodnuttfr@tumblr.com,Male,62.202.100.192\n569,Letitia,McMeekan,lmcmeekanfs@mapy.cz,Female,26.30.23.122\n570,Marcus,Kinze,mkinzeft@simplemachines.org,Male,5.159.26.247\n571,Richy,Gaukrodge,rgaukrodgefu@spotify.com,Male,52.148.240.144\n572,Felipa,Chene,fchenefv@google.com.br,Female,133.223.127.158\n573,Gasper,Borrett,gborrettfw@wunderground.com,Non-binary,7.219.27.97\n574,Hazel,Aitchinson,haitchinsonfx@tumblr.com,Male,96.36.185.14\n575,Georg,Hirsthouse,ghirsthousefy@de.vu,Bigender,112.158.236.232\n576,Rutter,Daniele,rdanielefz@google.com.hk,Male,183.161.180.98\n577,Chip,Iliffe,ciliffeg0@linkedin.com,Male,143.48.63.20\n578,Irwin,Cavee,icaveeg1@creativecommons.org,Male,24.183.133.120\n579,Douglass,Newcom,dnewcomg2@yandex.ru,Non-binary,146.107.146.69\n580,Glenn,Pendreigh,gpendreighg3@etsy.com,Male,95.156.217.183\n581,Bear,Andres,bandresg4@reference.com,Male,235.86.76.190\n582,Marci,Greasley,mgreasleyg5@51.la,Female,126.32.50.193\n583,Valle,Mournian,vmourniang6@hc360.com,Male,117.173.201.250\n584,Bondy,Beamond,bbeamondg7@wix.com,Male,30.147.89.214\n585,Benjamin,Treske,btreskeg8@topsy.com,Genderfluid,183.87.222.231\n586,Shalna,Managh,smanaghg9@shinystat.com,Female,245.137.7.208\n587,Thomasina,Shippam,tshippamga@xinhuanet.com,Female,250.0.248.94\n588,Leta,Brighouse,lbrighousegb@census.gov,Female,152.212.143.129\n589,Dorie,Perrelli,dperrelligc@seesaa.net,Female,80.48.226.35\n590,Elicia,Larham,elarhamgd@hud.gov,Female,118.247.59.18\n591,Waylin,Laville,wlavillege@berkeley.edu,Male,210.220.147.207\n592,Binny,Bende,bbendegf@state.tx.us,Female,47.33.248.121\n593,Beauregard,Gerant,bgerantgg@qq.com,Male,148.118.221.228\n594,Gwenore,Pettisall,gpettisallgh@ebay.com,Female,42.171.234.179\n595,Sherrie,Keyes,skeyesgi@tinypic.com,Female,73.208.26.202\n596,Anne-marie,Filer,afilergj@amazon.com,Female,21.144.174.206\n597,Albina,Kestell,akestellgk@accuweather.com,Female,111.157.14.67\n598,Waring,Prujean,wprujeangl@imdb.com,Male,195.174.73.225\n599,Cole,Fermor,cfermorgm@typepad.com,Male,125.204.205.252\n600,Tamiko,Bown,tbowngn@webmd.com,Agender,100.236.162.18\n601,Marven,Sempill,msempillgo@github.io,Male,231.172.236.100\n602,Alvinia,Tabbernor,atabbernorgp@cargocollective.com,Female,21.160.206.73\n603,Jere,Budgett,jbudgettgq@vimeo.com,Male,249.235.44.40\n604,Bengt,Davidowsky,bdavidowskygr@cmu.edu,Male,120.54.182.194\n605,Cristal,Jaspar,cjaspargs@over-blog.com,Genderqueer,207.7.35.213\n606,Titus,Macallam,tmacallamgt@bbc.co.uk,Genderqueer,96.108.172.172\n607,Gerianne,Royan,groyangu@yellowbook.com,Female,143.182.124.123\n608,Amity,Prine,aprinegv@istockphoto.com,Female,166.222.238.162\n609,Garwood,Pickston,gpickstongw@usnews.com,Male,216.162.229.138\n610,Ramsay,Partrick,rpartrickgx@webs.com,Male,169.102.96.195\n611,Tasha,Jewks,tjewksgy@sourceforge.net,Bigender,210.236.152.74\n612,Stevana,Mansuer,smansuergz@foxnews.com,Female,114.142.126.236\n613,Lynne,Creenan,lcreenanh0@e-recht24.de,Female,202.65.252.221\n614,Nickolai,Dusting,ndustingh1@opensource.org,Male,206.231.212.35\n615,Myra,Rate,mrateh2@dot.gov,Female,110.245.75.32\n616,Allyn,Zelake,azelakeh3@samsung.com,Male,217.73.212.126\n617,Onida,Barz,obarzh4@skype.com,Female,103.167.205.40\n618,Allyn,Demangeon,ademangeonh5@trellian.com,Female,210.223.203.1\n619,Flossy,April,faprilh6@omniture.com,Female,160.41.75.9\n620,Kevin,Belle,kbelleh7@oracle.com,Male,250.165.62.112\n621,Wye,Vibert,wviberth8@hatena.ne.jp,Male,45.114.43.65\n622,Anderea,Olcot,aolcoth9@twitter.com,Female,58.20.253.200\n623,Emalee,Mingame,emingameha@dailymotion.com,Female,77.201.230.7\n624,Felizio,Lancashire,flancashirehb@theatlantic.com,Male,167.204.19.22\n625,Roi,Egdell,regdellhc@shutterfly.com,Male,46.208.97.43\n626,Katerine,Snashall,ksnashallhd@zdnet.com,Female,13.210.232.25\n627,Inge,Dechelette,idechelettehe@odnoklassniki.ru,Bigender,224.181.130.224\n628,Jeno,Marten,jmartenhf@amazonaws.com,Male,118.233.47.158\n629,Anton,Salomon,asalomonhg@etsy.com,Male,72.101.174.61\n630,Lyn,Sargerson,lsargersonhh@live.com,Female,3.138.127.132\n631,Inessa,Eilert,ieilerthi@prlog.org,Female,97.32.83.153\n632,Sophia,Sambiedge,ssambiedgehj@google.com,Female,202.189.191.183\n633,Sollie,Ortsmann,sortsmannhk@miitbeian.gov.cn,Male,153.206.210.252\n634,Catharina,Morgan,cmorganhl@economist.com,Female,160.218.130.241\n635,Dennie,Sommerled,dsommerledhm@istockphoto.com,Male,183.248.119.164\n636,Isa,Cardall,icardallhn@walmart.com,Male,61.230.141.7\n637,Kippie,Crock,kcrockho@fastcompany.com,Female,70.141.57.241\n638,Atalanta,Lanon,alanonhp@biblegateway.com,Agender,63.125.82.238\n639,Bethena,Ashingden,bashingdenhq@tuttocitta.it,Female,127.130.79.139\n640,Valentine,Rooney,vrooneyhr@npr.org,Female,233.0.13.158\n641,Brietta,Bartlosz,bbartloszhs@newsvine.com,Female,239.251.37.13\n642,Pennie,Lau,plauht@stumbleupon.com,Female,82.88.80.23\n643,Winne,Fripps,wfrippshu@ihg.com,Female,101.133.206.121\n644,Arleyne,O'Breen,aobreenhv@smugmug.com,Female,162.76.128.0\n645,Elvis,Strike,estrikehw@cafepress.com,Male,86.213.246.250\n646,Brunhilda,Bortol,bbortolhx@eventbrite.com,Female,132.31.183.10\n647,Jacenta,Woehler,jwoehlerhy@bing.com,Female,171.7.21.137\n648,Smith,Crosser,scrosserhz@storify.com,Male,161.182.121.130\n649,Law,Corrigan,lcorrigani0@marriott.com,Male,93.125.9.145\n650,Courtney,Pattie,cpattiei1@artisteer.com,Female,125.84.116.80\n651,Adler,Woolland,awoollandi2@geocities.jp,Male,133.68.213.130\n652,Genny,Trewman,gtrewmani3@icq.com,Female,17.140.244.15\n653,Bradney,Eastlake,beastlakei4@cdc.gov,Male,29.253.128.205\n654,Vachel,Tunaclift,vtunaclifti5@unblog.fr,Male,252.208.152.117\n655,Isaac,Littrell,ilittrelli6@about.me,Male,208.215.187.142\n656,Flynn,Franciotti,ffranciottii7@uol.com.br,Male,63.202.124.228\n657,Bendite,Funnell,bfunnelli8@yellowbook.com,Female,185.182.0.242\n658,Rolland,Eva,revai9@sun.com,Male,224.215.221.29\n659,Morissa,Hammant,mhammantia@stumbleupon.com,Female,76.39.36.100\n660,Butch,Gerault,bgeraultib@ameblo.jp,Male,8.118.252.43\n661,Cheslie,Dee,cdeeic@examiner.com,Agender,40.53.116.0\n662,Edan,Battram,ebattramid@gizmodo.com,Male,75.70.148.2\n663,Randell,Wolton,rwoltonie@columbia.edu,Male,62.210.153.74\n664,Revkah,Shoutt,rshouttif@flavors.me,Female,122.4.113.43\n665,Royall,Krink,rkrinkig@whitehouse.gov,Male,8.87.151.251\n666,Orelia,Deetlefs,odeetlefsih@foxnews.com,Female,157.187.25.16\n667,Lynea,Lavers,llaversii@msu.edu,Female,21.203.52.31\n668,Moses,Pacey,mpaceyij@pbs.org,Male,92.3.209.63\n669,Beth,Boothroyd,bboothroydik@businesswire.com,Female,26.99.214.13\n670,Abner,Callingham,acallinghamil@sakura.ne.jp,Male,77.232.198.149\n671,Griffie,Roadknight,groadknightim@google.co.uk,Male,199.52.22.3\n672,Chloris,Siburn,csiburnin@sakura.ne.jp,Female,67.142.142.195\n673,Pammi,Klimschak,pklimschakio@nationalgeographic.com,Female,89.186.244.87\n674,Bernete,Majury,bmajuryip@delicious.com,Female,150.79.166.82\n675,Pooh,Sharpin,psharpiniq@shop-pro.jp,Male,100.48.76.97\n676,Thebault,Driver,tdriverir@google.co.jp,Male,58.6.92.144\n677,Aylmer,Baitson,abaitsonis@alexa.com,Male,221.93.194.221\n678,Cecilla,Junes,cjunesit@answers.com,Female,219.158.50.219\n679,Pansy,Klimontovich,pklimontovichiu@nature.com,Polygender,89.84.27.109\n680,Chilton,Jakes,cjakesiv@senate.gov,Male,142.54.90.201\n681,Clevie,Ciobotaru,cciobotaruiw@gov.uk,Male,78.57.189.89\n682,Marrilee,Jerche,mjercheix@state.tx.us,Female,54.93.26.224\n683,Travers,Gallihawk,tgallihawkiy@trellian.com,Male,211.86.151.88\n684,Orson,Brunke,obrunkeiz@prlog.org,Male,56.43.36.206\n685,Kristen,Brockherst,kbrockherstj0@theglobeandmail.com,Female,79.11.84.30\n686,Goraud,Kynton,gkyntonj1@sciencedirect.com,Agender,200.65.169.62\n687,Lincoln,Cerie,lceriej2@blogtalkradio.com,Male,251.201.181.170\n688,Drew,Peplow,dpeplowj3@devhub.com,Male,221.5.153.93\n689,Irwinn,Marchington,imarchingtonj4@mayoclinic.com,Male,1.228.35.180\n690,Zachariah,Tegeller,ztegellerj5@alibaba.com,Male,12.135.104.140\n691,Xever,Lovatt,xlovattj6@mapy.cz,Male,33.243.80.103\n692,Alana,Burgwyn,aburgwynj7@infoseek.co.jp,Female,226.5.72.217\n693,Suzi,Jakeway,sjakewayj8@live.com,Female,147.105.17.140\n694,Jobi,Serrurier,jserrurierj9@weather.com,Female,106.223.229.127\n695,Thomasina,Francioli,tfranciolija@issuu.com,Female,217.175.136.216\n696,Sheila-kathryn,Hawke,shawkejb@booking.com,Female,47.196.50.44\n697,Cherey,Van,cvanjc@deviantart.com,Female,201.211.98.237\n698,Patty,Dumphries,pdumphriesjd@networkadvertising.org,Female,94.145.20.75\n699,Yardley,Aspell,yaspellje@163.com,Male,67.202.168.195\n700,Nicolette,Warder,nwarderjf@flickr.com,Female,102.29.254.244\n701,Denver,Vasilischev,dvasilischevjg@eventbrite.com,Male,67.204.113.166\n702,Rosemarie,Tarplee,rtarpleejh@linkedin.com,Female,177.201.146.215\n703,Ethelind,Greason,egreasonji@com.com,Female,208.6.50.213\n704,Birch,Fontaine,bfontainejj@networkadvertising.org,Male,153.6.35.210\n705,Herb,Wharram,hwharramjk@mlb.com,Male,134.207.73.191\n706,Dagny,Brigshaw,dbrigshawjl@sphinn.com,Male,18.51.73.28\n707,Yalonda,Menhenitt,ymenhenittjm@ameblo.jp,Female,24.141.227.228\n708,Fannie,Britney,fbritneyjn@scribd.com,Female,102.201.233.235\n709,Cecily,Mell,cmelljo@mozilla.com,Female,155.173.232.3\n710,Matti,Seven,msevenjp@quantcast.com,Female,116.2.252.126\n711,Luis,Sankey,lsankeyjq@dagondesign.com,Male,160.212.139.133\n712,Leoine,Jessard,ljessardjr@github.com,Female,95.0.52.66\n713,Mariam,Milburn,mmilburnjs@zimbio.com,Female,22.152.157.73\n714,Jammie,Lauderdale,jlauderdalejt@ameblo.jp,Female,207.200.221.133\n715,Theresa,Chumley,tchumleyju@skyrock.com,Female,90.93.65.224\n716,Berky,Dewer,bdewerjv@who.int,Male,200.246.179.151\n717,Maren,Folbigg,mfolbiggjw@people.com.cn,Female,140.86.87.229\n718,Derrik,Mackley,dmackleyjx@ycombinator.com,Male,98.40.82.130\n719,Worden,Juppe,wjuppejy@mac.com,Male,79.195.139.211\n720,Selina,Houseago,shouseagojz@ning.com,Female,181.96.129.231\n721,Sol,Gratten,sgrattenk0@nytimes.com,Male,55.198.9.186\n722,Dahlia,Terney,dterneyk1@msu.edu,Female,130.191.255.248\n723,Fielding,Grayham,fgrayhamk2@phpbb.com,Male,34.94.248.123\n724,Grady,Gregh,ggreghk3@dailymotion.com,Male,42.30.180.126\n725,Nelia,Leinthall,nleinthallk4@globo.com,Female,210.220.130.54\n726,Gun,Fass,gfassk5@hao123.com,Male,134.143.105.251\n727,Eli,Brunesco,ebrunescok6@irs.gov,Male,174.223.78.236\n728,Katleen,Ciccarelli,kciccarellik7@nymag.com,Female,182.237.35.145\n729,Nicoline,Corley,ncorleyk8@nature.com,Female,26.107.50.72\n730,Danni,Macey,dmaceyk9@prnewswire.com,Female,11.44.209.136\n731,Sutton,Pothecary,spothecaryka@desdev.cn,Male,34.91.202.33\n732,Dede,Caulier,dcaulierkb@w3.org,Female,208.52.11.93\n733,Alberto,Nassau,anassaukc@dion.ne.jp,Male,74.32.123.51\n734,Geno,Petyankin,gpetyankinkd@discuz.net,Male,166.79.237.245\n735,Traver,Elnough,telnoughke@booking.com,Male,177.116.201.154\n736,Ingunna,Cescon,icesconkf@psu.edu,Bigender,106.84.197.117\n737,Langston,Topper,ltopperkg@who.int,Male,191.16.245.214\n738,Margi,Giraudy,mgiraudykh@artisteer.com,Female,50.1.213.116\n739,Clemente,Carswell,ccarswellki@bloglovin.com,Male,192.181.68.113\n740,Ros,Farquharson,rfarquharsonkj@state.tx.us,Female,129.24.44.124\n741,Isacco,Muckley,imuckleykk@flickr.com,Male,203.197.171.187\n742,Gypsy,Francais,gfrancaiskl@friendfeed.com,Female,135.249.19.206\n743,Gery,Pancoast,gpancoastkm@reddit.com,Male,239.165.84.107\n744,Bobina,Vogt,bvogtkn@ameblo.jp,Female,135.178.27.235\n745,Robbyn,Teresa,rteresako@spotify.com,Female,114.221.85.192\n746,Rebbecca,Peatheyjohns,rpeatheyjohnskp@huffingtonpost.com,Female,239.35.89.164\n747,Rozalin,Renton,rrentonkq@usatoday.com,Female,81.105.6.215\n748,Marti,Hugin,mhuginkr@deliciousdays.com,Female,11.225.161.171\n749,Angelle,Foucard,afoucardks@ocn.ne.jp,Polygender,180.144.69.89\n750,Jerrie,Vyel,jvyelkt@va.gov,Female,250.115.137.34\n751,Etan,Poundsford,epoundsfordku@bizjournals.com,Male,206.210.69.177\n752,Myer,Bird,mbirdkv@sina.com.cn,Male,53.81.89.12\n753,Artair,Gibling,agiblingkw@mayoclinic.com,Male,187.219.202.91\n754,Maddalena,Battrick,mbattrickkx@behance.net,Female,222.119.30.252\n755,Hattie,Conyers,hconyersky@omniture.com,Female,102.35.237.148\n756,Nadine,Scanlon,nscanlonkz@amazon.co.uk,Female,174.172.221.136\n757,Isak,Broadley,ibroadleyl0@buzzfeed.com,Male,131.232.179.168\n758,Aubree,Santorini,asantorinil1@tripod.com,Female,166.110.70.243\n759,Oralle,Storrar,ostorrarl2@hc360.com,Female,35.4.55.211\n760,Waylan,Gauvin,wgauvinl3@usnews.com,Male,59.191.127.62\n761,Darius,Basilotta,dbasilottal4@github.com,Male,211.175.227.149\n762,Shepperd,Clowney,sclowneyl5@meetup.com,Male,150.80.162.42\n763,Samson,Glacken,sglackenl6@ustream.tv,Male,115.140.86.55\n764,Rodolphe,Renfield,rrenfieldl7@archive.org,Male,228.192.41.161\n765,Kary,Wickham,kwickhaml8@sogou.com,Female,217.186.109.28\n766,Natalya,Demead,ndemeadl9@1688.com,Female,115.74.185.22\n767,Corabella,Molloy,cmolloyla@newyorker.com,Female,90.211.71.149\n768,Dasi,Sliman,dslimanlb@icq.com,Female,138.219.76.97\n769,Aleen,Easterby,aeasterbylc@stanford.edu,Female,109.99.184.113\n770,Harmon,Crichmere,hcrichmereld@jimdo.com,Male,99.24.196.87\n771,Rowan,Koba,rkobale@admin.ch,Male,86.187.241.84\n772,Risa,Breese,rbreeself@google.com.au,Female,1.212.19.70\n773,Craggy,Paffett,cpaffettlg@kickstarter.com,Male,7.99.140.227\n774,Cindee,Simoens,csimoenslh@slate.com,Female,14.146.110.5\n775,Yasmeen,Madine,ymadineli@rakuten.co.jp,Agender,253.178.97.168\n776,Ferguson,Durward,fdurwardlj@cyberchimps.com,Male,176.68.88.166\n777,Gayle,Roeby,groebylk@time.com,Female,78.35.146.215\n778,Brendin,Trevains,btrevainsll@paypal.com,Male,124.50.229.11\n779,Teri,Collum,tcollumlm@bing.com,Female,40.228.199.60\n780,Blane,Blofield,bblofieldln@state.tx.us,Male,22.74.118.100\n781,Eleonora,Showers,eshowerslo@vinaora.com,Female,201.106.96.48\n782,Rriocard,Prandin,rprandinlp@adobe.com,Male,32.197.173.108\n783,Magdalena,Hylands,mhylandslq@xrea.com,Female,165.14.247.236\n784,Hesther,Lohden,hlohdenlr@examiner.com,Female,247.90.112.36\n785,Nike,Hugli,nhuglils@arstechnica.com,Female,248.167.112.162\n786,Artemas,Wetwood,awetwoodlt@amazon.com,Male,230.99.206.110\n787,Timmi,Brashier,tbrashierlu@rakuten.co.jp,Female,254.188.51.208\n788,Elly,Sloyan,esloyanlv@java.com,Female,1.218.121.188\n789,Vivien,Rosellini,vrosellinilw@twitpic.com,Female,35.170.219.221\n790,Bethina,Giabuzzi,bgiabuzzilx@tinyurl.com,Female,110.2.35.34\n791,Claiborn,Maly,cmalyly@forbes.com,Male,201.76.152.211\n792,Ludvig,Albin,lalbinlz@freewebs.com,Male,47.8.214.67\n793,Gaylord,Duchateau,gduchateaum0@constantcontact.com,Male,121.99.165.153\n794,Ethyl,MacNeilley,emacneilleym1@go.com,Female,161.8.2.7\n795,Torie,Buttel,tbuttelm2@sbwire.com,Agender,189.211.205.76\n796,Quincey,Mayhow,qmayhowm3@ebay.co.uk,Male,167.118.110.190\n797,Francklyn,Kolin,fkolinm4@histats.com,Male,147.102.198.138\n798,Gilbert,Khilkov,gkhilkovm5@blogs.com,Male,220.156.16.132\n799,Gunther,Smoth,gsmothm6@miitbeian.gov.cn,Male,10.206.64.155\n800,Burk,Coudray,bcoudraym7@bing.com,Male,60.12.181.19\n801,Blinnie,Palser,bpalserm8@weebly.com,Non-binary,222.221.115.102\n802,Carlye,Hedin,chedinm9@cbslocal.com,Female,37.128.129.11\n803,Rowney,Verney,rverneyma@hostgator.com,Male,21.254.84.251\n804,Con,Pressland,cpresslandmb@thetimes.co.uk,Genderqueer,146.220.163.115\n805,Dew,Crawshaw,dcrawshawmc@google.co.uk,Male,73.135.90.65\n806,Hermina,De Bellis,hdebellismd@tamu.edu,Female,14.212.23.9\n807,Gonzalo,Brugemann,gbrugemannme@qq.com,Male,150.109.246.235\n808,Delmore,Dyka,ddykamf@blinklist.com,Male,246.90.239.42\n809,Janela,Menichini,jmenichinimg@wikimedia.org,Female,14.99.234.116\n810,Kristo,Follett,kfollettmh@weibo.com,Male,83.97.154.174\n811,Honor,Auchterlony,hauchterlonymi@ftc.gov,Female,81.220.88.187\n812,Jerome,Stidson,jstidsonmj@seesaa.net,Male,31.172.40.65\n813,Titos,Treamayne,ttreamaynemk@bloomberg.com,Agender,108.55.2.251\n814,Donovan,McKellen,dmckellenml@storify.com,Male,248.225.218.39\n815,Jilli,Weatherall,jweatherallmm@nytimes.com,Genderqueer,80.81.109.44\n816,Jeff,McNeachtain,jmcneachtainmn@europa.eu,Male,214.160.36.102\n817,Eada,Wilacot,ewilacotmo@virginia.edu,Female,35.179.181.232\n818,Sande,Dionisio,sdionisiomp@4shared.com,Female,186.7.89.5\n819,Isadora,Gullefant,igullefantmq@sakura.ne.jp,Agender,130.141.179.1\n820,Susanna,Belliss,sbellissmr@ucoz.com,Female,216.241.157.219\n821,Pauli,Leggen,pleggenms@instagram.com,Female,203.150.90.133\n822,Torin,Roon,troonmt@japanpost.jp,Male,112.173.155.60\n823,Olenka,Imorts,oimortsmu@businessinsider.com,Non-binary,246.155.34.49\n824,Mariellen,Guyton,mguytonmv@google.nl,Female,223.47.98.252\n825,Reggis,Rubega,rrubegamw@berkeley.edu,Polygender,185.126.248.233\n826,Randa,Capoun,rcapounmx@dion.ne.jp,Female,108.133.24.48\n827,Olwen,Cuningham,ocuninghammy@wikia.com,Female,94.36.33.223\n828,Madlen,Boame,mboamemz@google.de,Female,207.207.3.121\n829,Kimberli,Garnsey,kgarnseyn0@mlb.com,Female,171.236.188.52\n830,Cordula,Blasio,cblasion1@deviantart.com,Female,14.6.150.125\n831,Grethel,Dziwisz,gdziwiszn2@youtube.com,Female,157.129.201.152\n832,Matthias,Sugge,msuggen3@merriam-webster.com,Male,199.132.46.49\n833,Robby,Coughlin,rcoughlinn4@baidu.com,Female,53.41.60.232\n834,Cynthea,Wilmore,cwilmoren5@lulu.com,Female,85.177.1.176\n835,Ev,Ricioppo,ericioppon6@accuweather.com,Male,82.13.112.6\n836,Yardley,Noni,ynonin7@prlog.org,Male,205.29.122.26\n837,Weber,Slevin,wslevinn8@weather.com,Male,43.3.114.239\n838,Brietta,Filson,bfilsonn9@wisc.edu,Genderfluid,73.68.163.80\n839,Atalanta,Craney,acraneyna@cnet.com,Female,54.122.107.241\n840,Etan,D'Errico,ederriconb@nature.com,Male,163.220.164.211\n841,Dari,Cadogan,dcadogannc@sciencedaily.com,Polygender,248.18.151.112\n842,Bjorn,Fortnum,bfortnumnd@free.fr,Non-binary,40.6.148.56\n843,Murvyn,MacAughtrie,mmacaughtriene@buzzfeed.com,Male,55.235.52.17\n844,Gabbey,Hembry,ghembrynf@furl.net,Female,101.217.171.73\n845,Sim,Terrett,sterrettng@cbc.ca,Male,123.241.189.233\n846,Nataniel,Deeprose,ndeeprosenh@europa.eu,Male,99.130.228.130\n847,Antonella,Pickance,apickanceni@sciencedaily.com,Female,102.77.229.146\n848,Thurston,Senechault,tsenechaultnj@cloudflare.com,Male,189.0.128.151\n849,Jill,O'Crevy,jocrevynk@buzzfeed.com,Female,178.7.146.35\n850,Wylie,Gisbourn,wgisbournnl@feedburner.com,Male,227.133.137.207\n851,Cecilius,Shadfourth,cshadfourthnm@si.edu,Male,115.97.183.57\n852,Jeanie,Bloxsum,jbloxsumnn@list-manage.com,Female,158.246.208.76\n853,Arri,Dodgshon,adodgshonno@ucoz.ru,Male,52.2.45.225\n854,Bryon,Minors,bminorsnp@github.com,Male,128.13.233.236\n855,Carol,Evins,cevinsnq@google.ca,Female,91.57.168.142\n856,Merv,Nevin,mnevinnr@columbia.edu,Male,222.41.11.112\n857,Frankie,Hooks,fhooksns@hibu.com,Female,40.246.65.184\n858,Rosemaria,Absolom,rabsolomnt@soundcloud.com,Female,247.16.13.123\n859,Mordy,Sans,msansnu@printfriendly.com,Male,115.224.177.90\n860,Saunder,Chittim,schittimnv@google.fr,Genderqueer,216.193.85.225\n861,Frasco,Harridge,fharridgenw@tuttocitta.it,Male,243.74.164.224\n862,Philis,Kirmond,pkirmondnx@bloglovin.com,Bigender,206.186.100.100\n863,Bertie,Ruzic,bruzicny@google.ru,Female,66.94.75.169\n864,Portie,Johantges,pjohantgesnz@pbs.org,Male,63.26.252.244\n865,Jo,Norkutt,jnorkutto0@reference.com,Male,89.91.178.211\n866,Erik,McKibbin,emckibbino1@usatoday.com,Male,83.154.89.144\n867,Rad,Chattaway,rchattawayo2@tamu.edu,Male,34.131.142.12\n868,Retha,Shooter,rshootero3@wikia.com,Female,13.244.214.165\n869,Courtney,Picard,cpicardo4@google.ca,Female,18.45.142.193\n870,Nestor,Dysert,ndyserto5@hibu.com,Male,189.230.115.113\n871,Andreas,Fiddy,afiddyo6@wikispaces.com,Male,28.246.158.22\n872,Rozanne,Tither,rtithero7@w3.org,Female,209.97.50.22\n873,Joanie,Jorgesen,jjorgeseno8@sogou.com,Female,242.91.52.72\n874,Jolee,Bolliver,jbollivero9@ca.gov,Female,3.77.246.134\n875,Muire,Knyvett,mknyvettoa@unesco.org,Female,158.101.92.42\n876,Babbette,Munt,bmuntob@blinklist.com,Female,138.22.6.51\n877,Finlay,Fuzzey,ffuzzeyoc@opensource.org,Male,113.144.66.115\n878,Bendite,Seeks,bseeksod@admin.ch,Female,177.180.178.167\n879,Etienne,Haysar,ehaysaroe@independent.co.uk,Male,223.207.110.133\n880,Brandy,Bosma,bbosmaof@cam.ac.uk,Female,33.206.51.162\n881,Katerine,Coviello,kcovielloog@mapy.cz,Female,224.134.134.159\n882,Kristyn,Rhead,krheadoh@miibeian.gov.cn,Female,107.254.5.103\n883,Todd,Stadding,tstaddingoi@paginegialle.it,Male,72.195.228.82\n884,Leola,Cardo,lcardooj@dagondesign.com,Female,201.231.244.49\n885,Isadore,Heel,iheelok@sitemeter.com,Male,232.35.189.96\n886,Emelina,Tomasicchio,etomasicchiool@wunderground.com,Polygender,63.236.41.127\n887,Olivero,Newson,onewsonom@accuweather.com,Male,147.41.217.64\n888,Dacy,Reskelly,dreskellyon@booking.com,Female,242.32.14.128\n889,Nancee,Huson,nhusonoo@bizjournals.com,Female,20.7.80.3\n890,Esme,Portigall,eportigallop@ameblo.jp,Male,220.148.136.62\n891,Obed,Klain,oklainoq@ox.ac.uk,Male,93.108.154.241\n892,Arnuad,Janak,ajanakor@linkedin.com,Male,97.186.229.7\n893,Stirling,Dumbare,sdumbareos@google.it,Male,208.85.101.23\n894,Coleen,Weadick,cweadickot@indiatimes.com,Female,160.226.76.245\n895,Cece,Timperley,ctimperleyou@vkontakte.ru,Male,240.162.79.241\n896,Andrea,Meacher,ameacherov@mit.edu,Male,55.133.49.59\n897,Spencer,Frangello,sfrangelloow@nyu.edu,Male,13.224.78.85\n898,Boyd,Castelijn,bcastelijnox@miibeian.gov.cn,Male,37.92.231.93\n899,Ettie,Jodrellec,ejodrellecoy@auda.org.au,Bigender,186.215.18.123\n900,Constantine,Nicholson,cnicholsonoz@accuweather.com,Male,197.251.23.128\n901,Aldrich,Forlong,aforlongp0@hao123.com,Male,124.254.184.198\n902,Noby,Moreno,nmorenop1@ed.gov,Male,205.138.47.153\n903,Vilma,Greve,vgrevep2@gmpg.org,Female,30.111.136.228\n904,Janna,Boorn,jboornp3@purevolume.com,Female,233.65.190.93\n905,Vin,Elphee,velpheep4@digg.com,Male,111.26.22.166\n906,Darbee,Meeland,dmeelandp5@pbs.org,Male,152.58.176.183\n907,Klara,Capaldo,kcapaldop6@ft.com,Female,76.42.222.137\n908,Windy,Waslin,wwaslinp7@chron.com,Female,176.221.37.240\n909,Valentine,Vose,vvosep8@trellian.com,Male,110.83.21.216\n910,Korella,Hulburd,khulburdp9@i2i.jp,Female,193.119.231.197\n911,Jefferey,Summerhayes,jsummerhayespa@foxnews.com,Male,66.200.45.76\n912,Aluino,Crosher,acrosherpb@vinaora.com,Male,145.102.91.59\n913,Selby,Tolumello,stolumellopc@smugmug.com,Male,181.110.14.252\n914,Janel,Okeshott,jokeshottpd@trellian.com,Female,35.13.62.179\n915,Ferrell,Malatalant,fmalatalantpe@msn.com,Male,149.55.13.35\n916,Aharon,Narramore,anarramorepf@printfriendly.com,Male,79.17.149.192\n917,Xymenes,Lyven,xlyvenpg@blogs.com,Male,207.63.116.95\n918,Cecile,Else,celseph@altervista.org,Female,45.67.180.63\n919,Karlan,Hendrikse,khendriksepi@ycombinator.com,Male,72.239.226.101\n920,Matthus,Beirne,mbeirnepj@ehow.com,Male,154.204.148.209\n921,Sarita,Witt,swittpk@cafepress.com,Female,12.220.5.165\n922,Sheffy,Fairlam,sfairlampl@independent.co.uk,Male,218.230.90.114\n923,Tome,Caltun,tcaltunpm@rambler.ru,Male,210.53.103.81\n924,Yves,Cockman,ycockmanpn@berkeley.edu,Male,212.47.155.12\n925,Beltran,Vye,bvyepo@usgs.gov,Male,87.38.155.15\n926,Kristy,Doody,kdoodypp@soup.io,Female,237.105.199.158\n927,Eben,Troop,etrooppq@ovh.net,Male,163.111.146.143\n928,Blisse,Baldazzi,bbaldazzipr@hp.com,Female,74.138.242.235\n929,Evelin,Giffaut,egiffautps@boston.com,Male,211.205.237.25\n930,Deedee,Gonsalvez,dgonsalvezpt@blogspot.com,Female,230.230.195.156\n931,Ilsa,Thewless,ithewlesspu@ebay.co.uk,Female,148.29.177.169\n932,Adelheid,Grizard,agrizardpv@senate.gov,Genderfluid,209.134.5.240\n933,Wilhelmina,Loggie,wloggiepw@statcounter.com,Polygender,189.160.252.198\n934,Coraline,Lugard,clugardpx@typepad.com,Female,84.22.69.243\n935,Hoebart,Rossbrooke,hrossbrookepy@biglobe.ne.jp,Male,252.48.221.19\n936,Franciskus,Robeson,frobesonpz@guardian.co.uk,Male,122.54.167.33\n937,Sayers,Orchard,sorchardq0@google.cn,Male,150.224.179.255\n938,Sonnnie,Turrell,sturrellq1@vistaprint.com,Female,191.125.23.204\n939,Rosabelle,Bamford,rbamfordq2@wiley.com,Female,38.90.64.160\n940,Johna,Hemms,jhemmsq3@themeforest.net,Female,23.125.212.232\n941,Charin,Stoak,cstoakq4@tripod.com,Female,38.49.179.17\n942,Darnell,Lutsch,dlutschq5@mayoclinic.com,Male,177.166.55.137\n943,Lonee,Tighe,ltigheq6@myspace.com,Female,131.145.243.12\n944,Darren,Leynagh,dleynaghq7@exblog.jp,Male,204.144.76.145\n945,Josepha,Murkitt,jmurkittq8@163.com,Female,156.231.143.57\n946,Bobbette,Kennler,bkennlerq9@printfriendly.com,Female,89.188.12.42\n947,Dannel,Kelson,dkelsonqa@bloglovin.com,Genderfluid,181.113.2.77\n948,Dorelle,Albutt,dalbuttqb@live.com,Female,241.197.250.155\n949,Suzie,Greveson,sgrevesonqc@businessweek.com,Female,119.100.120.132\n950,Tiffani,Crumby,tcrumbyqd@blinklist.com,Female,17.147.14.104\n951,Larissa,Merkel,lmerkelqe@baidu.com,Female,243.181.150.178\n952,Edouard,Barnewille,ebarnewilleqf@elpais.com,Male,123.215.58.142\n953,Wernher,Marlow,wmarlowqg@123-reg.co.uk,Male,110.212.255.163\n954,Manon,Briatt,mbriattqh@ca.gov,Female,208.78.95.249\n955,Napoleon,Serjeantson,nserjeantsonqi@elegantthemes.com,Male,174.249.175.3\n956,Danielle,Clemett,dclemettqj@opensource.org,Female,193.171.203.31\n957,Netti,Ludlom,nludlomqk@tinyurl.com,Female,82.39.44.218\n958,Putnam,Grigoryev,pgrigoryevql@bigcartel.com,Male,183.133.105.230\n959,Darby,MacDiarmid,dmacdiarmidqm@hostgator.com,Male,87.71.72.27\n960,Hedy,Naisbet,hnaisbetqn@youku.com,Female,8.234.128.67\n961,Antin,Marcome,amarcomeqo@zimbio.com,Male,86.80.41.74\n962,Jaquenette,Pettiford,jpettifordqp@jimdo.com,Female,107.133.201.176\n963,Kathie,Simms,ksimmsqq@auda.org.au,Genderfluid,220.56.160.38\n964,Gennie,Roseveare,groseveareqr@skype.com,Female,131.195.27.142\n965,Alma,Smaleman,asmalemanqs@networksolutions.com,Female,224.233.198.213\n966,Dani,Darragon,ddarragonqt@pagesperso-orange.fr,Male,225.37.14.62\n967,Darin,Coe,dcoequ@vistaprint.com,Male,30.146.126.73\n968,Rudd,Govern,rgovernqv@uol.com.br,Male,0.60.133.220\n969,Forrester,Joselin,fjoselinqw@devhub.com,Male,170.242.239.52\n970,Tannie,Croisier,tcroisierqx@meetup.com,Male,116.5.147.230\n971,Marrilee,Hazard,mhazardqy@hao123.com,Female,249.218.33.77\n972,Saba,Espinosa,sespinosaqz@barnesandnoble.com,Female,39.156.116.99\n973,Maridel,Lys,mlysr0@freewebs.com,Female,71.78.251.156\n974,Karisa,Hammerich,khammerichr1@etsy.com,Female,112.45.245.202\n975,Harlan,Elijahu,helijahur2@sogou.com,Male,22.102.46.101\n976,Thurstan,Garretts,tgarrettsr3@scribd.com,Male,243.53.86.163\n977,Philippine,Ellesworthe,pellesworther4@facebook.com,Female,73.158.0.197\n978,Keefer,Ivanenko,kivanenkor5@upenn.edu,Male,68.148.3.124\n979,Buddy,Klagges,bklaggesr6@utexas.edu,Male,89.68.167.102\n980,Norina,Coldham,ncoldhamr7@moonfruit.com,Female,199.31.190.116\n981,Janie,Stonman,jstonmanr8@jalbum.net,Female,240.200.47.254\n982,Hagan,Reisk,hreiskr9@tinyurl.com,Genderfluid,166.11.122.124\n983,Celesta,Traice,ctraicera@intel.com,Female,24.200.80.225\n984,Ole,Kilner,okilnerrb@squidoo.com,Male,38.120.32.130\n985,Cirillo,Matejka,cmatejkarc@boston.com,Male,145.140.182.172\n986,Josy,Driffield,jdriffieldrd@google.pl,Female,103.35.186.246\n987,Edin,Wilce,ewilcere@github.io,Female,214.49.143.111\n988,Kerrill,Frankom,kfrankomrf@live.com,Female,48.107.160.221\n989,Hilliary,Wardington,hwardingtonrg@furl.net,Female,205.20.148.125\n990,Josy,Norwell,jnorwellrh@miitbeian.gov.cn,Female,198.128.59.23\n991,Joline,Gavozzi,jgavozziri@github.io,Female,184.47.27.243\n992,Karla,Waterson,kwatersonrj@51.la,Genderfluid,192.181.129.247\n993,Demott,Bradmore,dbradmorerk@un.org,Male,58.187.17.235\n994,Ethelbert,Tuminini,etumininirl@mashable.com,Male,36.188.221.139\n995,Pancho,Swale,pswalerm@mozilla.org,Polygender,139.10.92.123\n996,Nev,Giacoppoli,ngiacoppolirn@redcross.org,Male,50.132.195.177\n997,Abbie,Handling,ahandlingro@wp.com,Male,219.54.180.159\n998,Tyler,Chittie,tchittierp@illinois.edu,Male,206.65.249.65\n999,Dante,O'Drought,dodroughtrq@bloglines.com,Male,127.123.170.190\n1000,August,Ashpole,aashpolerr@toplist.cz,Male,10.159.64.158\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1552,
+        1072
+      ],
+      "id": "c68dcc1d-2488-4a7e-9f36-d3ea06f57636",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o item que chega no nó.\n// Assumimos que o texto CSV está num campo chamado 'textoCsv' no item anterior.\nconst csvTexto = $input.first().json.data\n\n// Quebra o texto em linhas, removendo espaços em branco no início/fim.\nconst linhas = csvTexto.trim().split('\\n');\n\n// Pega a primeira linha (cabeçalho) e quebra pelas vírgulas para ter os nomes das chaves.\nconst cabecalho = linhas[0].split(',');\n\n// Pega todas as outras linhas (os dados).\nconst linhasDeDados = linhas.slice(1);\n\n// Mapeia cada linha de dados para um objeto JSON.\nconst resultadoJson = linhasDeDados.map(linha => {\n  const valores = linha.split(',');\n  \n  // Usa 'reduce' para construir o objeto dinamicamente.\n  // Para cada item do cabeçalho, cria uma chave no objeto com o valor correspondente.\n  return cabecalho.reduce((objeto, chave, index) => {\n    objeto[chave.trim()] = valores[index].trim();\n    return objeto;\n  }, {});\n});\n\n// Retorna o array de objetos JSON.\n// Este será o output do nó Code e poderá ser usado nos próximos nós.\nreturn resultadoJson;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1328,
+        1072
+      ],
+      "id": "974a3bea-2266-4faa-a712-882b410b08ca",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "nome",
+              "keyValue": "={{ $('Webhook').item.json.body.nome }}"
+            },
+            {
+              "keyName": "telefone",
+              "keyValue": "={{ $('Webhook').item.json.body.telefone }}"
+            },
+            {
+              "keyName": "email",
+              "keyValue": "={{ $('Webhook').item.json.body.email }}"
+            },
+            {
+              "keyName": "id_evento",
+              "keyValue": "={{ $json.id_evento }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        800
+      ],
+      "id": "435f700f-3583-4797-92d2-b1eae9279ee2",
+      "name": "Get a row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4a1e8a57-ebd3-403e-a272-d154b0d7c695",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        800
+      ],
+      "id": "7be3db9d-3d93-4783-811a-85bdcb82c6d2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -784,
+        528
+      ],
+      "id": "7dfff2bf-d203-46f0-8e68-a19ee46c8ae2",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        656,
+        1024
+      ],
+      "id": "05fdd0f6-8df8-41b5-a6b0-f27d3a56fe57",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c0a666e-5d03-4682-b60d-fd194d360339",
+              "name": "cidade",
+              "value": "={{ $json.body.cidade.split(',')[1].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "edfb8ab4-991d-47bd-b8cc-439908724291",
+              "name": "=id_evento",
+              "value": "={{ $json.body.cidade.split(',')[0].trim() }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        800
+      ],
+      "id": "a8e2b41f-49bb-4a83-896a-0a9d118e10c8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "datas_evento",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "local",
+              "keyValue": "={{ $('Edit Fields1').item.json.cidade }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        800
+      ],
+      "id": "e7fc1c42-cd26-423e-852c-e09c97947c93",
+      "name": "Get a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $('Update a row1').item.json.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "=*EXPOCanada 2025*\nSua jornada começa agora!\n\nOlá {{ $('Webhook').item.json.body.nome.split(' ')[0]}}, tudo bem?\n*SUA INSCRIÇÃO FOI CONFIRMADA!*\n\nEstamos muito felizes por estar conosco nessa jornada rumo a novas oportunidades!\n\nVocê receberá seu ingresso e todas as informações sobre o evento através do e-mail.\n\nPara receber aqui neste WhatsApp, responda esta mensagem.\n\nAtenciosamente,\nEquipe EXPOCanada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "93f2a617-b799-41b8-90ae-c8112595eddd",
+      "name": "Msg de inscrição confirmada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -384,
+        1024
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "0740da5f-6281-479e-ac34-776febd01113"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1776
+      ],
+      "id": "8fbfe8bc-1471-44ac-8559-158091c31f40",
+      "name": "Get a row4",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96631670-1d55-4a00-8a03-f421f1534a4e",
+              "name": "disp_inscricao",
+              "value": "={{ $json.disp_inscricao }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        1776
+      ],
+      "id": "3557fd53-10c7-468c-9b1c-6de8cd5535db",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a482e19b-67e2-4b2c-99df-5350954d761e",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -656,
+        1440
+      ],
+      "id": "edf35bad-34e8-439d-bccf-af3dddf79699",
+      "name": "If2"
+    }
+  ],
+  "connections": {
+    "Generate QR Code": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a row4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "Jutando dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jutando dados": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Decide o use case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG 1 Semana antes": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o campo booleano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG 30 dias antes": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o campo booleano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG Pós Inscrição": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o campo booleano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG 3 dias antes": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o campo booleano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MSG Dia do evento": {
+      "main": [
+        [
+          {
+            "node": "Atualiza o campo booleano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza o campo booleano": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide o use case": {
+      "main": [
+        [
+          {
+            "node": "MSG Pós Inscrição",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG 30 dias antes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG 1 Semana antes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG 3 dias antes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MSG Dia do evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Respond with QR Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR Code1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Generate QR Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row3": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Data Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Get a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Imagem [Evolution]6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "URL Goiânia",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "URL Uberaba",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "URL Uberlândia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Imagem [Evolution]6": {
+      "main": [
+        [
+          {
+            "node": "Msg de inscrição confirmada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Uberaba": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Goiânia": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL Uberlândia": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg de inscrição confirmada": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 300
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Jutando dados": [
+      {
+        "json": {
+          "lead": {
+            "id": "1ec991bd-9412-450c-a72e-49ae24414a2e",
+            "nome": "Renato",
+            "telefone": "3496389988",
+            "email": "renatofb65@gmail.com",
+            "cidade": "Uberlândia - MG",
+            "created_at": "2025-10-01T21:45:41.435557+00:00",
+            "id_evento": 1,
+            "disp_dia_pos_inscricao": null,
+            "disp_30_dias_antes": null,
+            "disp_inscricao": null,
+            "disp_1_semana_antes": null,
+            "disp_3_dias_antes": null,
+            "disp_1_dia_antes": null,
+            "disp_dia_evento": null
+          },
+          "local": {
+            "id": 1,
+            "data": "2025-11-26T20:30:00+00:00",
+            "local": "Uberlândia - MG"
+          }
+        }
+      }
+    ],
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ],
+    "Get many rows": [
+      {
+        "json": {
+          "id": "1ec991bd-9412-450c-a72e-49ae24414a2e",
+          "nome": "Renato",
+          "telefone": "3496389988",
+          "email": "renatofb65@gmail.com",
+          "cidade": "Uberlândia - MG",
+          "created_at": "2025-10-02T21:45:41.435557+00:00",
+          "id_evento": 1,
+          "disp_dia_pos_inscricao": null,
+          "disp_30_dias_antes": null,
+          "disp_inscricao": null,
+          "disp_1_semana_antes": null,
+          "disp_3_dias_antes": null,
+          "disp_1_dia_antes": null,
+          "disp_dia_evento": null
+        }
+      }
+    ],
+    "Get a row1": [
+      {
+        "json": {
+          "id": 1,
+          "data": "2025-11-26T20:30:00+00:00",
+          "local": "Uberlândia - MG"
+        }
+      }
+    ],
+    "Code in JavaScript": [
+      {
+        "json": {
+          "status": "Pós-Inscrição",
+          "campoDB": "disp_dia_pos_inscricao"
+        }
+      }
+    ],
+    "Receive Data Webhook2": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1",
+            "content-length": "47",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br",
+            "accept-language": "pt-BR,pt;q=0.9",
+            "content-type": "application/json",
+            "origin": "https://expocanada.org",
+            "priority": "u=3, i",
+            "referer": "https://expocanada.org/",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "189.37.76.117",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "189.37.76.117"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "uuid": "49ea5a93-73d8-4844-8294-fdb0e5e45817"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/validacao-usuario",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Update a row": [
+      {
+        "json": {
+          "id": "49ea5a93-73d8-4844-8294-fdb0e5e45817",
+          "nome": "Renato Freitas",
+          "telefone": "3496389988",
+          "email": "teste@exemplo.us",
+          "created_at": "2025-10-03T20:10:45.573992+00:00",
+          "id_evento": 3,
+          "disp_dia_pos_inscricao": null,
+          "disp_30_dias_antes": null,
+          "disp_inscricao": null,
+          "disp_1_semana_antes": null,
+          "disp_3_dias_antes": null,
+          "disp_1_dia_antes": null,
+          "disp_dia_evento": null,
+          "qr_base64": "iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQMAAAAGz+OhAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABaklEQVRIib2WzY2EMAyFjXLgmBLSCTQWTUA0xnRCCTnmgPL2OUHaXWmOzljixx8HC/vZscgHSwCyyyJzlSmrV8xZFH3N6RLxW/MGsIB3drilLL42bxBLmQHFIw9k4g/oQwYxzV/0W8ApLfxkz5oOoj8u5m//qw1D9pjDrP/2z8wYI70ZjHFZI30sA9iFSgGwZ3qNZC1fYbSVWW19tOMOT0ZtWWDBDvYR9TfhgAxgCWXF0ftoxyaUoTlzQOXtUNm9WLnC/Fmz1JtUAktVVeqP/ixZ5EDjzUFW5m8LI5g6uBmQcffsrhnFnCXMJ4c/9ayDQUKfObYsqnN7XPzEmdN6dQCr/vaqZwoiQb7G2hy6ZT5l4otq3Jo9A5Rnj9ZNwvwu5qyfC6pxzWkMz4w1Ze18a+cC8qTakAGs7wKujWm13/3AmonW6MV2ajoYwSI1TifpTlMHsL7/UXLAzksWe9Z0oIx7LEvFlv0O+2A/5bd836QXv14AAAAASUVORK5CYII=",
+          "status": "{\n \"status\": true,\n \"created_at\": \"2025-10-03T18:52:38.402-03:00\"\n}",
+          "qtd_scan": 6
+        }
+      }
+    ],
+    "Get a row3": [
+      {
+        "json": {
+          "id": "49ea5a93-73d8-4844-8294-fdb0e5e45817",
+          "nome": "Renato Freitas",
+          "telefone": "3496389988",
+          "email": "teste@exemplo.us",
+          "created_at": "2025-10-03T20:10:45.573992+00:00",
+          "id_evento": 3,
+          "disp_dia_pos_inscricao": null,
+          "disp_30_dias_antes": null,
+          "disp_inscricao": null,
+          "disp_1_semana_antes": null,
+          "disp_3_dias_antes": null,
+          "disp_1_dia_antes": null,
+          "disp_dia_evento": null,
+          "qr_base64": "iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQMAAAAGz+OhAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABaklEQVRIib2WzY2EMAyFjXLgmBLSCTQWTUA0xnRCCTnmgPL2OUHaXWmOzljixx8HC/vZscgHSwCyyyJzlSmrV8xZFH3N6RLxW/MGsIB3drilLL42bxBLmQHFIw9k4g/oQwYxzV/0W8ApLfxkz5oOoj8u5m//qw1D9pjDrP/2z8wYI70ZjHFZI30sA9iFSgGwZ3qNZC1fYbSVWW19tOMOT0ZtWWDBDvYR9TfhgAxgCWXF0ftoxyaUoTlzQOXtUNm9WLnC/Fmz1JtUAktVVeqP/ixZ5EDjzUFW5m8LI5g6uBmQcffsrhnFnCXMJ4c/9ayDQUKfObYsqnN7XPzEmdN6dQCr/vaqZwoiQb7G2hy6ZT5l4otq3Jo9A5Rnj9ZNwvwu5qyfC6pxzWkMz4w1Ze18a+cC8qTakAGs7wKujWm13/3AmonW6MV2ajoYwSI1TifpTlMHsL7/UXLAzksWe9Z0oIx7LEvFlv0O+2A/5bd836QXv14AAAAASUVORK5CYII=",
+          "status": "{\n \"status\": true,\n \"created_at\": \"2025-10-03T17:39:32.158-03:00\"\n}",
+          "qtd_scan": 5
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23A355 Instagram 403.0.0.28.80 (iPhone12,8; iOS 26_0_1; pt_BR; pt; scale=2.00; 750x1334; IABMV/1; 808786605)",
+            "content-length": "126",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br",
+            "accept-language": "pt-BR,pt;q=0.9",
+            "content-type": "application/json",
+            "origin": "https://expocanada.org",
+            "priority": "u=3, i",
+            "referer": "https://expocanada.org/",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "189.41.87.83",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "189.41.87.83"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Vinicius",
+            "email": "vinicius.arduini.pro@gmail.com",
+            "telefone": "34997892249",
+            "cidade": "2, Uberaba - MG",
+            "origem": "ec"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "63c33a5c-2ab2-40a2-9f84-22b2b0a6da27",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "createdAt": "2025-10-02T14:32:27.977Z",
+      "updatedAt": "2025-10-02T14:32:27.977Z",
+      "role": "workflow:owner",
+      "workflowId": "zA2nKyyslxNF6DOP",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
