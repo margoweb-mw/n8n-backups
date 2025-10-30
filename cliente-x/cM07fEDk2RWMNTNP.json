@@ -1,0 +1,171 @@
+{
+  "createdAt": "2025-09-03T21:06:08.564Z",
+  "updatedAt": "2025-09-16T01:41:23.161Z",
+  "id": "cM07fEDk2RWMNTNP",
+  "name": "Notificação de cadastro",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "notificacao-cadastro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        224
+      ],
+      "id": "a78b2d75-f1b3-49dc-aa2f-55798bb7b13f",
+      "name": "Webhook",
+      "webhookId": "2e304720-3ade-4310-8fe2-db6219cef788"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/Checkllix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $json.body.whatsapp.replace(/[^0-9]/g, '') }}\n"
+            },
+            {
+              "name": "text",
+              "value": "=*🎉 Seja bem vindo ao Checkllix*\n\n_Seu acesso:_\nUsername: {{ $json.body.username }}\nSenha: {{ $json.body.password }}\n\n_Faça login:_\nhttps://check.kllix.com.br\n\nNote que seu acesso foi enviado pelo email também!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "647816b1-b43a-406e-b6ab-f467c4c60173",
+      "name": "Enviar para Renato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        224
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        0
+      ],
+      "id": "6be04edb-f853-4b9f-afbf-138ad3a983d6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36bc073a-ec3e-4e5b-ab18-10b8a721f9dd",
+              "name": "body",
+              "value": "={{ $json.body }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        224
+      ],
+      "id": "81e87a72-beff-4b03-8f18-0e11eb818763",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Enviar para Renato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "85",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "content-type": "text/plain;charset=UTF-8",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "31.97.251.50",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a60fcd78b7ac",
+            "x-real-ip": "31.97.251.50"
+          },
+          "params": {},
+          "query": {},
+          "body": "{\"whatsapp\":\"(34) 99638-9988\",\"email\":\"renatofb65@gmail.com\",\"username\":\"renatofb65\"}",
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/notificacao-cadastro",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "7f3c24e9-cf27-4207-a50d-e22d335b781e",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-03T21:06:08.564Z",
+      "updatedAt": "2025-09-03T21:06:08.564Z",
+      "role": "workflow:owner",
+      "workflowId": "cM07fEDk2RWMNTNP",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
