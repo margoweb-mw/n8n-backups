@@ -1,0 +1,361 @@
+{
+  "createdAt": "2025-10-22T15:44:28.434Z",
+  "updatedAt": "2025-10-22T18:07:37.942Z",
+  "id": "q66HyxtWJa8j1Txh",
+  "name": "teste",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "datas_evento",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Normalização').item.json.id_evento }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        448
+      ],
+      "id": "5ff49579-0441-4e61-9c25-a2b8ef380169",
+      "name": "Get a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/Checkllix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $('Loop Over Items').item.json.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('Loop Over Items').item.json.mensagem }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3735ed5f-aae1-4f53-9b7a-0525c6954b20",
+      "name": "Msg de inscrição confirmada1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1888,
+        432
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        272
+      ],
+      "id": "5b443278-50b0-43ad-a25c-ce353f2e48d5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28cee801-047f-41b2-b506-0738b003cf31",
+              "name": "nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "062e7248-8b84-4e14-8aa8-5c26984be8c1",
+              "name": "telefone",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "824d9c4b-c38a-4ef3-8692-1e740000ffda",
+              "name": "id_evento",
+              "value": "={{ $json.id_evento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        432
+      ],
+      "id": "5b1b02b7-9df5-41e1-a20a-c55e87250f90",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "content": "# DISPARO LEADS INCOMPLETOS",
+        "height": 80,
+        "width": 576,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "6b93b269-b366-464a-bbd4-0783c27d477c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 464,
+        "width": 2112,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "2727d1fe-38cd-4572-9f15-15b4b6b07800",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        784,
+        432
+      ],
+      "id": "d1f93851-bf2a-4adf-9014-c7f6cee52a3c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1184,
+        432
+      ],
+      "id": "b36f47d3-f20f-482a-9896-7ea8d52c31c0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQqumVhrvqvzPYCWpXmhMgId_nNyC0wNxhGEEmxQa_kOEQ7kOC-vvZ9XwfGQFmOvNwzcw6AjYyLrGE4/pub?output=xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        592
+      ],
+      "id": "e3b6ba0c-88a2-4ecd-be7e-6fefaef2bfe6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        96,
+        592
+      ],
+      "id": "4fefdf75-76ea-4bc7-b8fd-b9754cd4be77",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "amount": "=120"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        448
+      ],
+      "id": "af36edd9-1302-4a34-94e0-bf354288f468",
+      "name": "30min",
+      "webhookId": "2e316976-cf2c-45e6-b498-59888199ce8e"
+    }
+  ],
+  "connections": {
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "Msg de inscrição confirmada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg de inscrição confirmada1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "30min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        []
+      ]
+    },
+    "30min": {
+      "main": [
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ],
+    "Normalização": [
+      {
+        "json": {
+          "nome": "Renato Freitas",
+          "telefone": "34996389988",
+          "id_evento": "2",
+          "mensagem": "Teste1"
+        }
+      },
+      {
+        "json": {
+          "nome": "Renato Freitas",
+          "telefone": "34996389988",
+          "id_evento": "2",
+          "mensagem": "Teste2"
+        }
+      },
+      {
+        "json": {
+          "nome": "Renato Freitas",
+          "telefone": "34996389988",
+          "id_evento": "2",
+          "mensagem": "Teste3"
+        }
+      }
+    ]
+  },
+  "versionId": "7fb8cfa1-ab16-4864-8be7-f869c87731f3",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-22T15:44:28.434Z",
+      "updatedAt": "2025-10-22T15:44:28.434Z",
+      "role": "workflow:owner",
+      "workflowId": "q66HyxtWJa8j1Txh",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
