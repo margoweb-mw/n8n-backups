@@ -1,0 +1,342 @@
+{
+  "createdAt": "2025-10-29T22:08:44.153Z",
+  "updatedAt": "2025-10-30T17:28:06.825Z",
+  "id": "kuO8mRPp6vdKpZTW",
+  "name": "[COMPLETO] CRON JOB 🟢 Disparo de leads incompletos v4 (planilha CI)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        112
+      ],
+      "id": "0c19032e-dae6-4b34-ae79-71e8a1dc11ad",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKPqL776iGBQ29jMyMpX6v5p4e1AzOmpRU22Rfyhh10WgnJVDaArHkeerFde7MCXNPSuEfdLPXgyIT/pub?output=xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1728,
+        112
+      ],
+      "id": "fc35e2c7-9202-4a3e-be67-3a211b2e3864",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28cee801-047f-41b2-b506-0738b003cf31",
+              "name": "nome",
+              "value": "={{ $json.full_name }}",
+              "type": "string"
+            },
+            {
+              "id": "11dbe355-afd1-4bfa-8e85-617629eea034",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "062e7248-8b84-4e14-8aa8-5c26984be8c1",
+              "name": "telefone",
+              "value": "={{ $json.phone_number.startsWith('p:+55') ?  $json.phone_number.replace('p:+55', '').replace(/[()\\s-]/g, '') : \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "2f23b85f-562a-44c7-abee-129e2e1e4da9",
+              "name": "cidade",
+              "value": "={{\n  $json.cidade == '1' ? \"1, Uberlândia - MG\" :\n  $json.cidade == '2' ? \"2, Uberaba - MG\" :\n  $json.cidade == '3' ? \"3, Goiânia - GO\" :\n  'Inválido'\n}}",
+              "type": "string"
+            },
+            {
+              "id": "7c43d0b5-aef1-44fd-a08f-5355ae823268",
+              "name": "origem",
+              "value": "=ci",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1264,
+        112
+      ],
+      "id": "c1ace148-65db-4137-87de-3793569882e9",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -432,
+        112
+      ],
+      "id": "304072a8-8ba6-4b39-91ba-1670be4f32e1",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        96
+      ],
+      "id": "2254b8ac-49b1-46a8-8e27-7a7b280e98fd",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -64
+      ],
+      "id": "72004e54-0bc9-4a60-b883-bcd12e38ab1c"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8b7b8d9-f6a1-4007-b199-b3770399b412",
+              "leftValue": "={{ $json.cidade }}",
+              "rightValue": "Inválido",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        112
+      ],
+      "id": "0e26b7b7-4b36-40cb-97de-3ddc9efa2021",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "numero",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "key": "status",
+              "value": "🔴Cidade inválida"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -1024,
+        352
+      ],
+      "id": "f43b540e-1ae5-4d04-a7de-9ee8430a0cf3",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        -96
+      ],
+      "id": "286ba325-c873-4ad7-a5ea-fe6ee5b079e5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "path": "disparo-incompleto-v4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1968,
+        112
+      ],
+      "id": "559dc3ab-e1b7-4ddd-aaab-e91f8598ae98",
+      "name": "Webhook",
+      "webhookId": "cfd925f6-87d9-4e62-adc6-46f85695688d"
+    }
+  ],
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "4f7548c3-836d-4d29-a4ad-60c9ed86d648",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-29T22:08:44.153Z",
+      "updatedAt": "2025-10-29T22:08:44.153Z",
+      "role": "workflow:owner",
+      "workflowId": "kuO8mRPp6vdKpZTW",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
