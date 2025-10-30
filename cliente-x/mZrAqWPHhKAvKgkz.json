@@ -1,0 +1,1206 @@
+{
+  "createdAt": "2025-07-25T13:22:56.761Z",
+  "updatedAt": "2025-09-18T15:50:41.633Z",
+  "id": "mZrAqWPHhKAvKgkz",
+  "name": "Puxa todos clientes",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "listar-clientes",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -32
+      ],
+      "id": "aaa58ca6-ac7a-425d-9d8b-30a142b88774",
+      "name": "Webhook",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0f74013e-6402-4a46-8faf-728fe54e35b6",
+      "name": "Puxa clientes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -288,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -32
+      ],
+      "id": "20cfe7ce-ed8a-4e4a-bf72-55856f457529",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/ordens-servico?order&sort&limit=1000000offset&nome_cliente&vendedor&status&lixeira=Nao&data_modificacao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "65aa91f6-1704-4983-a6d3-2684da39eaca",
+      "name": "1. Pegar todas Ordens de Serviço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -736,
+        1376
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -32
+      ],
+      "id": "5be533cc-3dfe-4de4-a42f-3998f7614983",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3192b00e-3b58-4176-8c8e-d796763c775e",
+              "name": "id_cliente",
+              "value": "={{ $json.id_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "1da0d1ad-099a-49d9-8e2c-67848f03eb99",
+              "name": "razao_cliente",
+              "value": "={{ $json.razao_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "cb8f4d50-5407-48a4-8151-04145d762244",
+              "name": "doc",
+              "value": "={{ $json.cnpj_cliente }}",
+              "type": "string"
+            },
+            {
+              "id": "6ec6e9ed-7de7-40cf-9ed5-c23df8f9870f",
+              "name": "email_cliente",
+              "value": "={{ $json.email_cliente === \"\" ? 'Email não informado' : $json.email_cliente }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        -32
+      ],
+      "id": "9f0d1cb0-a842-4b2a-8eca-18055b605e8f",
+      "name": "Pessoa Física"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.tipo_pessoa }}",
+                    "rightValue": "Pessoa Física",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6d950c5c-921c-40fe-bf39-76cb67ef4926"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0417f0a4-1fb3-41f1-a077-df4a2dea62c7",
+                    "leftValue": "={{ $json.tipo_pessoa }}",
+                    "rightValue": "PJ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pessoa Juridica"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -736,
+        1152
+      ],
+      "id": "06aeadb5-b8dc-420f-af05-a008ce1ad345",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1952,
+        -32
+      ],
+      "id": "e31bb619-5705-4895-825e-ba3651623a51",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o array 'data' que veio do nó 'Puxa clientes'\nconst clientes = $input.first().json.data;\n\n// Transforma cada item do array para o formato desejado\nconst resultadoFormatado = clientes.map(cliente => {\n  return {\n    json: {\n      id_cliente: cliente.id_cliente,\n      razao_cliente: cliente.razao_cliente,\n      doc: cliente.cnpj_cliente || cliente.cpf_cliente || '' // Garante que pegue um dos dois\n    }\n  };\n});\n\n// Retorna a lista de itens formatados para o próximo nó\nreturn resultadoFormatado;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        480
+      ],
+      "id": "8ee7a237-eecc-43b5-bf73-0995fdcc201b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "clientes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        -32
+      ],
+      "id": "3889319f-95c3-477a-9c71-29a77ad82c0c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=250&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e9eb24e7-929f-4492-9394-6f008684db83",
+      "name": "Puxa clientes 250-500",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "add94d14-703c-4241-8e6e-d86eac221e38",
+              "name": "date",
+              "value": "={{ $json.data.concat($('Puxa clientes').item.json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -736,
+        704
+      ],
+      "id": "4ae34e21-ade0-484a-b8ee-680887347117",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "54db9974-01ae-407d-94d6-3f22ce9c98c0",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 1250,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1000 até 2000"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3939df6b-ad36-4447-9f17-2c3d444b40a0",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 750,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "750-1000"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "97da8a5f-9f69-4730-9554-4df84e67d4a4",
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 500,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "500-750"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.paging.total_count }}",
+                    "rightValue": 250,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    },
+                    "id": "59edac6a-309b-4595-b44c-719ffa5266a6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "250-500"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -64,
+        -64
+      ],
+      "id": "09d528e6-0424-47fb-8aaa-f1770046d02d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=750&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "17413663-dc3b-42bb-8658-f2032dc03180",
+      "name": "Puxa clientes 750-1000",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=1000&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4ea2032f-b576-4373-bc92-9281b6280970",
+      "name": "Puxa clientes 1000-1250",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=1250&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5fcf9b20-ebcf-47f1-8ace-c6f0f28e0840",
+      "name": "Puxa clientes 1250-1500",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=1500&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8cfbb211-12b4-4584-b30d-bb53111bd49c",
+      "name": "Puxa clientes 1500-1750",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=1750&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a5871db7-ac31-4708-a466-af8cd73259e5",
+      "name": "Puxa clientes 1750-2000",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=250&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7496e6ed-0a32-4803-abb4-66d66c434309",
+      "name": "Puxa clientes 250-500 B",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85bd1380-0426-461b-986e-c430407b830f",
+              "name": "=data",
+              "value": "={{ $json.data.concat($('Puxa clientes').item.json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        -320
+      ],
+      "id": "aac180f4-9cd0-4a76-90da-6219731e85f1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2f51151-d563-489d-ba4b-eeb2619de95b",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 250-500 B').item.json.data, $('Puxa clientes').item.json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        -128
+      ],
+      "id": "b688ea92-a30f-4e68-a1d7-c2780d26cf55",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "47902f8b-f051-40da-a237-522f01499e96",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 250-500 C').item.json.data, $('Puxa clientes').item.json.data), $('Puxa clientes 500-750 B').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        64
+      ],
+      "id": "e399ad9b-1405-4146-93b9-3762eb46a2af",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89114cf4-4738-4052-9c89-c0b1b445d331",
+              "name": "data",
+              "value": "={{ $json.data.concat($('Puxa clientes 1500-1750').item.json.data, $('Puxa clientes 1250-1500').item.json.data), $('Puxa clientes 1000-1250').item.json.data, $('Puxa clientes').item.json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        256
+      ],
+      "id": "a2559e53-d3c3-4a34-8a57-c84f0d2dadab",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        928
+      ],
+      "id": "6f8e93d1-56c8-45cc-a646-5753d33a6661",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=500&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "76584894-b53e-4c2a-9d44-d7c8c610f7d6",
+      "name": "Puxa clientes 500-750 ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=500&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9a93e817-d903-48cd-85b1-fdd64fa3ae2d",
+      "name": "Puxa clientes 500-750 B",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1000&order=data_cad_cliente&sort=desc&offset=250&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14538092-64a6-4ce0-9cb9-b2dc05bdccae",
+      "name": "Puxa clientes 250-500 C",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        64
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Pessoa Física",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pessoa Física": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-500": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1000-1250",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-500 C",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-500 B",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Puxa clientes 250-500",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 750-1000": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1000-1250": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1250-1500",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1250-1500": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1500-1750",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 1500-1750": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 1750-2000",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Puxa clientes 1750-2000": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-500 B": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 500-750 ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 500-750 ": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 500-750 B": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 750-1000",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa clientes 250-500 C": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes 500-750 B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "12",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "31.97.251.50",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a60fcd78b7ac",
+            "x-real-ip": "31.97.251.50"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "userId": 1
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/listar-clientes",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "70a3be79-bbaa-45f2-9d95-5182df47fe71",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-07-25T13:22:56.761Z",
+      "updatedAt": "2025-07-25T13:22:56.761Z",
+      "role": "workflow:owner",
+      "workflowId": "mZrAqWPHhKAvKgkz",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
