@@ -1,0 +1,149 @@
+{
+  "createdAt": "2025-10-17T22:07:14.930Z",
+  "updatedAt": "2025-10-18T13:21:02.032Z",
+  "id": "24SBhy7XVw0U5WjW",
+  "name": "W 2 TESTE",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste22",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        -128
+      ],
+      "id": "53f6d15f-58e7-4ee9-9f80-44cc221a6ae3",
+      "name": "Webhook",
+      "webhookId": "ed2ded20-f1b9-4ab2-8764-2e4bea788211"
+    },
+    {
+      "parameters": {
+        "amount": 6
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        -32
+      ],
+      "id": "7d909aec-a9d7-4ea5-a531-339e21e57047",
+      "name": "Wait",
+      "webhookId": "0c866d20-2652-4305-b607-7aee79df5198"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f02a260f-1b98-4558-8802-47a6c5e29546",
+              "leftValue": "={{ $json.body.disparado }}",
+              "rightValue": "={{ $json.body.disparado }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        -128
+      ],
+      "id": "fc132587-387b-4fe1-9a79-ac0c94ec1dea",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "axios/1.8.3",
+            "content-length": "94",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Debora Batista Basilio",
+            "telefone": "62982873003",
+            "id_evento": "3",
+            "disparado": "false"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/teste22",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "74742cf3-d745-4a3b-8d46-5ef67f8e468f",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-17T22:07:14.930Z",
+      "updatedAt": "2025-10-17T22:07:14.930Z",
+      "role": "workflow:owner",
+      "workflowId": "24SBhy7XVw0U5WjW",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
