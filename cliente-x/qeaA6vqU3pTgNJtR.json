@@ -1,0 +1,958 @@
+{
+  "createdAt": "2025-08-01T15:01:37.559Z",
+  "updatedAt": "2025-10-01T18:03:53.302Z",
+  "id": "qeaA6vqU3pTgNJtR",
+  "name": "Adicionar os",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"message\": \"Nova ordem de serviço cadastrada\",\n  \"id_ordem\": {{ $('Ordem serviço').item.json.data.id_ordem }}\n} ",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1472,
+        96
+      ],
+      "id": "e826cc6a-c97c-4daf-84c8-934252ec5262",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "adicionar-manutencao",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        96
+      ],
+      "id": "5711897a-235b-4794-930e-25e4ebf71f7f",
+      "name": "Webhook1",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.user_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        96
+      ],
+      "id": "8b773f21-a1e0-478e-9aea-e2db69c2da00",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "23cd099d-4fc0-49a5-99d1-3570c3612c2a",
+              "leftValue": "={{ $('Ordem serviço').item.json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        192
+      ],
+      "id": "3b8924e2-00bb-4c90-96c7-7dd12101a65d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"Falha ao cadastrar nova ordem de serviço\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1472,
+        288
+      ],
+      "id": "8a143996-7da7-4a49-95f4-da8ec5697f2e",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1e83984-eedf-44e7-bdff-ffc4b94f91d8",
+              "name": "obs",
+              "value": "={{ $('Webhook1').item.json.body.public_link }}",
+              "type": "string"
+            },
+            {
+              "id": "cc7bf5d3-3be7-4975-8c2e-4c1f0a089799",
+              "name": "body.public_link",
+              "value": "={{ $('Webhook1').item.json.body.public_link }}",
+              "type": "string"
+            },
+            {
+              "id": "781c8ac4-840e-4366-9b1a-a7112c463d7d",
+              "name": "body.",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        96
+      ],
+      "id": "298ed6fc-1898-4453-a18a-ae616d6942e6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/ordens-servico?nome_cliente={{ $('Webhook1').item.json.body.nome_cliente }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "obs_pedido",
+              "value": "=Placa: {{ $('Webhook1').item.json.body.veiculo_dados.placa }}\n\n{{ $json.obs }}"
+            },
+            {
+              "name": "vendedor_pedido_id",
+              "value": "={{ $('Webhook1').item.json.body.vendedor_id }}"
+            },
+            {
+              "name": "vendedor_pedido",
+              "value": "={{ $('Webhook1').item.json.body.vendedor_nome }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8e6450f6-735b-43fd-9454-6666fd9af868",
+      "name": "Ordem serviço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.vhsys.com/v2/clientes/{{ $('Webhook1').item.json.body.cliente_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "observacoes_cliente",
+              "value": "=Veículo inserido através do checkllix:\n\n{{ $('Webhook1').item.json.body.veiculo_dados.placa ? 'Veículo: ' + $('Webhook1').item.json.body.veiculo_dados.placa : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.tipo ? 'Tipo: ' + $('Webhook1').item.json.body.veiculo_dados.tipo : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.cor ? 'Cor: ' + $('Webhook1').item.json.body.veiculo_dados.cor : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.marca ? 'Marca: ' + $('Webhook1').item.json.body.veiculo_dados.marca : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.modelo ? 'Modelo: ' + $('Webhook1').item.json.body.veiculo_dados.modelo : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.combustivel ? 'Combústivel: ' + $('Webhook1').item.json.body.veiculo_dados.combustivel : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.ano ? 'Ano: ' + $('Webhook1').item.json.body.veiculo_dados.ano : '' }}\n{{ $('Webhook1').item.json.body.veiculo_dados.anoModelo ? 'Ano Modelo: ' + $('Webhook1').item.json.body.veiculo_dados.anoModelo : '' }}"
+            },
+            {
+              "name": "vendedor_pedido_id",
+              "value": "={{ $('Webhook1').item.json.body.vendedor_id }}"
+            },
+            {
+              "name": "vendedor_pedido",
+              "value": "={{ $('Webhook1').item.json.body.vendedor_nome }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a31cd391-0dc5-43d5-a9b8-4db5d9a9f9c7",
+      "name": "Atualizar OBS do cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        128,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/ordens-servico/{{ $('Ordem serviço').item.json.data.id_ordem }}/servicos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n     \"horas_servico\": {{ $json.horasServico }},\n      \"id_servico\": {{ $('Webhook1').item.json.body.ids_externos }},\n      \"valor_unit_servico\": {{ $json.valorServico }},\n      \"desc_servico\": \"{{ $json.nome }}\"\n  }\n] ",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "298024d5-fc7d-4759-b3b7-6077e61314a4",
+      "name": "Add Serviço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1008,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/ordens-servico/{{ $('Ordem serviço').item.json.data.id_ordem }}/servicos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n     \"horas_servico\": {{ $json.horasServico }},\n      \"id_servico\": {{ Number($json.IdExterno) }},\n      \"valor_unit_servico\": {{ $json.valorServico }},\n      \"desc_servico\": \"{{ $json.nome }}\"\n  }\n] \n",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "27c9bbb2-567d-4f27-85b7-7b5f32531aa5",
+      "name": "Add Serviço1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3634a285-59cb-4f6a-9db1-42680aa3f2ed",
+              "leftValue": "={{ $json.IdExterno }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        -272
+      ],
+      "id": "4b3342e2-1adf-4ca6-a3b2-4f5e3569de55",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b14b5cd-cab8-4b9f-bf55-149cb676fe36",
+              "name": "body.servicos_detalhados",
+              "value": "={{ $('Webhook1').item.json.body.servicos_detalhados }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        -112
+      ],
+      "id": "1ca63dda-d76d-4b00-94fa-ccb32ea07f00",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.servicos_detalhados",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -272
+      ],
+      "id": "961afad6-8467-4cdb-90fe-c6eaac38336d",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook1').item.json.body.ids_externos.includes(',')  }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "b6f1709c-033b-4b1d-ba1c-056fca9919ee"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mais de 1 ID externo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a3895725-3ce6-4e1f-ac1a-4c85d0a01ab4",
+                    "leftValue": "={{ $('Webhook1').item.json.body.ids_externos }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1 ID"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d8c5a629-ae02-458e-98c5-ac95b03f5f14",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Não tem ID Externo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        96
+      ],
+      "id": "f6dad183-0e7f-471d-9fd3-88b23a61db53",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "CategoriaChecklist",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('Webhook1').item.json.body.user_id }}"
+            },
+            {
+              "keyName": "IdExterno",
+              "keyValue": "={{ $('Webhook1').item.json.body.ids_externos }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        784,
+        288
+      ],
+      "id": "2c56908d-245c-4f6f-88b5-1de5374436cd",
+      "name": "Get a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/clientes/{{ $('Webhook1').item.json.body.cliente_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8102a9e4-ba3c-4c1c-8905-39bf757ef55c",
+      "name": "Puxa cliente especifico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/Checkllix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $json.data.fone_cliente ? $json.data.fone_cliente.replace(/[^0-9]/g, '') :  $json.data.celular_cliente.replace(/[^0-9]/g, '') }}"
+            },
+            {
+              "name": "text",
+              "value": "=Olá {{ $('Webhook1').item.json.body.nome_cliente }}!\n\nVocê acabou de levar o veículo placa: *{{ $('Webhook1').item.json.body.veiculo_dados.placa }}* na *Rofe Motors*  \n\n*📋 Uma nova ordem de serviço foi cadastrada em seu nome!*\n\nVeículo: {{ $('Webhook1').item.json.body.veiculo_dados.placa }}\n_Acesse e acompanhe por aqui:_\n\n{{ $('Webhook1').item.json.body.public_link }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cc8be3a2-5d11-43db-8b03-af9b14762f11",
+      "name": "Mensagem de ordem de serviço cadastrada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2064,
+        96
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1248,
+        -80
+      ],
+      "id": "99cb00ed-98a2-446d-8d32-cbfa719a5b05",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        96
+      ],
+      "id": "7d729430-ad57-43fd-bd99-b947de6fdfee",
+      "name": "Limit"
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Ordem serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordem serviço": {
+      "main": [
+        [
+          {
+            "node": "Atualizar OBS do cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar OBS do cliente": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Serviço": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Serviço1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Add Serviço1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "Add Serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Puxa cliente especifico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa cliente especifico": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de ordem de serviço cadastrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "909",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "179.155.84.74",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "179.155.84.74"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "user_id": 11,
+            "public_link": "https://check.kllix.com.br/manutencao/public/c474a119-6a8c-4ef4-a855-077dcb4f7eb4",
+            "nome_cliente": "MW T10",
+            "cliente_id": 37560031,
+            "vendedor_id": "248339",
+            "vendedor_nome": "João da Silva",
+            "veiculo_dados": {
+              "placa": "ABC2222",
+              "tipo": null,
+              "cor": null,
+              "marca": null,
+              "modelo": null,
+              "combustivel": null,
+              "ano": null,
+              "anoModelo": null
+            },
+            "ids_externos": "72419060,72353528,",
+            "servicos_detalhados": [
+              {
+                "id": 91,
+                "nome": "ALINHAMENTO CARRO SUV",
+                "descricao": "",
+                "cor": "#CCCCCC",
+                "IdExterno": 72419060,
+                "valorServico": 150,
+                "descServico": null,
+                "horasServico": 1
+              },
+              {
+                "id": 90,
+                "nome": "ALINHAMENTO CAMIONETE RAM",
+                "descricao": "",
+                "cor": "#CCCCCC",
+                "IdExterno": 72353528,
+                "valorServico": 100,
+                "descServico": null,
+                "horasServico": 1
+              },
+              {
+                "id": 7,
+                "nome": "Suspensão e Direção",
+                "descricao": "Itens de suspensão, direção e componentes relacionados",
+                "cor": "#3B82F6",
+                "IdExterno": null,
+                "valorServico": null,
+                "descServico": null,
+                "horasServico": 1
+              }
+            ]
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/adicionar-manutencao",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "4d3eeafc-c063-4756-9be3-9bab34bc21d7",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-08-01T15:01:37.559Z",
+      "updatedAt": "2025-08-01T15:01:37.559Z",
+      "role": "workflow:owner",
+      "workflowId": "qeaA6vqU3pTgNJtR",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
