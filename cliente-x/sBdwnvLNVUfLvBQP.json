@@ -1,0 +1,281 @@
+{
+  "createdAt": "2025-07-25T19:05:41.184Z",
+  "updatedAt": "2025-09-23T14:16:17.097Z",
+  "id": "sBdwnvLNVUfLvBQP",
+  "name": "Adiciona novo cliente",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "novo-cliente",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        112
+      ],
+      "id": "b4889f06-ca0b-4b11-be81-52432fe589b5",
+      "name": "Webhook1",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "23cd099d-4fc0-49a5-99d1-3570c3612c2a",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -800,
+        112
+      ],
+      "id": "ecf86789-bef1-46b8-b13e-b55a32c79820",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"Usuário não foi cadastrado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -544,
+        208
+      ],
+      "id": "ca4d3578-ba29-422e-8f01-7f0362b2e3d9",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"message\": \"Sucesso\",\n  \"id_cliente\": {{ $json.data.id_cliente }}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "4f3a3ef6-dcdf-462a-b603-e802ebd3b7c7",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        112
+      ],
+      "id": "b417d299-677b-4092-afec-1d26a80787fb",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/clientes?razao_cliente={{ $('Webhook1').item.json.body.nome }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"razao_cliente\": \"{{ $('Webhook1').item.json.body.nome.toUpperCase() }}\",\n    \"fantasia_cliente\": \"{{ ($('Webhook1').item.json.body.tipoPessoa == 'juridica') ? $('Webhook1').item.json.body.nomeFantasia : '' }}\",\n    \"tipo_pessoa\": \"{{ ($('Webhook1').item.json.body.tipoPessoa == 'fisica') ? 'PF' : 'PJ' }}\",\n    \"tipo_cadastro\": \"Cliente\",\n    \"cnpj_cliente\": \"{{ $('Webhook1').item.json.body.cpf }}\",\n    \"data_nasc_cliente\": \"{{\n  // Verifica se o tipo de pessoa é 'fisica'\n  ($('Webhook1').item.json.body.tipoPessoa == 'fisica')\n  // Se for, formata a data. Se não, retorna uma string vazia.\n  ? $('Webhook1').item.json.body.dataNascimento.split('/').reverse().join('-')\n  : ''\n}}\",\n    \"email_cliente\": \"{{ $('Webhook1').item.json.body.email }}\",\n    \"celular_cliente\": \"{{ $('Webhook1').item.json.body.celular }}\",\n    \"fone_cliente\": \"{{ $('Webhook1').item.json.body.celular }}\",\n    \"cep_cliente\": \"{{ $('Webhook1').item.json.body.cep }}\",\n    \"endereco_cliente\": \"{{ $('Webhook1').item.json.body.endereco }}\",\n    \"numero_cliente\": \"{{ $('Webhook1').item.json.body.numero }}\",\n    \"bairro_cliente\": \"{{ $('Webhook1').item.json.body.bairro }}\",\n    \"cidade_cliente\": \"{{ $('Webhook1').item.json.body.cidade }}\",\n    \"uf_cliente\": \"{{ $('Webhook1').item.json.body.estado }}\",\n    \"complemento_cliente\": \"{{ $('Webhook1').item.json.body.complemento  }} {{ $('Webhook1').item.json.body.referencia }}\",\n    \"contato_cliente\": \"{{ $('Webhook1').item.json.body.nome }}\",\n    \"situacao_cliente\": \"Ativo\"\n}",
+        "options": {}
+      },
+      "id": "90d73dd8-3926-4244-a0cb-822d76978b5d",
+      "name": "Adiciona cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1008,
+        112
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Adiciona cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adiciona cliente": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "356",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "31.97.251.50",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "31.97.251.50"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Francisco Francelino Filho",
+            "userId": 1,
+            "tipoPessoa": "fisica",
+            "cpf": "123.456.789-10",
+            "email": "",
+            "genero": "",
+            "dataNascimento": "12/12/1950",
+            "celular": "(34) 99993-1113",
+            "cep": "38411-178",
+            "endereco": "Rua João Severiano Rodrigues da Cunha",
+            "numero": "860",
+            "bairro": "Jardim Karaíba",
+            "cidade": "Uberlândia",
+            "estado": "MG",
+            "pais": "Brasil",
+            "complemento": ""
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/novo-cliente",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "5712b648-8b35-43c6-8704-a32e6a43fb37",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-07-25T19:05:41.184Z",
+      "updatedAt": "2025-07-25T19:05:41.184Z",
+      "role": "workflow:owner",
+      "workflowId": "sBdwnvLNVUfLvBQP",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
