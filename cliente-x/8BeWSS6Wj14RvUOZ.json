@@ -1,0 +1,375 @@
+{
+  "createdAt": "2025-10-20T20:23:15.759Z",
+  "updatedAt": "2025-10-21T19:35:07.255Z",
+  "id": "8BeWSS6Wj14RvUOZ",
+  "name": "[CONCLUIDO] 🟢 Hidratação leads EXPOCanada da LP",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1392,
+        128
+      ],
+      "id": "d814e5b7-e57f-459d-a065-5f27f1e4a913",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmIxa4zpMmLwrr9L-hiIMcrVgzJqAYlFI4Yehjjr78uzQ3mIidn0aRIE0X-LMG6S_XffTGJfIiL_Mn/pub?output=xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1616,
+        128
+      ],
+      "id": "9aff6e37-7cae-4fc2-9574-0a3b831112d4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "amount": "={{ (new Date().getHours() < 6) ? 21600 : (Math.floor(Math.random() * 300) + 3300) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        224
+      ],
+      "id": "950c8ba0-eb33-46ce-bf84-4fd93bb10470",
+      "name": "Wait",
+      "webhookId": "2e316976-cf2c-45e6-b498-59888199ce8e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28cee801-047f-41b2-b506-0738b003cf31",
+              "name": "nome",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "11dbe355-afd1-4bfa-8e85-617629eea034",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "062e7248-8b84-4e14-8aa8-5c26984be8c1",
+              "name": "telefone",
+              "value": "={{ $json['Phone number'].startsWith('+55') ?  $json['Phone number'].replace('+55', '').replace(/[()\\s-]/g, '') : $json.field_data[4].values[0].replace(/[()\\s-]/g, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "2f23b85f-562a-44c7-abee-129e2e1e4da9",
+              "name": "cidade",
+              "value": "={{\n  $json['Escolha o evento:'].includes('Uberlândia') ? \"1, Uberlândia - MG\" :\n  $json['Escolha o evento:'].includes('Uberaba') ? \"2, Uberaba - MG\" :\n  $json['Escolha o evento:'].includes('Goiânia') ? \"3, Goiânia - GO\" :\n  'Inválido'\n}}",
+              "type": "string"
+            },
+            {
+              "id": "7c43d0b5-aef1-44fd-a08f-5355ae823268",
+              "name": "origem",
+              "value": "=ci",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1136,
+        128
+      ],
+      "id": "31e7f56f-8c94-49c9-a3e4-655970dd2d5c",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        128
+      ],
+      "id": "07f4cc20-0130-45b7-9e30-dd0812cf297a",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -624,
+        112
+      ],
+      "id": "353dcc42-1ec0-45a1-81bb-f21b3397d916",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -48
+      ],
+      "id": "d649251b-0a45-42e7-b5b6-20b4171e2838"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -336,
+        416
+      ],
+      "id": "8c00001e-5f17-4987-98e7-7856fa5c7fcf",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8b7b8d9-f6a1-4007-b199-b3770399b412",
+              "leftValue": "={{ $json.cidade }}",
+              "rightValue": "Inválido",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -912,
+        128
+      ],
+      "id": "f0bfe7b4-d67c-47f6-9b3e-fba2b5cdaa39",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "numero",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "key": "status",
+              "value": "🔴Cidade inválida"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -912,
+        368
+      ],
+      "id": "36239f38-255e-48a6-925a-a3facdffc8b6",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1872,
+        112
+      ],
+      "id": "4a5ed95d-5a17-4335-ba10-467166b31ae9",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "c7528b8d-0104-4216-bd06-89e12535c0ab",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-20T20:23:15.759Z",
+      "updatedAt": "2025-10-20T20:23:15.759Z",
+      "role": "workflow:owner",
+      "workflowId": "8BeWSS6Wj14RvUOZ",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
