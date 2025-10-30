@@ -1,0 +1,28 @@
+{
+  "createdAt": "2025-10-22T14:54:51.119Z",
+  "updatedAt": "2025-10-22T14:54:51.119Z",
+  "id": "feGBueMLwAsyW9NS",
+  "name": "VERIFICAÇÃO NÚMEROS QUE NÃO RECEBERAM",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "91a75036-691f-4956-8d17-03d8cd798c28",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-22T14:54:51.119Z",
+      "updatedAt": "2025-10-22T14:54:51.119Z",
+      "role": "workflow:owner",
+      "workflowId": "feGBueMLwAsyW9NS",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
