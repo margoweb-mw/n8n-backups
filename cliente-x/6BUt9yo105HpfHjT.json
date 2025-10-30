@@ -1,0 +1,413 @@
+{
+  "createdAt": "2025-07-23T18:23:13.610Z",
+  "updatedAt": "2025-09-22T20:19:22.442Z",
+  "id": "6BUt9yo105HpfHjT",
+  "name": "Módulo de inspeção - Validaçao LOGIN",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "testando",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        192
+      ],
+      "id": "a6abd7c7-5684-42ca-b7d6-ccd1f98964f3",
+      "name": "Webhook",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"ok\",\n  \"message\": \"Não existe\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        224
+      ],
+      "id": "eac247cf-837d-40c7-8ab8-bb3395428418",
+      "name": "Respond to Webhook Success"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b6597303-0ffd-4845-a35f-481b17900572",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        400
+      ],
+      "id": "81f06322-2fd7-4e94-84b9-143c2b50181c",
+      "name": "Checks login"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"Credenciais inválidas. Verifique seu usuário e senha.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        416
+      ],
+      "id": "6ad4f2f9-f617-40c7-9720-4598f2329a9a",
+      "name": "Respond to Webhook Failure"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b50f32ed-7a17-415a-af63-30822ce30894",
+              "name": "accessToken",
+              "value": "={{ $json.body.accessToken }}",
+              "type": "string"
+            },
+            {
+              "id": "40daaddf-2cb4-45d7-813c-5af2aa6159d2",
+              "name": "secretToken",
+              "value": "={{ $json.body.secretToken }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        192
+      ],
+      "id": "c06380c9-44b6-4f2b-9b9d-599f8195f5ea",
+      "name": "Tokens"
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.accessToken }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secretToken }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "de69adf9-a59c-4086-9492-1f4e7fba00d7",
+      "name": "1. Pegar todas Ordens de Serviço1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f254ac2c-e6ff-4c3d-a110-cf3119d07301",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        192
+      ],
+      "id": "49f819b5-6a7a-493a-af22-52155091309b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/clientes?limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.accessToken }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secretToken }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a73b672d-90d3-4d6e-9058-c68ae043df8a",
+      "name": "Vê se o login é válido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -48,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"ok\",\n  \"message\": \"Já existe\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        64
+      ],
+      "id": "756d8381-9724-4762-8f4b-3e465a91e83a",
+      "name": "Respond to Webhook Success1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "access",
+              "keyValue": "={{ $('Webhook').item.json.body.accessToken }}"
+            },
+            {
+              "keyName": "secret",
+              "keyValue": "={{ $('Webhook').item.json.body.secretToken }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        464,
+        192
+      ],
+      "id": "05cf420b-f919-45b1-bd4e-9f312a9bff42",
+      "name": "Get a row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Tokens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checks login": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tokens": {
+      "main": [
+        [
+          {
+            "node": "Vê se o login é válido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vê se o login é válido": {
+      "main": [
+        [
+          {
+            "node": "Checks login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Success1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "undici",
+            "content-length": "94",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "179.155.84.74",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "7e487a41def6",
+            "x-real-ip": "179.155.84.74"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "accessToken": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q",
+            "secretToken": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/testando",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "9b867b9d-c76a-406f-9741-19ab762042ca",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-07-23T18:23:13.610Z",
+      "updatedAt": "2025-07-23T18:23:13.610Z",
+      "role": "workflow:owner",
+      "workflowId": "6BUt9yo105HpfHjT",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
