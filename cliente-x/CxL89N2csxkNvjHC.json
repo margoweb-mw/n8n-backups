@@ -1,0 +1,411 @@
+{
+  "createdAt": "2025-10-13T14:00:23.257Z",
+  "updatedAt": "2025-10-14T17:56:02.718Z",
+  "id": "CxL89N2csxkNvjHC",
+  "name": "Automação captação de Leads",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "leads-expo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -896,
+        -80
+      ],
+      "id": "64d30fb4-765d-4ba3-8029-f1acfd162ca7",
+      "name": "Webhook1",
+      "webhookId": "d785c13f-302a-453f-98ff-2459b0efb05a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ced8edb3-b681-4b58-bb0d-7697f0e55c87",
+              "name": "leadgen_id",
+              "value": "={{ $json.body.entry[0].changes[0].value.leadgen_id }}",
+              "type": "string"
+            },
+            {
+              "id": "000c039e-9d02-4344-90ef-6ce01d444db2",
+              "name": "form_id",
+              "value": "={{ $json.body.entry[0].changes[0].value.form_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -672,
+        -80
+      ],
+      "id": "99a827b3-195b-499c-8e31-1d31d91a5c5f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v20.0/{{ $json.leadgen_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        -80
+      ],
+      "id": "bbc0b19f-f8f5-4a66-99d3-edf62bdf8666",
+      "name": "HTTP Request",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "MZjfbWuDbmtbK6af",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28cee801-047f-41b2-b506-0738b003cf31",
+              "name": "nome",
+              "value": "={{ $json.field_data[2].values[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "11dbe355-afd1-4bfa-8e85-617629eea034",
+              "name": "email",
+              "value": "={{ $json.field_data[3].values[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "062e7248-8b84-4e14-8aa8-5c26984be8c1",
+              "name": "telefone",
+              "value": "={{ $json.field_data[4].values[0].startsWith('+55') ?  $json.field_data[4].values[0].replace('+55', '') : $json.field_data[4].values[0].replace(/[()\\s-]/g, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "2f23b85f-562a-44c7-abee-129e2e1e4da9",
+              "name": "cidade",
+              "value": "={{ { '1145815187487905': '1, Uberlândia - MG', '1939494576783712': '2, Uberaba - MG', '1164132798935449': '3, Goiânia - GO' }[$('Edit Fields').item.json.form_id] || 'Inválido' }}",
+              "type": "string"
+            },
+            {
+              "id": "7c43d0b5-aef1-44fd-a08f-5355ae823268",
+              "name": "origem",
+              "value": "=ci",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -80
+      ],
+      "id": "29f8d885-7f5a-451f-b2c0-dcd9befbdeca",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -176
+      ],
+      "id": "27b0d4bc-6700-461e-87c5-daacc024da2f",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "daf1998d-ec3e-4996-a175-e67475cb360d",
+              "leftValue": "={{ $json.cidade }}",
+              "rightValue": "Inválido",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "2f1fd52c-450f-45b5-ba23-f30b4f7d8acf",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        224,
+        16
+      ],
+      "id": "65cec73f-a5b7-404c-b54c-a52745663d7a",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "status",
+              "value": "🟢 Formulário válido"
+            },
+            {
+              "key": "numero",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "key": "nome",
+              "value": "={{ $json.nome }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        -176
+      ],
+      "id": "f5593beb-a5b2-4e77-b4b4-01eac2581050",
+      "name": "Execution Data1"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "status",
+              "value": "🔴 Formulário inválido"
+            },
+            {
+              "key": "numero",
+              "value": "={{ $json.telefone }}"
+            },
+            {
+              "key": "nome",
+              "value": "={{ $json.nome }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        16
+      ],
+      "id": "f0d68b88-56fa-4f9a-ab05-f2a4eafc8222",
+      "name": "Execution Data2"
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Execution Data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Execution Data1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "Webhooks/1.0 (https://fb.me/webhooks)",
+            "content-length": "312",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "66.220.149.28",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-hub-signature": "sha1=1301cda25db40d681059618234d70c17b806c641",
+            "x-hub-signature-256": "sha256=dfb1ab9ab702107ad193998f3018f3dc70ecf2fa891df2ca81f1e6c9950e7e6b",
+            "x-real-ip": "66.220.149.28",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "entry": [
+              {
+                "id": "220587001128470",
+                "time": 1760402723,
+                "changes": [
+                  {
+                    "value": {
+                      "adgroup_id": "120234991782450169",
+                      "ad_id": "120234991782450169",
+                      "created_time": 1760402719,
+                      "leadgen_id": "2143795009477097",
+                      "page_id": "220587001128470",
+                      "form_id": "1164132798935449"
+                    },
+                    "field": "leadgen"
+                  }
+                ]
+              }
+            ],
+            "object": "page"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/leads-expo",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "80e53876-79de-4466-a3ed-193db97e6d02",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-13T14:00:23.257Z",
+      "updatedAt": "2025-10-13T14:00:23.257Z",
+      "role": "workflow:owner",
+      "workflowId": "CxL89N2csxkNvjHC",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
