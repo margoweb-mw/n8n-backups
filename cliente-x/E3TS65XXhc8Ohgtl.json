@@ -1,0 +1,797 @@
+{
+  "createdAt": "2025-10-22T14:20:24.928Z",
+  "updatedAt": "2025-10-29T18:07:23.790Z",
+  "id": "E3TS65XXhc8Ohgtl",
+  "name": "[CONCLUIDO] CRON JOB 🟢 Disparo de leads incompletos v3",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "datas_evento",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Normalização').item.json.id_evento }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        288
+      ],
+      "id": "2e666af6-82fa-4d0a-887d-99f1e4d66e5b",
+      "name": "Get a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendMedia/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $('Normalização').item.json.telefone }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "=image"
+            },
+            {
+              "name": "media",
+              "value": "={{ $('Get a row2').item.json.img_disparo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "955d517f-74ec-4dfa-9241-d45535daeaf3",
+      "name": "Enviar Imagem [Evolution]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        288
+      ],
+      "executeOnce": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{$('Normalização').item.json.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "=*EXPOCanada 2025*\nSua jornada começa agora!\n\nOlá {{ $('Normalização').item.json.nome.split(' ')[0]}}, tudo bem?\n*SUA INSCRIÇÃO FOI CONFIRMADA!*\n\nEstamos muito felizes por estar conosco nessa jornada rumo a novas oportunidades!\n\nVocê receberá seu ingresso e todas as informações sobre o evento através do e-mail.\n\nPara receber aqui neste WhatsApp, responda esta mensagem.\n\nAtenciosamente,\nEquipe EXPOCanada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c3517924-87aa-452e-96ee-eabf809cbe87",
+      "name": "Msg de inscrição confirmada1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2528,
+        288
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        112
+      ],
+      "id": "66a4583f-3547-407b-95af-98717bdd6e1f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ae236030-5910-42d4-bc3e-e778f11469fb",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "28cee801-047f-41b2-b506-0738b003cf31",
+              "name": "nome",
+              "value": "={{ $json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "062e7248-8b84-4e14-8aa8-5c26984be8c1",
+              "name": "telefone",
+              "value": "={{ $json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "824d9c4b-c38a-4ef3-8692-1e740000ffda",
+              "name": "id_evento",
+              "value": "={{ $json.id_evento }}",
+              "type": "string"
+            },
+            {
+              "id": "b32f466b-acbf-43c9-aca0-ee48b50dfe5a",
+              "name": "disp_inscricao",
+              "value": "={{ $json.disp_inscricao }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        288
+      ],
+      "id": "c5badb56-7271-49f3-91e4-1f5babb7d0a4",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "content": "# DISPARO LEADS INCOMPLETOS",
+        "height": 80,
+        "width": 576,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "f05c6e1e-650e-40cf-bf21-aba46dfc5b10",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 496,
+        "width": 3344,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "513c53c3-099c-4db5-a1e2-fe4c2bc570fc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "path": "leads-incompletos-v2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        304,
+        224
+      ],
+      "id": "60fcd297-6e86-47d3-bd6b-a35d412fd570",
+      "name": "Webhook",
+      "webhookId": "90a5e1a2-74f7-447b-8c93-b13d9d8bab63"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1024,
+        224
+      ],
+      "id": "9efad0b4-8580-4800-9746-cee276bddb72",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        240,
+        1056
+      ],
+      "id": "c24eec81-ea26-4509-bb16-bb903821b1b9",
+      "name": "Leads já disparados na janela de tempo especificada"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads_expo_canada",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "created_at",
+              "condition": "gte",
+              "keyValue": "'2025-10-18 11:40:00'"
+            },
+            {
+              "keyName": "created_at",
+              "condition": "lte",
+              "keyValue": "'2025-10-19 15:27:00'"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        240,
+        832
+      ],
+      "id": "fe18f5bf-60ec-4856-85da-abc736558490",
+      "name": "Filtro dia 18-19",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads_expo_canada",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "created_at",
+              "condition": "gt",
+              "keyValue": "'2025-10-22 19:18:00'"
+            },
+            {
+              "keyName": "created_at",
+              "condition": "lt",
+              "keyValue": "'2025-10-23 19:18:00'"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        240,
+        608
+      ],
+      "id": "eb8d2455-ac6d-4d60-ba9b-b22a923a8ddd",
+      "name": "Filtro dia 22-23",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "nome",
+              "value": "={{ $('Normalização').item.json.nome }}"
+            },
+            {
+              "key": "numero",
+              "value": "={{ $('Normalização').item.json.telefone }}"
+            },
+            {
+              "key": "status",
+              "value": "🔴 Disparo não realizado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        2976,
+        288
+      ],
+      "id": "91765f5c-34ec-4026-915c-b9c571b10457",
+      "name": "🟢 Execution Data SUCESSO"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "nome",
+              "value": "={{ $('Normalização').item.json.nome }}"
+            },
+            {
+              "key": "numero",
+              "value": "={{ $('Normalização').item.json.telefone }}"
+            },
+            {
+              "key": "status",
+              "value": "🔴 Disparo não realizado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        608
+      ],
+      "id": "8fa71382-09eb-4d26-a843-1c497f806568",
+      "name": "🔴 Execution Data FRACASSO"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalização').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "disp_inscricao",
+              "fieldValue": "={\"created_at\":\"{{ $now }}\",\"status_wpp\":true,\"status_email\":true}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        288
+      ],
+      "id": "c0db86fb-814e-4527-8436-daee845ad4ec",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        3184,
+        288
+      ],
+      "id": "e346fcb7-aa39-47ab-a64c-51542202a277"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me2",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        608
+      ],
+      "id": "08371c58-2638-4aa7-8de6-0d22067a56fe"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "obj",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        784,
+        224
+      ],
+      "id": "623e1142-f169-4f4d-bbc0-326f8933336b",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads_expo_canada",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telefone",
+              "keyValue": "={{ $json.telefone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        288
+      ],
+      "id": "edf4174f-aa72-437d-b981-cb879cf5719f",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ddc9118-e97d-46fa-bff2-897935b216e1",
+              "name": "obj",
+              "value": "[\n  {\n    \"telefone\": \"62996371086\"\n  },\n  {\n    \"telefone\": \"062982640741\"\n  },\n  {\n    \"telefone\": \"3488861450\"\n  },\n  {\n    \"telefone\": \"62999485228\"\n  },\n  {\n    \"telefone\": \"5519995136043\"\n  },\n  {\n    \"telefone\": \"3484178287\"\n  }\n]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        224
+      ],
+      "id": "e29cf67a-868a-4fea-8bf2-99fc8b19144c",
+      "name": "JSON LEADS INCOMPLETOS"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ddc9118-e97d-46fa-bff2-897935b216e1",
+              "name": "obj",
+              "value": "[ {     \"telefone\": \"34988344027\"   },   {     \"telefone\": \"61993735610\"   },   {     \"telefone\": \"34991643423\"   },   {     \"telefone\": \"62999988932\"   },   {     \"telefone\": \"34992510807\"   },   {     \"telefone\": \"62985465088\"   },   {     \"telefone\": \"34984095551\"   },   {     \"telefone\": \"62983105105\"   },   {     \"telefone\": \"64984249156\"   },   {     \"telefone\": \"34984089537\"   },   {     \"telefone\": \"62982362795\"   },   {     \"telefone\": \"62992456763\"   },   {     \"telefone\": \"62982060275\"   },   {     \"telefone\": \"94992634076\"   },   {     \"telefone\": \"62984030008\"   },   {     \"telefone\": \"38988089118\"   },   {     \"telefone\": \"62985100004\"   },   {     \"telefone\": \"62993575386\"   },   {     \"telefone\": \"5519995136043\"   },   {     \"telefone\": \"34991768819\"   },   {     \"telefone\": \"34984431441\"   },   {     \"telefone\": \"34998921808\"   },   {     \"telefone\": \"6291659806\"   },   {     \"telefone\": \"62999485228\"   },   {     \"telefone\": \"62991903734\"   },   {     \"telefone\": \"62998327369\"   },   {     \"telefone\": \"62981439100\"   },   {     \"telefone\": \"62981490782\"   },   {     \"telefone\": \"64993238853\"   },   {     \"telefone\": \"62996646896\"   },   {     \"telefone\": \"62994562233\"   },   {     \"telefone\": \"34999171879\"   },   {     \"telefone\": \"42999487035\"   },   {     \"telefone\": \"34998027806\"   },   {     \"telefone\": \"34991786466\"   },   {     \"telefone\": \"34988643609\"   },   {     \"telefone\": \"62992098618\"   },   {     \"telefone\": \"62998238129\"   },   {     \"telefone\": \"34998974585\"   },   {     \"telefone\": \"62998363716\"   },   {     \"telefone\": \"62996459558\"   },   {     \"telefone\": \"62981433527\"   },   {     \"telefone\": \"64999567531\"   },   {     \"telefone\": \"62993799483\"   },   {     \"telefone\": \"62991517280\"   },   {     \"telefone\": \"62982263512\"   },   {     \"telefone\": \"3488322238\"   },   {     \"telefone\": \"62983241235\"   },   {     \"telefone\": \"64993436477\"   },   {     \"telefone\": \"61992966822\"   },   {     \"telefone\": \"62983327878\"   },   {     \"telefone\": \"62996310024\"   },   {     \"telefone\": \"62981990451\"   },   {     \"telefone\": \"34996675653\"   },   {     \"telefone\": \"34988246002\"   },   {     \"telefone\": \"62992117409\"   },   {     \"telefone\": \"34991674922\"   },   {     \"telefone\": \"61984364423\"   },   {     \"telefone\": \"64992558511\"   },   {     \"telefone\": \"34996949323\"   },   {     \"telefone\": \"62993798560\"   },   {     \"telefone\": \"62981601993\"   },   {     \"telefone\": \"91982176719\"   },   {     \"telefone\": \"34998080609\"   },   {     \"telefone\": \"34999044416\"   },   {     \"telefone\": \"34988344699\"   },   {     \"telefone\": \"62995416364\"   },   {     \"telefone\": \"34992037312\"   },   {     \"telefone\": \"64992813623\"   },   {     \"telefone\": \"61996727438\"   },   {     \"telefone\": \"34988535291\"   },   {     \"telefone\": \"62993967646\"   },   {     \"telefone\": \"3498282799\"   },   {     \"telefone\": \"62991010065\"   },   {     \"telefone\": \"62991476071\"   },   {     \"telefone\": \"62996628853\"   },   {     \"telefone\": \"34991027209\"   },   {     \"telefone\": \"6284640736\"   },   {     \"telefone\": \"62998987258\"   },   {     \"telefone\": \"62999508871\"   },   {     \"telefone\": \"62992565044\"   },   {     \"telefone\": \"64993419887\"   },   {     \"telefone\": \"062982640741\"   },   {     \"telefone\": \"34998746549\"   },   {     \"telefone\": \"62991427338\"   },   {     \"telefone\": \"34991599870\"   },   {     \"telefone\": \"34997817577\"   },   {     \"telefone\": \"62995718383\"   },   {     \"telefone\": \"34993057269\"   },   {     \"telefone\": \"18996706983\"   },   {     \"telefone\": \"3499500243\"   },   {     \"telefone\": \"62996917778\"   },   {     \"telefone\": \"62991238901\"   },   {     \"telefone\": \"64992299364\"   },   {     \"telefone\": \"62996371086\"   },   {     \"telefone\": \"21983330400\"   },   {     \"telefone\": \"34998702848\"   },   {     \"telefone\": \"62994473526\"   },   {     \"telefone\": \"62995187907\"   },   {     \"telefone\": \"3496714854\"   },   {     \"telefone\": \"11989722964\"   },   {     \"telefone\": \"62994575453\"   },   {     \"telefone\": \"19982193019\"   },   {     \"telefone\": \"62994786161\"   },   {     \"telefone\": \"62992844545\"   },   {     \"telefone\": \"62985243605\"   },   {     \"telefone\": \"34992080325\"   },   {     \"telefone\": \"34988300409\"   },   {     \"telefone\": \"34997726047\"   },   {     \"telefone\": \"3488861450\"   },   {     \"telefone\": \"64993094214\"   },   {     \"telefone\": \"83986905647\"   },   {     \"telefone\": \"62992083058\"   },   {     \"telefone\": \"62996362980\"   },   {     \"telefone\": \"34991100306\"   },   {     \"telefone\": \"62999610190\"   },   {     \"telefone\": \"64984461336\"   },   {     \"telefone\": \"66992392586\"   },   {     \"telefone\": \"61983428392\"   },   {     \"telefone\": \"61991000712\"   },   {     \"telefone\": \"34991965136\"   },   {     \"telefone\": \"61995935901\"   },   {     \"telefone\": \"5561995935901\"   },   {     \"telefone\": \"64993275872\"   },   {     \"telefone\": \"34999793253\"   },   {     \"telefone\": \"3498862813\"   },   {     \"telefone\": \"62983259228\"   },   {     \"telefone\": \"62993113532\"   },   {     \"telefone\": \"3499980053\"   },   {     \"telefone\": \"34993239147\"   },   {     \"telefone\": \"66984381257\"   },   {     \"telefone\": \"62991177871\"   },   {     \"telefone\": \"62993201757\"   },   {     \"telefone\": \"34992070749\"   },   {     \"telefone\": \"34992116097\"   }]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        608
+      ],
+      "id": "3d111d9b-1645-4b75-81dd-1d0c1a102334",
+      "name": "JSON LEADS INCOMPLETOS1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7ccdaae8-069a-4437-b2ea-5ce35f24b2b2",
+              "leftValue": "={{ $json.disp_inscricao.status_wpp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        288
+      ],
+      "id": "71e5b07d-a2f9-41ed-9e42-b4cd15083bbd",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Imagem [Evolution]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Imagem [Evolution]": {
+      "main": [
+        [
+          {
+            "node": "Msg de inscrição confirmada1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔴 Execution Data FRACASSO",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg de inscrição confirmada1": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔴 Execution Data FRACASSO",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "JSON LEADS INCOMPLETOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro dia 18-19": {
+      "main": [
+        []
+      ]
+    },
+    "Filtro dia 22-23": {
+      "main": [
+        []
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "🟢 Execution Data SUCESSO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟢 Execution Data SUCESSO": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔴 Execution Data FRACASSO": {
+      "main": [
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON LEADS INCOMPLETOS": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "pg_net/0.19.5",
+            "accept": "*/*",
+            "x-forwarded-for": "56.125.84.85",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "56.125.84.85",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/leads-incompletos-v2",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "6cdd568b-b656-4af9-9b4a-4eb83dadde42",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-22T14:20:24.928Z",
+      "updatedAt": "2025-10-22T14:20:24.928Z",
+      "role": "workflow:owner",
+      "workflowId": "E3TS65XXhc8Ohgtl",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
