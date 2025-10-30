@@ -1,0 +1,354 @@
+{
+  "createdAt": "2025-10-17T19:26:05.998Z",
+  "updatedAt": "2025-10-20T20:22:39.186Z",
+  "id": "7fpNiyy4ndDZ6pWh",
+  "name": "🌐 Disparo de Leads Incompletos",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendMedia/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $('Webhook').item.json.body.telefone }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "=image"
+            },
+            {
+              "name": "media",
+              "value": "={{ $json.img_disparo }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "be99acef-7700-4e44-90c9-217df4c47c6a",
+      "name": "Enviar Imagem [Evolution]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        -144
+      ],
+      "executeOnce": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=55{{ $('Webhook').item.json.body.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "=*EXPOCanada 2025*\nSua jornada começa agora!\n\nOlá {{  $('Webhook').item.json.body.nome.split(' ')[0]}}, tudo bem?\n*SUA INSCRIÇÃO FOI CONFIRMADA!*\n\nEstamos muito felizes por estar conosco nessa jornada rumo a novas oportunidades!\n\nVocê receberá seu ingresso e todas as informações sobre o evento através do e-mail.\n\nPara receber aqui neste WhatsApp, responda esta mensagem.\n\nAtenciosamente,\nEquipe EXPOCanada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad6159d4-3943-4807-8e4e-fe77b586a5de",
+      "name": "Msg de inscrição confirmada1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -144
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "disparo-incompletos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "4b2138c5-3dd2-4752-89fa-3fdec1d65acc",
+      "name": "Webhook",
+      "webhookId": "6147aa93-5219-4903-aaf3-e3b0528043e1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "40ae4c04-e3eb-450e-9114-c07e9e9bf707",
+              "leftValue": "={{ $json.body.disparado }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        -48
+      ],
+      "id": "33d56beb-e121-439f-a162-feb9ca501a66",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "telefone",
+              "value": "={{ $('Webhook').item.json.body.telefone }}"
+            },
+            {
+              "key": "status",
+              "value": "🟢 Status disparado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        -144
+      ],
+      "id": "5b6946f0-b35c-4e5a-9ed0-92425d7a7129",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "telefone"
+            },
+            {
+              "key": "status",
+              "value": "🔴 Já foi disparado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        80
+      ],
+      "id": "69bd98e1-33b5-41ea-973d-74595c660716",
+      "name": "Execution Data1"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        -144
+      ],
+      "id": "e1efe987-82b5-46ac-8739-67d95d3f20eb",
+      "name": "Wait",
+      "webhookId": "14fc3330-c7b0-42cf-8350-226de44d0484"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "datas_evento",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.body.id_evento }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -144
+      ],
+      "id": "ce0938cd-3b98-4a50-a4c5-ee05531b958c",
+      "name": "Get a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Enviar Imagem [Evolution]": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg de inscrição confirmada1": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Msg de inscrição confirmada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Imagem [Evolution]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "axios/1.8.3",
+            "content-length": "80",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nome": "Davi Mata",
+            "telefone": "62993705307",
+            "id_evento": "3",
+            "disparado": "true"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/disparo-incompletos",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "7a887985-5388-4907-b01e-88c62a7a3f9e",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-17T19:26:05.998Z",
+      "updatedAt": "2025-10-17T19:26:05.998Z",
+      "role": "workflow:owner",
+      "workflowId": "7fpNiyy4ndDZ6pWh",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
