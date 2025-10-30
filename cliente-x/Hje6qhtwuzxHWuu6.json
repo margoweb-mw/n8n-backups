@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-10-27T18:51:09.436Z",
-  "updatedAt": "2025-10-30T13:20:17.916Z",
+  "updatedAt": "2025-10-30T20:58:09.121Z",
   "id": "Hje6qhtwuzxHWuu6",
   "name": "[EM ANDAMENTO] CRON JOB 🟡 Disparo de QR Codes v1",
-  "active": true,
+  "active": false,
   "isArchived": false,
   "nodes": [
     {
@@ -637,6 +637,19 @@
       ],
       "id": "63068053-cf4b-417b-8b3f-b779acd2676a",
       "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        144
+      ],
+      "id": "a8d91a78-0321-49c3-8e68-50dccc689243",
+      "name": "Nó de teste"
     }
   ],
   "connections": {
@@ -5648,7 +5661,7 @@
       }
     ]
   },
-  "versionId": "efabab9c-59a6-47f9-9fa0-abc74b57ce80",
+  "versionId": "5258d3a1-7610-4d61-8909-693490273008",
   "triggerCount": 1,
   "shared": [
     {
