@@ -1,0 +1,318 @@
+{
+  "createdAt": "2025-07-25T20:16:20.633Z",
+  "updatedAt": "2025-07-25T20:46:30.695Z",
+  "id": "Rg2qAjUu6wL5osLJ",
+  "name": "Adiciona nova ordem de serviço",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"ok\",\n  \"message\": \"Nova ordem de serviço cadastrada\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -880,
+        -192
+      ],
+      "id": "4a189b58-1fc8-4fab-b32e-c7bceae6baef",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nova-ordem-servico",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1808,
+        -112
+      ],
+      "id": "a0bacdac-0941-4996-9e49-e2cc8f9ee8dc",
+      "name": "Webhook1",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.idPai }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        -112
+      ],
+      "id": "20db0a80-f15c-47fe-a587-d59fa63d406c",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IZqVBWuIqpPTpAtb",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "23cd099d-4fc0-49a5-99d1-3570c3612c2a",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        -112
+      ],
+      "id": "41287d61-b65a-4ee5-b95d-b28d5b82773f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"Falha ao cadastrar nova ordem de serviço\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -880,
+        -16
+      ],
+      "id": "1c162fa7-3f78-41b5-8af1-8ac30d3057d1",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.vhsys.com/v2/ordens-servico?nome_cliente={{ $('Webhook1').item.json.body.nomeCliente }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "problema_ordem",
+              "value": "={{ $json.obs }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0319c0ed-9e73-438c-9f82-bbeee90f1538",
+      "name": "Ordem serviço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1232,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1e83984-eedf-44e7-bdff-ffc4b94f91d8",
+              "name": "obs",
+              "value": "=Limpador: {{ $('Webhook1').item.json.body.inspecao.limpador ? $('Webhook1').item.json.body.inspecao.limpador : 'Não preenchido' }}\nExtintor: {{ $('Webhook1').item.json.body.inspecao.extintor ? $('Webhook1').item.json.body.inspecao.extintor : 'Não preenchido' }}\nBuzina: {{ $('Webhook1').item.json.body.inspecao.buzina ? $('Webhook1').item.json.body.inspecao.buzina : 'Não preenchido' }}\nCinto: {{ $('Webhook1').item.json.body.inspecao.cinto ? $('Webhook1').item.json.body.inspecao.cinto : 'Não preenchido' }}\nFreio: {{ $('Webhook1').item.json.body.inspecao.freio ? $('Webhook1').item.json.body.inspecao.freio : 'Não preenchido' }}\nVolante: {{ $('Webhook1').item.json.body.inspecao.volante ? $('Webhook1').item.json.body.inspecao.volante : 'Não preenchido' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1440,
+        -112
+      ],
+      "id": "02a21cfd-ac01-4376-9084-af54d384b3ba",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordem serviço": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Ordem serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "undici",
+            "content-length": "189",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "179.155.84.74",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "071d7a5e985a",
+            "x-real-ip": "179.155.84.74"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "idPai": "1",
+            "idCliente": "37555454",
+            "nomeCliente": "MW T1",
+            "inspecao": {
+              "limpador": "",
+              "extintor": "atencao",
+              "buzina": "atencao",
+              "cinto": "nao_aplica",
+              "freio": "nao_aplica",
+              "volante": "reprovado"
+            }
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/nova-ordem-servico",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "269084eb-079c-4fa0-a6cc-4ee7a88f0201",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-07-25T20:16:20.633Z",
+      "updatedAt": "2025-07-25T20:16:20.633Z",
+      "role": "workflow:owner",
+      "workflowId": "Rg2qAjUu6wL5osLJ",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
