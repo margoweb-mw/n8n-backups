@@ -1,0 +1,320 @@
+{
+  "createdAt": "2025-09-05T17:01:21.405Z",
+  "updatedAt": "2025-09-17T18:05:19.230Z",
+  "id": "47TANoQZKDyGy12r",
+  "name": "Contagem de OS por cliente e última data",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"contagem_os\" : {{ $json.contagem_os_cliente }},\n  \"data_ultima_os\" : \"{{ $json.data_ultima_os }}\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1120,
+        -304
+      ],
+      "id": "5dec3abe-7640-4995-aa31-23c54d78d538",
+      "name": "Resposta contagem OS por cliente"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ad0559cc-93fc-471b-88ed-64e0d189a514",
+              "name": "contagem_os_cliente",
+              "value": "={{ $json.paging.total_count }}",
+              "type": "number"
+            },
+            {
+              "id": "591ca2de-9024-484a-a034-20be53b591e0",
+              "name": "data_ultima_os",
+              "value": "={{ new Date($json.data[0].data_pedido + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase().replace(/ DE /g, ' ').replace(/\\./, \"\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        -304
+      ],
+      "id": "082abcb4-ca92-4854-aeea-c37ae0b9dc7a",
+      "name": "Set fields da contagem de OS do cliente"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contagem-os",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        -208
+      ],
+      "id": "8567419c-bb3f-45bb-9e8f-037cc8648b47",
+      "name": "Webhook",
+      "webhookId": "87bbbf79-55b5-4410-bfe3-e12f1df023b1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico?nome_cliente={{ $('Webhook').item.json.body.nome_cliente }}&order=data_mod_pedido&sort=desc&limit=250&lixeira=nao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b609d5d-d1c6-48b9-a4fc-52ef322e8068",
+      "name": "Contagem de ordens de serviço por cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -208
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a9ccfc95-0226-4530-a27e-f3e60cd1f697",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -208
+      ],
+      "id": "e070787b-0676-49be-aeb0-a7a0100b5d85",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"contagem_os\" : \"N/A\",\n  \"data_ultima_os\" : \"N/A\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "81cd0417-3275-4992-964e-c9c456b00369",
+      "name": "Resposta contagem OS por cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.user_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -208
+      ],
+      "id": "0d35df83-e5a3-4012-ad06-7633af95435a",
+      "name": "Get a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"contagem_os\" : \"N/A\",\n  \"data_ultima_os\" : \"N/A\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        -32
+      ],
+      "id": "c894040f-88a6-4d03-b2a4-9c6eabe7e841",
+      "name": "Resposta contagem OS por cliente2"
+    }
+  ],
+  "connections": {
+    "Set fields da contagem de OS do cliente": {
+      "main": [
+        [
+          {
+            "node": "Resposta contagem OS por cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contagem de ordens de serviço por cliente": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resposta contagem OS por cliente2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Set fields da contagem de OS do cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resposta contagem OS por cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "Contagem de ordens de serviço por cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "54",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "31.97.251.50",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a60fcd78b7ac",
+            "x-real-ip": "31.97.251.50"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "user_id": 1,
+            "nome_cliente": "Cliente não atribuído"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/contagem-os",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "a24f311d-b260-4614-95e4-282fe3830933",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-05T17:01:21.405Z",
+      "updatedAt": "2025-09-05T17:01:21.405Z",
+      "role": "workflow:owner",
+      "workflowId": "47TANoQZKDyGy12r",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
