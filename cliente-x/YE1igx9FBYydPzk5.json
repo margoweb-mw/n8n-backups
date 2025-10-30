@@ -1,0 +1,379 @@
+{
+  "createdAt": "2025-07-25T17:16:05.831Z",
+  "updatedAt": "2025-07-25T20:50:20.292Z",
+  "id": "YE1igx9FBYydPzk5",
+  "name": "Puxa carros do cliente",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/clientes/{{ $('Webhook1').item.json.body.clienteId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "={{ $json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ca61c0da-feec-4468-b06b-3f7b2d7654a8",
+      "name": "Puxa clientes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1056,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        32
+      ],
+      "id": "0d39060d-31de-437a-8710-9dfc94b9078b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "listar-carros",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1504,
+        64
+      ],
+      "id": "92f5d69d-1024-4fec-96ae-8f1d5eb3bebf",
+      "name": "Webhook1",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        64
+      ],
+      "id": "808d0c61-330f-4929-9436-2f9f219d52dd",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "IZqVBWuIqpPTpAtb",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "23cd099d-4fc0-49a5-99d1-3570c3612c2a",
+              "leftValue": "={{ $json.data[\"veiculos:\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        64
+      ],
+      "id": "f7c64290-289e-4951-9151-d3c2457688ef",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data[\"veiculos:\"]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -32
+      ],
+      "id": "22f8a9cd-e92d-45ac-8afc-0449888dd8e2",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/produtos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "=u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "=ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f2fc3b10-9b1d-45b8-8555-77c4ba9fbcae",
+      "name": "Puxa clientes1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        -304
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1216,
+        -304
+      ],
+      "id": "25afe86e-b93c-4cc1-b01a-2f85c5f159ec",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "450fd278-928a-4e8e-948f-76b50b3b8ef7",
+              "name": "placa",
+              "value": "={{ $json.placa }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        -48
+      ],
+      "id": "86cfa715-e898-4b1a-b340-e89734da4a85",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"ok\",\n  \"message\": \"Usuário não tem veiculo cadastrado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -592,
+        160
+      ],
+      "id": "49c8e2c6-245e-4de3-a486-905f4d5af885",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "connections": {
+    "Puxa clientes": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Puxa clientes1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "undici",
+            "content-length": "37",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "179.155.84.74",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "071d7a5e985a",
+            "x-real-ip": "179.155.84.74"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "userId": "1",
+            "clienteId": "34725816"
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/listar-carros",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "0150f4db-4eda-42be-b465-4964befa8994",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-07-25T17:16:05.831Z",
+      "updatedAt": "2025-07-25T17:16:05.831Z",
+      "role": "workflow:owner",
+      "workflowId": "YE1igx9FBYydPzk5",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
