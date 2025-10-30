@@ -1,0 +1,3452 @@
+{
+  "createdAt": "2025-07-23T14:27:20.427Z",
+  "updatedAt": "2025-09-17T20:44:07.137Z",
+  "id": "FYocDHgd54bHDdvV",
+  "name": "Automação VHSYS",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.vhsys.com/v2/ordens-servico?order&sort&limit=1000000offset&nome_cliente&vendedor&status&lixeira=Nao&data_modificacao",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7ce94aff-b9ea-4539-a59b-01ded90ce490",
+      "name": "1. Pegar todas Ordens de Serviço",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/ordens-servico/{{$json.id_ordem}}/servicos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "8648f4a2-7676-4a0d-aec8-29e1a93b2ed6",
+      "name": "3. Pegar Serviços da Ordem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        416
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9203ddb-e85d-4f15-9cae-3f982845c822",
+              "name": "dados",
+              "type": "object",
+              "value": "={{ $('2. Divide todo o JSON').item.json }}"
+            },
+            {
+              "id": "0df0061e-18be-4d19-9477-93e8787a70a8",
+              "name": "servicos",
+              "type": "auto",
+              "value": "={{ $json.data.map(item => item.desc_servico) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7953eb12-8ba2-4c61-be3a-2b72cac468fb",
+      "name": "4. Juntar Ordem + Serviços",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        272,
+        144
+      ],
+      "id": "57cb18b8-fb86-48f1-a3ea-ac5c0919c176",
+      "name": "2. Divide todo o JSON"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        288
+      ],
+      "id": "c3553b6c-c75a-43db-b45a-44dd106de33a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.sociostech.cloud/message/sendText/Nirma - Esteticista",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=553496389988"
+            },
+            {
+              "name": "text",
+              "value": "=Envia"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a16f45d3-dc14-4ace-bf44-f2d5d27ea8c8",
+      "name": "Enviar Mensagem [EvolutionAPI]",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1280,
+        1136
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/clientes/{{ $json.dados.id_cliente }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "u6Lg0x7PkLd8n0w3s0VLMzXoDvOk1Q"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "ZFcNk0bMkW2ep0cwqJPXy5W5uKjA2"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "d472d72e-04e9-4028-933e-f2cdeb999686",
+      "name": "Pegar número do cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        672
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b9b24d2-609f-432d-b48f-6c737f81f35a",
+              "leftValue": "={{ $json.data.celular_cliente }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        928
+      ],
+      "id": "348a3473-8c5f-4530-8bd2-c9d589bff5ce",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93d0b085-8113-48d1-b50b-c0df80871dd6",
+              "name": "whatsapp",
+              "value": "={{ \"55\" + $json.data.celular_cliente.replace(/\\D/g, '') }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        912
+      ],
+      "id": "918bf8ad-3311-41de-8686-8477a08445af",
+      "name": "Normaliza whatsapp"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "VHSYS",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ordem_id",
+              "keyValue": "={{ $('Verificação datas e serviço').item.json.dados.id_ordem }}"
+            },
+            {
+              "keyName": "servico",
+              "keyValue": "={{ $('Parâmetro tipo de serviço').item.json.tipo_servico_mw }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        512
+      ],
+      "id": "3ad5b32b-894a-40c0-b59a-9666243726ad",
+      "name": "Supabase",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "tableId": "VHSYS",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "whatsapp",
+              "fieldValue": "={{ $('Normaliza whatsapp').item.json.whatsapp }}"
+            },
+            {
+              "fieldId": "servico",
+              "fieldValue": "={{ $('Parâmetro tipo de serviço').item.json.tipo_servico_mw }}"
+            },
+            {
+              "fieldId": "ordem_id",
+              "fieldValue": "={{ $('Verificação datas e serviço').item.json.dados.id_ordem }}"
+            },
+            {
+              "fieldId": "follow_up",
+              "fieldValue": "1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        272
+      ],
+      "id": "bd3f5983-a32d-40ea-bfca-643d36b57b9c",
+      "name": "Supabase1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        592,
+        912
+      ],
+      "id": "29dadcc6-bf4c-4cea-96bd-adc1d70733bd",
+      "name": "Loop Over Items",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7551a529-0193-42ee-86ff-22681a23895f",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        512
+      ],
+      "id": "d0a5def0-df69-48da-9074-296a9db9917f",
+      "name": "Vê se tá vazio",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c9e81161-a14f-442b-8450-bb85879596c4",
+              "leftValue": "={{ $json.follow_up }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        912
+      ],
+      "id": "df6ca0cc-cbfc-4e1e-842f-2dfbd46488a6",
+      "name": "If2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        848
+      ],
+      "id": "8692d331-4f3b-4ffb-a6a4-a20e74a2dce4",
+      "name": "Wait",
+      "webhookId": "a60ab634-99cd-4f6a-ac81-a94b52261dd0",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        848
+      ],
+      "id": "525128aa-2d64-4d95-a79f-77f02b07864d",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1776,
+        336
+      ],
+      "id": "e9065965-346f-4892-a116-7baa60c75617",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e303fc-eb5b-45de-b136-467efe13c6c6",
+              "leftValue": "={{ $json.servicos }}",
+              "rightValue": "=TROCA DE OLEO",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            },
+            {
+              "id": "7ae9fd99-8980-4369-bddc-47eb5ec7fb08",
+              "leftValue": "={{ $now.toISODate() }}",
+              "rightValue": "={{ DateTime.fromISO($json.dados.data_entrega).plus({months:1}).toISODate() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            },
+            {
+              "id": "262020ee-49a8-4edf-8080-b4f725025d18",
+              "leftValue": "={{ $now.toISODate() }}",
+              "rightValue": "={{ DateTime.fromISO($json.dados.data_entrega).plus({months: 6}).toISODate() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1200,
+        544
+      ],
+      "id": "532fe3d4-12bd-44c2-bbfa-d60f59ae70dd",
+      "name": "If3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2561d1b5-9293-469a-a5c5-7c82ff315a0e",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": "404",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1504,
+        544
+      ],
+      "id": "2fbb35f0-ca8b-414b-87ca-38b1f5474817",
+      "name": "If4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "198fc576-bb40-4f67-9e95-5a3cb70a3941",
+              "name": "dados.id_ordem",
+              "value": "={{ $('4. Juntar Ordem + Serviços').item.json.dados }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1504,
+        336
+      ],
+      "id": "f36c3312-1958-4670-980d-c0f381b097b1",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vhsys.com/v2/clientes/{{ $json.dados.id_cliente }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "access-token",
+              "value": "XYFPXWFIPDPXTAEZCTFfeGCQPXfUVf"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "y1UKh6W4OcPxM2Y4OGcLi7M3IFlKSQ6"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "6484b1a3-c386-44cd-93ce-b6562405f78c",
+      "name": "Pegar número do cliente1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1776,
+        544
+      ],
+      "disabled": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "### Lembrar de verificar clientes que foram excluidos e tratar de acordo\n",
+        "height": 80,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        336
+      ],
+      "id": "c7e60a5d-4b01-4630-942c-21d6cc868a15",
+      "name": "Sticky Note",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e303fc-eb5b-45de-b136-467efe13c6c6",
+              "leftValue": "={{ $json.servicos }}",
+              "rightValue": "={{ $('Parâmetro tipo de serviço').item.json.tipo_servico_mw }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        672
+      ],
+      "id": "4e5f2301-e361-4bf3-9598-d1a03bbe2dd3",
+      "name": "Verificação datas e serviço"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "60f0a4ee-b824-4ce9-9b8f-2d34fadbb413",
+              "name": "tipo_servico_mw",
+              "value": "TROCA DE OLEO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        304
+      ],
+      "id": "124321fb-d36b-4bed-a2e2-cab634a60353",
+      "name": "Parâmetro tipo de serviço"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Fazer nada",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        1056
+      ],
+      "id": "3df8fc98-dc77-44fe-a3ef-66221da86c81",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "VHSYS",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "condition": "eq",
+              "keyValue": "={{ $('Normaliza whatsapp').item.json.whatsapp }}"
+            },
+            {
+              "keyName": "ordem_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Verificação datas e serviço').item.json.dados.id_ordem }}"
+            },
+            {
+              "keyName": "servico",
+              "condition": "eq",
+              "keyValue": "={{ $('Parâmetro tipo de serviço').item.json.tipo_servico_mw }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "follow_up",
+              "fieldValue": "={{ $json.follow_up + 1 }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        608
+      ],
+      "id": "a289a8fe-5a2a-4a4a-bc48-a65ce128abe5",
+      "name": "Supabase2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Nada",
+        "options": {
+          "systemMessage": "=Você é um agente IA responsável por apenas alterar a natureza da seguinte mensagem, porém NÃO ALTERE o sentido da mensagem, mantenha o intuito inicial:\n\nOlá Renato, tudo bem?\n\nEstamos passando para lembrar que a troca de óleo do seu veículo, já está no período recomendado para ser feita novamente. \n\nManter a troca em dia ajuda a garantir o bom funcionamento e a durabilidade do motor. \n\n✅ Atendimento rápido \n✅ Serviço de qualidade\n\nPara agendar, basta responder essa mensagem!\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -1568,
+        784
+      ],
+      "id": "5475dd55-fdaf-4e03-87f1-80c938481133",
+      "name": "AI Agent",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1456,
+        1072
+      ],
+      "id": "f2daee1d-aa13-4bac-8cee-b1585dec03ef",
+      "name": "OpenAI Chat Model",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0babbec2-53a0-4ae2-aceb-0253b9584603",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        784
+      ],
+      "id": "702c9624-458e-4471-9bbf-16b27a5772ba",
+      "name": "Edit Fields1",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "1. Pegar todas Ordens de Serviço": {
+      "main": [
+        [
+          {
+            "node": "2. Divide todo o JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Pegar Serviços da Ordem": {
+      "main": [
+        [
+          {
+            "node": "4. Juntar Ordem + Serviços",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Juntar Ordem + Serviços": {
+      "main": [
+        [
+          {
+            "node": "Verificação datas e serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Divide todo o JSON": {
+      "main": [
+        [
+          {
+            "node": "3. Pegar Serviços da Ordem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Parâmetro tipo de serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegar número do cliente": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Normaliza whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliza whatsapp": {
+      "main": [
+        []
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Vê se tá vazio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vê se tá vazio": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fazer nada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificação datas e serviço": {
+      "main": [
+        [
+          {
+            "node": "Pegar número do cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parâmetro tipo de serviço": {
+      "main": [
+        [
+          {
+            "node": "1. Pegar todas Ordens de Serviço",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Pegar número do cliente1": [
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36191950,
+            "id_registro": 10,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "097.826.956-02",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "LUIGI PARRA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Vereador Carlito Cordeiro ",
+            "numero_cliente": "2315",
+            "bairro_cliente": "Jardim Inconfidência",
+            "complemento_cliente": "R10 C 160",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-475",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "097.826.956-02",
+            "nome_destinatario_cliente": "LUIGI PARRA",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99289-8900",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-04-30 21:14:30",
+            "data_mod_cliente": "2025-06-04 11:48:07",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1336,
+                "id_empresa": 979833,
+                "id_cliente": 36191950,
+                "id_veiculo": 1,
+                "id_marca": 91,
+                "id_modelo": 29852,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "FVV5B22",
+                "renavam": "",
+                "ano_fabricacao": "2020",
+                "ano_modelo": "2021",
+                "km": "70000",
+                "chassi": "",
+                "data_cad": "2025-04-30 21:14:30",
+                "data_mod": "2025-06-04 11:48:07",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 3002,
+                "id_empresa": 979833,
+                "id_cliente": 36191950,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28380,
+                "id_combustivel": 3,
+                "id_cor": 15,
+                "placa": "RMG1H77",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2021",
+                "km": "105205",
+                "chassi": "",
+                "data_cad": "2025-06-04 11:48:07",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36191941,
+            "id_registro": 9,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "402.612.628-58",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "BILLY ANDERSON MARTINELLI",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Sebastião Rangel ",
+            "numero_cliente": "751",
+            "bairro_cliente": "Santa Mônica",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.408-250",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "402.612.628-58",
+            "nome_destinatario_cliente": "BILLY ANDERSON MARTINELLI",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(14) 99668-1903",
+            "email_cliente": "BILLYMARTINELLI47@GMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-04-30 21:08:59",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1335,
+                "id_empresa": 979833,
+                "id_cliente": 36191941,
+                "id_veiculo": 1,
+                "id_marca": 148,
+                "id_modelo": 24427,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "GHX8D15",
+                "renavam": "",
+                "ano_fabricacao": "2018",
+                "ano_modelo": "2018",
+                "km": "100600",
+                "chassi": "",
+                "data_cad": "2025-04-30 21:08:59",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": "404",
+          "status": "error",
+          "data": "Nenhum registro cadastrado com esse ID"
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36316577,
+            "id_registro": 26,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "022.719.066-10",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "GUILHERME DE OLIVEIRA LUIZ",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Piauí ",
+            "numero_cliente": "1369",
+            "bairro_cliente": "Nossa Senhora das Graças",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.402-020",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "022.719.066-10",
+            "nome_destinatario_cliente": "GUILHERME DE OLIVEIRA LUIZ",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99896-0274",
+            "email_cliente": "guilhermedeoliveira050898@gmail.com",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-05-06 09:05:28",
+            "data_mod_cliente": "2025-05-12 11:23:12",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1519,
+                "id_empresa": 979833,
+                "id_cliente": 36316577,
+                "id_veiculo": 1,
+                "id_marca": 148,
+                "id_modelo": 24433,
+                "id_combustivel": 1,
+                "id_cor": 11,
+                "placa": "PVE4E86",
+                "renavam": "",
+                "ano_fabricacao": "2014",
+                "ano_modelo": "2014",
+                "km": "133680",
+                "chassi": "",
+                "data_cad": "2025-05-06 09:05:28",
+                "data_mod": "2025-05-12 11:23:12",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": "404",
+          "status": "error",
+          "data": "Nenhum registro cadastrado com esse ID"
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36322407,
+            "id_registro": 27,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "127.096.586-74",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "PEDRO HENRIQUE DE MELO TAVARES",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Humaitá ",
+            "numero_cliente": "190",
+            "bairro_cliente": "Tubalina",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.412-000",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "",
+            "nome_destinatario_cliente": "",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99134-5901",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99134-5901",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-05-06 15:10:55",
+            "data_mod_cliente": "2025-05-12 10:47:58",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1578,
+                "id_empresa": 979833,
+                "id_cliente": 36322407,
+                "id_veiculo": 1,
+                "id_marca": 98,
+                "id_modelo": 28879,
+                "id_combustivel": 3,
+                "id_cor": 11,
+                "placa": "RVL1G53",
+                "renavam": "",
+                "ano_fabricacao": "2022",
+                "ano_modelo": "2023",
+                "km": "64000",
+                "chassi": "",
+                "data_cad": "2025-05-06 18:34:08",
+                "data_mod": "2025-05-10 19:47:32",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36244137,
+            "id_registro": 21,
+            "tipo_pessoa": "PJ",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "30.837.950/0001-36",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "ROFE VEICULOS LTDA",
+            "fantasia_cliente": "ROFE MOTORS",
+            "endereco_cliente": "AVENIDA DOS VINHEDOS",
+            "numero_cliente": "070",
+            "bairro_cliente": "KARAIBA",
+            "complemento_cliente": "SALA 1303",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-217",
+            "cidade_cliente": "UBERLANDIA",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99897-0004",
+            "doc_destinatario_cliente": "30.837.950/0001-36",
+            "nome_destinatario_cliente": "ROFE VEICULOS LTDA",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99897-0004",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99897-0004",
+            "email_cliente": "SILVIA@ROFEMOTORS.COM.BR",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "",
+            "insc_estadual_cliente": "32238560033",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-05-01 21:54:26",
+            "data_mod_cliente": "2025-06-25 17:35:29",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1377,
+                "id_empresa": 979833,
+                "id_cliente": 36244137,
+                "id_veiculo": 1,
+                "id_marca": 123,
+                "id_modelo": 26780,
+                "id_combustivel": 4,
+                "id_cor": 1,
+                "placa": "RVS7E13",
+                "renavam": "",
+                "ano_fabricacao": "2022",
+                "ano_modelo": "2023",
+                "km": "70000",
+                "chassi": "",
+                "data_cad": "2025-05-01 21:54:26",
+                "data_mod": "2025-06-25 17:35:29",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 1760,
+                "id_empresa": 979833,
+                "id_cliente": 36244137,
+                "id_veiculo": 1,
+                "id_marca": 91,
+                "id_modelo": 29667,
+                "id_combustivel": 3,
+                "id_cor": 25,
+                "placa": "SIY9E62",
+                "renavam": "",
+                "ano_fabricacao": "2023",
+                "ano_modelo": "2024",
+                "km": "46000",
+                "chassi": "",
+                "data_cad": "2025-05-10 19:35:26",
+                "data_mod": "2025-06-25 17:35:29",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 2012,
+                "id_empresa": 979833,
+                "id_cliente": 36244137,
+                "id_veiculo": 1,
+                "id_marca": 109,
+                "id_modelo": 28011,
+                "id_combustivel": 4,
+                "id_cor": 6,
+                "placa": "QXC6A60",
+                "renavam": "",
+                "ano_fabricacao": "2019",
+                "ano_modelo": "2019",
+                "km": "85000",
+                "chassi": "",
+                "data_cad": "2025-05-15 17:41:57",
+                "data_mod": "2025-06-25 17:35:29",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 4191,
+                "id_empresa": 979833,
+                "id_cliente": 36244137,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28339,
+                "id_combustivel": 4,
+                "id_cor": 6,
+                "placa": "QNR-6081",
+                "renavam": "",
+                "ano_fabricacao": "2017",
+                "ano_modelo": "2018",
+                "km": "142000",
+                "chassi": "",
+                "data_cad": "2025-06-25 17:35:29",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36410528,
+            "id_registro": 46,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "012.599.216-54",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "LUIZ MARIO DE ABREU E FREITAS",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Alexandre Ribeiro Guimarães ",
+            "numero_cliente": "315",
+            "bairro_cliente": "Saraiva",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.408-050",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99816-0007",
+            "doc_destinatario_cliente": "012.599.216-54",
+            "nome_destinatario_cliente": "LUIZ MARIO DE ABREU E FREITAS",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99816-0007",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99816-0007",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1979-10-27",
+            "data_cad_cliente": "2025-05-13 13:10:30",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1839,
+                "id_empresa": 979833,
+                "id_cliente": 36410528,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28327,
+                "id_combustivel": 3,
+                "id_cor": 15,
+                "placa": "RVR3H24",
+                "renavam": "",
+                "ano_fabricacao": "2022",
+                "ano_modelo": "2023",
+                "km": "",
+                "chassi": "",
+                "data_cad": "2025-05-13 13:10:30",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36433268,
+            "id_registro": 50,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "070.513.406-70",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "RONIELLI SALES E MORAES",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua João Severiano Rodrigues da Cunha ",
+            "numero_cliente": "860",
+            "bairro_cliente": "Jardim Karaíba",
+            "complemento_cliente": "VI3 160",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-178",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "070.513.406-70",
+            "nome_destinatario_cliente": "RONIELLI SALES E MORAES",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99667-2777",
+            "email_cliente": "RONIELLI@ICLOUD.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1984-09-01",
+            "data_cad_cliente": "2025-05-14 13:48:22",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1932,
+                "id_empresa": 979833,
+                "id_cliente": 36433268,
+                "id_veiculo": 1,
+                "id_marca": 145,
+                "id_modelo": 25318,
+                "id_combustivel": 3,
+                "id_cor": 6,
+                "placa": "FKQ-7683",
+                "renavam": "",
+                "ano_fabricacao": "2018",
+                "ano_modelo": "2019",
+                "km": "63000",
+                "chassi": "",
+                "data_cad": "2025-05-14 13:48:22",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36443157,
+            "id_registro": 51,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "082.670.426-36",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "LUIZ HUMBERTO MARTINS SILVA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida dos Jardins ",
+            "numero_cliente": "1500",
+            "bairro_cliente": "Nova Uberlândia",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.412-639",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "082.670.426-36",
+            "nome_destinatario_cliente": "LUIZ HUMBERTO MARTINS SILVA",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99194-3584",
+            "email_cliente": "LUIZHUMBERTO@VIASABOR.COM.BR",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1986-07-29",
+            "data_cad_cliente": "2025-05-15 10:36:38",
+            "data_mod_cliente": "2025-05-15 15:42:41",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1970,
+                "id_empresa": 979833,
+                "id_cliente": 36443157,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28327,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "SCI5I82",
+                "renavam": "",
+                "ano_fabricacao": "2022",
+                "ano_modelo": "2022",
+                "km": "66364",
+                "chassi": "",
+                "data_cad": "2025-05-15 10:36:38",
+                "data_mod": "2025-05-15 15:42:41",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 1999,
+                "id_empresa": 979833,
+                "id_cliente": 36443157,
+                "id_veiculo": 1,
+                "id_marca": 85,
+                "id_modelo": 30994,
+                "id_combustivel": 0,
+                "id_cor": 6,
+                "placa": "FFM8B56",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2022",
+                "km": "57065",
+                "chassi": "",
+                "data_cad": "2025-05-15 15:42:41",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36468283,
+            "id_registro": 55,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "077.974.416-00",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "ADRIANO SANTOS",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Nicarágua ",
+            "numero_cliente": "050",
+            "bairro_cliente": "Tibery",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.405-100",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99244-4666",
+            "doc_destinatario_cliente": "077.974.416-00",
+            "nome_destinatario_cliente": "ADRIANO SANTOS",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99244-4666",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99244-4666",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1988-12-26",
+            "data_cad_cliente": "2025-05-15 19:07:50",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2014,
+                "id_empresa": 979833,
+                "id_cliente": 36468283,
+                "id_veiculo": 1,
+                "id_marca": 85,
+                "id_modelo": 30599,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "GKB2J85",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2021",
+                "km": "84000",
+                "chassi": "",
+                "data_cad": "2025-05-15 19:07:50",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36470552,
+            "id_registro": 57,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "048.330.026-80",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "HUDSON DOS REIS PEREIRA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Estrela Dalva ",
+            "numero_cliente": "275",
+            "bairro_cliente": "Jardim Brasília",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.401-428",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "048.330.026-80",
+            "nome_destinatario_cliente": "HUDSON DOS REIS PEREIRA",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 98803-0298",
+            "email_cliente": "HUDSONVILLASANTE@ICLOUD.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1979-04-13",
+            "data_cad_cliente": "2025-05-16 10:07:33",
+            "data_mod_cliente": "2025-05-20 11:59:18",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2024,
+                "id_empresa": 979833,
+                "id_cliente": 36470552,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28336,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "PBQ7C71",
+                "renavam": "",
+                "ano_fabricacao": "2019",
+                "ano_modelo": "2019",
+                "km": "60046",
+                "chassi": "",
+                "data_cad": "2025-05-16 10:07:33",
+                "data_mod": "2025-05-20 11:59:18",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1092078,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36513250,
+            "id_registro": 58,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "106.429.596-76",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "RAFAEL NUNES DE CASTRO",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Divino Carvalho ",
+            "numero_cliente": "153",
+            "bairro_cliente": "Santa Rosa",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.401-780",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "106.429.596-76",
+            "nome_destinatario_cliente": "RAFAEL NUNES DE CASTRO",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99798-2618",
+            "email_cliente": "FAELCASTTRO@GMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1992-09-05",
+            "data_cad_cliente": "2025-05-19 10:05:51",
+            "data_mod_cliente": "2025-05-20 12:11:17",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2103,
+                "id_empresa": 979833,
+                "id_cliente": 36513250,
+                "id_veiculo": 1,
+                "id_marca": 148,
+                "id_modelo": 24542,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "QPF9C28",
+                "renavam": "",
+                "ano_fabricacao": "2018",
+                "ano_modelo": "2018",
+                "km": "87666",
+                "chassi": "",
+                "data_cad": "2025-05-19 10:05:51",
+                "data_mod": "2025-05-20 12:11:17",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1092078,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36527750,
+            "id_registro": 63,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "016.581.106-41",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "FERNANDO FERREIRA DE ALMEIDA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Tijuca ",
+            "numero_cliente": "333",
+            "bairro_cliente": "AP 1201",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-042",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99297-0114",
+            "doc_destinatario_cliente": "016.581.106-41",
+            "nome_destinatario_cliente": "FERNANDO FERREIRA DE ALMEIDA",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99297-0114",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99297-0114",
+            "email_cliente": "FERNANDO.FA@GMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1988-11-04",
+            "data_cad_cliente": "2025-05-19 20:04:56",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2167,
+                "id_empresa": 979833,
+                "id_cliente": 36527750,
+                "id_veiculo": 1,
+                "id_marca": 148,
+                "id_modelo": 24649,
+                "id_combustivel": 3,
+                "id_cor": 15,
+                "placa": "QTS9J00",
+                "renavam": "",
+                "ano_fabricacao": "2019",
+                "ano_modelo": "2020",
+                "km": "80264",
+                "chassi": "",
+                "data_cad": "2025-05-19 20:04:56",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36556497,
+            "id_registro": 72,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "041.780.366-45",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "MARCOS FREIRE DE OLIVEIRA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Princesa Izabel ",
+            "numero_cliente": "410",
+            "bairro_cliente": "Fundinho",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38400192",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99932-2992",
+            "doc_destinatario_cliente": "041.780.366-45",
+            "nome_destinatario_cliente": "MARCOS FREIRE DE OLIVEIRA",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99932-2992",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99932-2992",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1977-04-19",
+            "data_cad_cliente": "2025-05-21 14:32:25",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2279,
+                "id_empresa": 979833,
+                "id_cliente": 36556497,
+                "id_veiculo": 1,
+                "id_marca": 110,
+                "id_modelo": 27899,
+                "id_combustivel": 1,
+                "id_cor": 1,
+                "placa": "FIG-0200",
+                "renavam": "",
+                "ano_fabricacao": "2012",
+                "ano_modelo": "2013",
+                "km": "147000",
+                "chassi": "",
+                "data_cad": "2025-05-21 14:32:25",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36663810,
+            "id_registro": 84,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "053.975.156-12",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "FERNANDO CORREA ALMEIDA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua José Elias ",
+            "numero_cliente": "040",
+            "bairro_cliente": "Jardim Karaíba",
+            "complemento_cliente": "APTO 94 TORRE 2",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-201",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99126-2887",
+            "doc_destinatario_cliente": "053.975.156-12",
+            "nome_destinatario_cliente": "FERNANDO CORREA ALMEIDA",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99126-2887",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99126-2887",
+            "email_cliente": "NANDOALMEIDA81@HOTMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-05-29 13:50:15",
+            "data_mod_cliente": "2025-05-29 15:05:20",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2711,
+                "id_empresa": 979833,
+                "id_cliente": 36663810,
+                "id_veiculo": 1,
+                "id_marca": 148,
+                "id_modelo": 24649,
+                "id_combustivel": 3,
+                "id_cor": 6,
+                "placa": "EZY8F17",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2021",
+                "km": "59843",
+                "chassi": "",
+                "data_cad": "2025-05-29 13:50:15",
+                "data_mod": "2025-05-29 15:05:20",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36712578,
+            "id_registro": 89,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "015.882.776-74",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "FLAVIO DOS SANTOS MACEDO",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Decápolis ",
+            "numero_cliente": "091",
+            "bairro_cliente": "Jardim Canaã",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.412-380",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99647-4060",
+            "doc_destinatario_cliente": "015.882.776-74",
+            "nome_destinatario_cliente": "FLAVIO DOS SANTOS MACEDO",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99647-4060",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99647-4060",
+            "email_cliente": "FLAVIO25SANTOS10@GMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1986-10-25",
+            "data_cad_cliente": "2025-06-02 14:49:37",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2882,
+                "id_empresa": 979833,
+                "id_cliente": 36712578,
+                "id_veiculo": 1,
+                "id_marca": 85,
+                "id_modelo": 30793,
+                "id_combustivel": 3,
+                "id_cor": 11,
+                "placa": "NFL0G21",
+                "renavam": "",
+                "ano_fabricacao": "2005",
+                "ano_modelo": "2005",
+                "km": "",
+                "chassi": "",
+                "data_cad": "2025-06-02 14:49:37",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36752753,
+            "id_registro": 94,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "361.144.216-04",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "RUBENS BENTO DE SOUZA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua do Austral ",
+            "numero_cliente": "102",
+            "bairro_cliente": "São Jorge",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.410-056",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99190-7906",
+            "doc_destinatario_cliente": "361.144.216-04",
+            "nome_destinatario_cliente": "RUBENS BENTO DE SOUZA",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99190-7906",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99190-7906",
+            "email_cliente": "BSRUBENS@HOTMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1959-12-19",
+            "data_cad_cliente": "2025-06-04 09:47:31",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 2989,
+                "id_empresa": 979833,
+                "id_cliente": 36752753,
+                "id_veiculo": 1,
+                "id_marca": 98,
+                "id_modelo": 28880,
+                "id_combustivel": 3,
+                "id_cor": 11,
+                "placa": "PYM2B46",
+                "renavam": "",
+                "ano_fabricacao": "2016",
+                "ano_modelo": "2017",
+                "km": "130370",
+                "chassi": "",
+                "data_cad": "2025-06-04 09:47:31",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36191950,
+            "id_registro": 10,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "097.826.956-02",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "LUIGI PARRA",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Vereador Carlito Cordeiro ",
+            "numero_cliente": "2315",
+            "bairro_cliente": "Jardim Inconfidência",
+            "complemento_cliente": "R10 C 160",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-475",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "",
+            "doc_destinatario_cliente": "097.826.956-02",
+            "nome_destinatario_cliente": "LUIGI PARRA",
+            "contato_cliente": "",
+            "fone_cliente": "",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99289-8900",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "0000-00-00",
+            "data_cad_cliente": "2025-04-30 21:14:30",
+            "data_mod_cliente": "2025-06-04 11:48:07",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 1336,
+                "id_empresa": 979833,
+                "id_cliente": 36191950,
+                "id_veiculo": 1,
+                "id_marca": 91,
+                "id_modelo": 29852,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "FVV5B22",
+                "renavam": "",
+                "ano_fabricacao": "2020",
+                "ano_modelo": "2021",
+                "km": "70000",
+                "chassi": "",
+                "data_cad": "2025-04-30 21:14:30",
+                "data_mod": "2025-06-04 11:48:07",
+                "usuario_cad": 1090800,
+                "usuario_mod": 1090800,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 3002,
+                "id_empresa": 979833,
+                "id_cliente": 36191950,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28380,
+                "id_combustivel": 3,
+                "id_cor": 15,
+                "placa": "RMG1H77",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2021",
+                "km": "105205",
+                "chassi": "",
+                "data_cad": "2025-06-04 11:48:07",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36807432,
+            "id_registro": 103,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "036.009.736-73",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "GEDERSON GOMES",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Afrânio Rodrigues da Cunha ",
+            "numero_cliente": "455",
+            "bairro_cliente": "Tabajaras",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.400-262",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 98858-1234",
+            "doc_destinatario_cliente": "036.009.736-73",
+            "nome_destinatario_cliente": "GEDERSON GOMES",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 98858-1234",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 98858-1234",
+            "email_cliente": "PROFGEDERSON@HOTMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1979-05-21",
+            "data_cad_cliente": "2025-06-07 08:51:28",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3185,
+                "id_empresa": 979833,
+                "id_cliente": 36807432,
+                "id_veiculo": 1,
+                "id_marca": 103,
+                "id_modelo": 28336,
+                "id_combustivel": 3,
+                "id_cor": 6,
+                "placa": "RML9H79",
+                "renavam": "",
+                "ano_fabricacao": "2021",
+                "ano_modelo": "2021",
+                "km": "62019",
+                "chassi": "",
+                "data_cad": "2025-06-07 08:51:29",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36818626,
+            "id_registro": 106,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "096.580.776-25",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "EMERSON FERNANDES MIRANDA JUNIOR",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua Quinze de Novembro ",
+            "numero_cliente": "404",
+            "bairro_cliente": "Fundinho",
+            "complemento_cliente": "",
+            "referencia_cliente": "",
+            "cep_cliente": "38.400-214",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99968-1378",
+            "doc_destinatario_cliente": "096.580.776-25",
+            "nome_destinatario_cliente": "EMERSON FERNANDES MIRANDA JUNIOR",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99968-1378",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99968-1378",
+            "email_cliente": "EMEROSN@VILLAPET.UDI.BR",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1988-02-24",
+            "data_cad_cliente": "2025-06-09 09:05:28",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3219,
+                "id_empresa": 979833,
+                "id_cliente": 36818626,
+                "id_veiculo": 1,
+                "id_marca": 97,
+                "id_modelo": 29143,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "LTZ7H84",
+                "renavam": "",
+                "ano_fabricacao": "2019",
+                "ano_modelo": "2019",
+                "km": "85937",
+                "chassi": "",
+                "data_cad": "2025-06-09 09:05:28",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36864834,
+            "id_registro": 116,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "846.074.836-72",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "ADAEL SANSON SOARES",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua João Severiano Rodrigues da Cunha ",
+            "numero_cliente": "860",
+            "bairro_cliente": "Jardim Karaíba",
+            "complemento_cliente": "RUA 04 CASA 80",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-178",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99158-6772",
+            "doc_destinatario_cliente": "846.074.836-72",
+            "nome_destinatario_cliente": "ADAEL SANSON SOARES",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99158-6772",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99158-6772",
+            "email_cliente": "",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1972-05-21",
+            "data_cad_cliente": "2025-06-12 11:26:53",
+            "data_mod_cliente": "2025-06-12 17:38:13",
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3455,
+                "id_empresa": 979833,
+                "id_cliente": 36864834,
+                "id_veiculo": 1,
+                "id_marca": 85,
+                "id_modelo": 30896,
+                "id_combustivel": 3,
+                "id_cor": 1,
+                "placa": "SDB0B40",
+                "renavam": "",
+                "ano_fabricacao": "2022",
+                "ano_modelo": "2023",
+                "km": "12501",
+                "chassi": "",
+                "data_cad": "2025-06-12 11:26:53",
+                "data_mod": "2025-06-12 17:38:13",
+                "usuario_cad": 1091525,
+                "usuario_mod": 1091525,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              },
+              {
+                "id_cliente_veiculo": 3494,
+                "id_empresa": 979833,
+                "id_cliente": 36864834,
+                "id_veiculo": 1,
+                "id_marca": 94,
+                "id_modelo": 29352,
+                "id_combustivel": 6,
+                "id_cor": 1,
+                "placa": "STU2G45",
+                "renavam": "",
+                "ano_fabricacao": "2023",
+                "ano_modelo": "2024",
+                "km": "",
+                "chassi": "",
+                "data_cad": "2025-06-12 17:38:13",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36863151,
+            "id_registro": 115,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "618.925.808-53",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "MARCOS ANTONIO FRANCISCO",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Rua José Elias ",
+            "numero_cliente": "200",
+            "bairro_cliente": "Jardim Karaíba",
+            "complemento_cliente": "APARTAMENTO 1804",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-201",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 99888-6709",
+            "doc_destinatario_cliente": "618.925.808-53",
+            "nome_destinatario_cliente": "MARCOS ANTONIO FRANCISCO",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 99888-6709",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 99888-6709",
+            "email_cliente": "MARQUERA@YAHOO.COM.BR",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1953-01-17",
+            "data_cad_cliente": "2025-06-12 09:39:22",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3445,
+                "id_empresa": 979833,
+                "id_cliente": 36863151,
+                "id_veiculo": 1,
+                "id_marca": 87,
+                "id_modelo": 29988,
+                "id_combustivel": 0,
+                "id_cor": 11,
+                "placa": "HJW-5833",
+                "renavam": "",
+                "ano_fabricacao": "2008",
+                "ano_modelo": "2009",
+                "km": "35000",
+                "chassi": "",
+                "data_cad": "2025-06-12 09:39:22",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36885143,
+            "id_registro": 121,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "042.864.950-51",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "GUILHERME LUIS RABUSKE",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Cesário Alvim ",
+            "numero_cliente": "478",
+            "bairro_cliente": "Centro",
+            "complemento_cliente": "APARTAMENTO 130B",
+            "referencia_cliente": "",
+            "cep_cliente": "38.400-096",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(51) 99676-4016",
+            "doc_destinatario_cliente": "042.864.950-51",
+            "nome_destinatario_cliente": "GUILHERME LUIS RABUSKE",
+            "contato_cliente": "",
+            "fone_cliente": "(51) 99676-4016",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(51) 99676-4016",
+            "email_cliente": "GUILHERMEL.RABUSKE@GMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1997-12-09",
+            "data_cad_cliente": "2025-06-13 14:21:05",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3548,
+                "id_empresa": 979833,
+                "id_cliente": 36885143,
+                "id_veiculo": 1,
+                "id_marca": 125,
+                "id_modelo": 26546,
+                "id_combustivel": 4,
+                "id_cor": 1,
+                "placa": "OXE-1833",
+                "renavam": "",
+                "ano_fabricacao": "2014",
+                "ano_modelo": "2014",
+                "km": "206000",
+                "chassi": "",
+                "data_cad": "2025-06-13 14:21:05",
+                "data_mod": null,
+                "usuario_cad": 1090800,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id_cliente": 36905542,
+            "id_registro": 125,
+            "tipo_pessoa": "PF",
+            "tipo_cadastro": "Cliente",
+            "cnpj_cliente": "062.113.676-00",
+            "rg_cliente": "",
+            "data_emissao_rg_cliente": "0000-00-00",
+            "orgao_expedidor_rg_cliente": "",
+            "passaporte_cliente": "",
+            "estrangeiro_cliente": 0,
+            "razao_cliente": "GABRIEL DE CASTRO PEREIRA NUNUES",
+            "fantasia_cliente": "",
+            "endereco_cliente": "Avenida Geraldo Abrão ",
+            "numero_cliente": "611",
+            "bairro_cliente": "Jardim Inconfidência",
+            "complemento_cliente": "MEDITERRÂNEO 225",
+            "referencia_cliente": "",
+            "cep_cliente": "38.411-229",
+            "cidade_cliente": "Uberlândia",
+            "cidade_cliente_cod": 3170206,
+            "uf_cliente": "MG",
+            "tel_destinatario_cliente": "(34) 98404-0623",
+            "doc_destinatario_cliente": "062.113.676-00",
+            "nome_destinatario_cliente": "GABRIEL DE CASTRO PEREIRA NUNUES",
+            "contato_cliente": "",
+            "fone_cliente": "(34) 98404-0623",
+            "fone_contato_cliente": "",
+            "fone_ramal_cliente": "",
+            "fax_cliente": "",
+            "celular_cliente": "(34) 98404-0623",
+            "email_cliente": "G20NUNES@HOTMAIL.COM",
+            "email_contato_cliente": "",
+            "celular_contato_cliente": "",
+            "estado_civil_cliente": "",
+            "website_cliente": "",
+            "aposentado_cliente": 0,
+            "empregador_cliente": "",
+            "profissao_cliente": "",
+            "genero_cliente": "Masculino",
+            "insc_estadual_cliente": "",
+            "insc_municipal_cliente": "",
+            "insc_produtor_cliente": "",
+            "insc_suframa_cliente": "",
+            "nif": "",
+            "id_categoria": 0,
+            "situacao_cliente": "Ativo",
+            "vendedor_cliente": "",
+            "vendedor_cliente_id": 0,
+            "modalidade_frete": 9,
+            "id_transportadora": null,
+            "desc_transportadora": null,
+            "observacoes_cliente": "",
+            "listapreco_cliente": 0,
+            "condicaopag_cliente": 0,
+            "limite_credito": "0.00",
+            "ultrapassar_limite_credito": 1,
+            "consumidor_final": "1",
+            "contribuinte_icms": 0,
+            "atividade_encerrada_cliente": 0,
+            "data_nasc_cliente": "1984-01-25",
+            "data_cad_cliente": "2025-06-16 14:40:48",
+            "data_mod_cliente": null,
+            "lixeira": "Nao",
+            "categoria": [],
+            "veiculos:": [
+              {
+                "id_cliente_veiculo": 3632,
+                "id_empresa": 979833,
+                "id_cliente": 36905542,
+                "id_veiculo": 1,
+                "id_marca": 126,
+                "id_modelo": 26364,
+                "id_combustivel": 3,
+                "id_cor": 15,
+                "placa": "SCU3D64",
+                "renavam": "",
+                "ano_fabricacao": "2023",
+                "ano_modelo": "2023",
+                "km": "5000",
+                "chassi": "",
+                "data_cad": "2025-06-16 14:40:48",
+                "data_mod": null,
+                "usuario_cad": 1091525,
+                "usuario_mod": 0,
+                "status": "Ativo",
+                "lixeira": "Nao"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "0572d518-c2f5-40cf-aa84-5b73bb1d99c9",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-07-23T14:27:20.427Z",
+      "updatedAt": "2025-07-23T14:27:20.427Z",
+      "role": "workflow:owner",
+      "workflowId": "FYocDHgd54bHDdvV",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
