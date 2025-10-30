@@ -1,0 +1,392 @@
+{
+  "createdAt": "2025-09-23T19:27:38.877Z",
+  "updatedAt": "2025-09-23T21:54:08.208Z",
+  "id": "UGMRAiSmYaDbPOmt",
+  "name": "[CRON JOB] -> Atualização dos servicos",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "atualizacao-servicos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        464
+      ],
+      "id": "c6c14f46-9e49-453b-8861-3265bf219fa7",
+      "name": "Webhook",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QKgCyB7u12cox7vv",
+          "mode": "list",
+          "cachedResultName": "Pega todos serviços"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "tipo": "atualizacao"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "tipo",
+              "displayName": "tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        464
+      ],
+      "id": "3558d383-fd31-40a4-80d4-b1ad515a7351",
+      "name": "Call 'Pega todos serviços'"
+    },
+    {
+      "parameters": {
+        "tableId": "CategoriaChecklist",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $('Loop Over Items').item.json.nome }}"
+            },
+            {
+              "fieldId": "valorServico",
+              "fieldValue": "={{ $('Loop Over Items').item.json.valor_unit_servico }}"
+            },
+            {
+              "fieldId": "horasServico",
+              "fieldValue": "={{ Number($('Loop Over Items').item.json.horas_servico) }}"
+            },
+            {
+              "fieldId": "IdExterno",
+              "fieldValue": "={{ $('Loop Over Items').item.json.id }}"
+            },
+            {
+              "fieldId": "descricao"
+            },
+            {
+              "fieldId": "userId",
+              "fieldValue": "={{ $('Call \\'Pega todos serviços\\'').item.json.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        816,
+        528
+      ],
+      "id": "eb98311d-5ee1-4b22-b3f5-b86d4c0f6514",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        32
+      ],
+      "id": "74748a7b-8f28-46ae-82f4-db4e5846f03a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e588a597-7bd3-43ff-a021-fb4dda5e763f",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "={{ $json.nome }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        464
+      ],
+      "id": "68f99182-c088-4fbf-893d-78ef7f85e240",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "CategoriaChecklist",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('Get many rows').item.json.id }}"
+            },
+            {
+              "keyName": "IdExterno",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        368,
+        384
+      ],
+      "id": "ed21768b-d519-4376-81fd-3ab736b2eaaf",
+      "name": "Get a row1",
+      "alwaysOutputData": true,
+      "retryOnFail": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        464
+      ],
+      "id": "81c44791-aeb8-4c50-8f23-f6437185f1ae",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        368,
+        192
+      ],
+      "id": "b896e225-51cb-4998-8502-714a99c8ca7e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "User",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        464
+      ],
+      "id": "8f5405d6-6f3e-4118-a6e4-9e6a1d43fc85",
+      "name": "Get many rows",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Call 'Pega todos serviços'": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Call 'Pega todos serviços'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "pg_net/0.19.5",
+            "accept": "*/*",
+            "x-forwarded-for": "54.94.153.87",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "54.94.153.87",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/atualizacao-servicos",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "0a21f919-5b69-49ca-a920-d91aa63e68df",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-23T19:27:38.877Z",
+      "updatedAt": "2025-09-23T19:27:38.877Z",
+      "role": "workflow:owner",
+      "workflowId": "UGMRAiSmYaDbPOmt",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
