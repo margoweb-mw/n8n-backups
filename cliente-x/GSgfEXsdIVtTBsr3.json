@@ -1,0 +1,28 @@
+{
+  "createdAt": "2025-10-10T15:40:50.719Z",
+  "updatedAt": "2025-10-10T15:40:50.719Z",
+  "id": "GSgfEXsdIVtTBsr3",
+  "name": "Backup Banco de dados EXPO",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "bee044a0-3e63-430b-8321-4bf07ea987f6",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-10T15:40:50.719Z",
+      "updatedAt": "2025-10-10T15:40:50.719Z",
+      "role": "workflow:owner",
+      "workflowId": "GSgfEXsdIVtTBsr3",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
