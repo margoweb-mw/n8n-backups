@@ -1,0 +1,28 @@
+{
+  "createdAt": "2025-10-29T13:15:09.040Z",
+  "updatedAt": "2025-10-29T13:15:09.040Z",
+  "id": "EdbmuMeQa9Aikpmo",
+  "name": "Disparo QR CODE",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f1815efe-c34c-45dc-b412-ad26ece31eb9",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-10-29T13:15:09.040Z",
+      "updatedAt": "2025-10-29T13:15:09.040Z",
+      "role": "workflow:owner",
+      "workflowId": "EdbmuMeQa9Aikpmo",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
