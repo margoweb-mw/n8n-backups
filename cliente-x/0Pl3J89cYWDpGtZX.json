@@ -1,0 +1,328 @@
+{
+  "createdAt": "2025-10-13T21:20:31.970Z",
+  "updatedAt": "2025-10-24T13:53:13.768Z",
+  "id": "0Pl3J89cYWDpGtZX",
+  "name": "[COMPLETO] CRON JOB 🟢 Hidratação leads EXPOCanada da planilha v2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -208
+      ],
+      "id": "e1c77186-7d0a-4c3d-872b-02b945e22704",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -336,
+        -208
+      ],
+      "id": "54a21aff-b2ed-47fb-a8d2-3d492af60ffc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -208
+      ],
+      "id": "b96858d3-0767-4825-b979-2ffce1f5ab45",
+      "name": "Normalização"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        -208
+      ],
+      "id": "e5989a37-f6ad-4594-949c-9e9afae0d0f2",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        336,
+        -208
+      ],
+      "id": "f1ff09d5-4976-4d90-ad2d-0ea467a90f73",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -400
+      ],
+      "id": "5d695211-234b-4be0-9342-fc76d8b86ade"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -208
+      ],
+      "id": "7b8753d9-1e8a-4149-b975-bf5bafb557a5",
+      "name": "Get a row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "oB0ah3zt3sjdBABC",
+          "name": "Supabase account nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3aea8a7-82dd-4374-8acc-5bd1f16b0e22",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        -208
+      ],
+      "id": "6fa38943-101b-4744-a638-fe400387a453",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        -368
+      ],
+      "id": "7cbfd60e-7f5f-4a6d-a341-7b8ecd59fc19",
+      "name": "🟢 Execution Data SUCESSO"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        -128
+      ],
+      "id": "c62b4ce2-d452-44b3-af47-7ee414f77a40",
+      "name": "🔴 Execution Data FRACASSO"
+    },
+    {
+      "parameters": {
+        "path": "f3cd844c-2955-49ea-92d1-10ef88640a08",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -560,
+        -208
+      ],
+      "id": "84045e43-34d8-4eb7-8a4d-df08e12c2e1c",
+      "name": "Webhook",
+      "webhookId": "f3cd844c-2955-49ea-92d1-10ef88640a08"
+    },
+    {
+      "parameters": {
+        "content": "# ℹ️ A maioria dos leads da planilha já existiam na base da dados",
+        "height": 80,
+        "width": 1104,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -768,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "ef2b6f8f-b14c-49cc-9517-23ea9b181572",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Normalização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalização": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "🟢 Execution Data SUCESSO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔴 Execution Data FRACASSO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "10d44e64-12df-4be7-9816-353649514106",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-13T21:20:31.970Z",
+      "updatedAt": "2025-10-13T21:20:31.970Z",
+      "role": "workflow:owner",
+      "workflowId": "0Pl3J89cYWDpGtZX",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
