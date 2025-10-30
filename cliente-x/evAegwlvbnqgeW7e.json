@@ -1,0 +1,272 @@
+{
+  "createdAt": "2025-09-22T16:46:58.530Z",
+  "updatedAt": "2025-09-23T21:58:40.292Z",
+  "id": "evAegwlvbnqgeW7e",
+  "name": "Pull inicial dos serviços da conta pós registro",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QKgCyB7u12cox7vv",
+          "mode": "list",
+          "cachedResultName": "Pega todos serviços"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "tipo": "normal"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "tipo",
+              "displayName": "tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        0
+      ],
+      "id": "29a28df1-160f-473b-a23a-659a477f8cfe",
+      "name": "Call 'Pega todos serviços'"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cadastro-inicial-servicos",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "e2ee97e1-7d9c-4e20-bfec-3fc336334fdc",
+      "name": "Webhook",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "User",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        304,
+        0
+      ],
+      "id": "56b9d471-508b-410f-a98c-a8e8e1ba0bb2",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "CategoriaChecklist",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $json.nome }}"
+            },
+            {
+              "fieldId": "valorServico",
+              "fieldValue": "={{ $json.valor_unit_servico }}"
+            },
+            {
+              "fieldId": "horasServico",
+              "fieldValue": "={{ Number($json.horas_servico) }}"
+            },
+            {
+              "fieldId": "IdExterno",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "descricao"
+            },
+            {
+              "fieldId": "userId",
+              "fieldValue": "={{ $('Get a row').first().json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        752,
+        0
+      ],
+      "id": "32cf055e-811a-4696-9d22-cff726b2176e",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        976,
+        0
+      ],
+      "id": "48cfff98-9f7a-453f-b12e-f06e30973759",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Call 'Pega todos serviços'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Pega todos serviços'": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "13",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "179.155.84.74",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "001506f2c741",
+            "x-real-ip": "179.155.84.74"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "userId": 11
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/cadastro-inicial-servicos",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "4ea7950e-292a-465f-a325-c723b701381b",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-22T16:46:58.530Z",
+      "updatedAt": "2025-09-22T16:46:58.530Z",
+      "role": "workflow:owner",
+      "workflowId": "evAegwlvbnqgeW7e",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
