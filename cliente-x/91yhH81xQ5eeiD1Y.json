@@ -1,0 +1,503 @@
+{
+  "createdAt": "2025-08-26T23:40:37.566Z",
+  "updatedAt": "2025-10-30T20:42:46.351Z",
+  "id": "91yhH81xQ5eeiD1Y",
+  "name": "Backups",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        128
+      ],
+      "id": "90bf9815-d8cf-4921-ae31-94edd05392c4",
+      "name": "n8n"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').item.json.owner }}",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').item.json.repository }}",
+          "mode": "name"
+        },
+        "filePath": "=cliente-x/{{ $json.id }}.json",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "47ae3e96-3a17-4925-992e-c82105a02651",
+      "name": "GitHub",
+      "alwaysOutputData": true,
+      "webhookId": "0070831e-5bd6-43e9-b726-f2c12c744202",
+      "credentials": {
+        "githubApi": {
+          "id": "CZfWBOqyFoxfC4FR",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "804390ad-9f59-4db5-b2e6-e30a7bc453f9",
+              "name": "owner",
+              "value": "sociostech",
+              "type": "string"
+            },
+            {
+              "id": "06e21e36-c353-4049-8839-89003d241fa8",
+              "name": "repository",
+              "value": "n8n-backups",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        128
+      ],
+      "id": "0149e8a9-9cf5-4b7f-8d02-26807e460219",
+      "name": "Informações gerais"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc369c25-25b4-4c73-9010-c2c6ef748c48",
+              "name": "data",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        240
+      ],
+      "id": "bbf0e3c9-d798-471d-8a1b-ecb274f62eff",
+      "name": "Workflow Dados"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "mode": "each",
+        "options": {
+          "format": true,
+          "fileName": "={{ $json.id }}.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        432
+      ],
+      "id": "64329f64-4757-47f1-91ca-4644802d4c7d",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "data.id",
+              "field2": "data.id"
+            }
+          ]
+        },
+        "resolve": "preferInput2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        112
+      ],
+      "id": "a1ccd26e-6b40-4d51-878a-3922edf22dc2",
+      "name": "Compare Datasets"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        432
+      ],
+      "id": "95c3a18f-c490-4372-83a6-767ecc78a412",
+      "name": "Workflow"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').first().json.owner }}",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').first().json.repository }}",
+          "mode": "name"
+        },
+        "filePath": "=cliente-x/{{ $('Workflow').item.json.id }}.json",
+        "binaryData": true,
+        "commitMessage": "={{ $('Workflow').item.json.name }} {{ $now.toString() }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        944,
+        432
+      ],
+      "id": "f6d113c7-a7a8-4e30-8cd4-0a4db5f8a5c2",
+      "name": "GitHub Create File",
+      "webhookId": "49528eb2-6834-4ae9-9799-95955316be51"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "mode": "each",
+        "options": {
+          "format": true,
+          "fileName": "={{ $json.id }}.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        224
+      ],
+      "id": "9836f34a-c3e2-4e56-809d-ea709291809d",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        224
+      ],
+      "id": "eb11ba84-6e7f-40a6-88d3-6e45bf816c7e",
+      "name": "Workflow1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').first().json.owner }}",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Informações gerais').first().json.repository }}",
+          "mode": "name"
+        },
+        "filePath": "=cliente-x/{{ $('Workflow1').item.json.id }}.json",
+        "binaryData": true,
+        "commitMessage": "={{ $('Workflow1').item.json.name }} {{ $now.toString() }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        944,
+        224
+      ],
+      "id": "10f351d0-76a0-497c-b66b-ad37519f2dac",
+      "name": "GitHub Edit File",
+      "webhookId": "9f52e3cb-664a-4ac5-ba30-9e4276b93a7d"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        48,
+        0
+      ],
+      "id": "11877c0a-d638-4697-932a-b55a227779e1",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23,
+              "triggerAtMinute": 59
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        128
+      ],
+      "id": "4562c584-23af-4897-91b4-d095b6b052cb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -128
+      ],
+      "id": "94792e94-06ff-4807-a820-7325cf47ddde",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "repository",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/margoweb-dev",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "=n8n-backups",
+          "mode": "url"
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        -176
+      ],
+      "id": "f6bd1049-cf4a-4c9d-924d-15528f4c9424",
+      "name": "GitHub1",
+      "alwaysOutputData": true,
+      "webhookId": "0070831e-5bd6-43e9-b726-f2c12c744202",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "Xm1uOGoeNL0gHFj4",
+          "name": "GitHub account OAuth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "n8n": {
+      "main": [
+        [
+          {
+            "node": "Workflow Dados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Informações gerais": {
+      "main": [
+        [
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Dados": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "GitHub Create File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Datasets": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "GitHub Edit File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Informações gerais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3b34cf87-3b8c-408f-bd08-42a913109447",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-08-26T23:40:37.566Z",
+      "updatedAt": "2025-08-26T23:40:37.566Z",
+      "role": "workflow:owner",
+      "workflowId": "91yhH81xQ5eeiD1Y",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
