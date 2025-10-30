@@ -1,0 +1,328 @@
+{
+  "createdAt": "2025-08-22T17:42:22.719Z",
+  "updatedAt": "2025-08-29T17:09:41.110Z",
+  "id": "qlmnareL5zezsYfb",
+  "name": "Atualizar os",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"ok\",\n  \"message\": \"Ordem de serviço atualizada com sucesso\"\n} ",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        -240
+      ],
+      "id": "192fb691-a9b7-4203-b0d9-448de06e8ddc",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atualizar-manutencao",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -976,
+        -144
+      ],
+      "id": "13e0bc43-4b80-44ce-a021-da9fcfca86f3",
+      "name": "Webhook1",
+      "webhookId": "7a4bde59-4185-4acb-a487-e53d9976509a",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "E9KlM5h7YsOIVY5o",
+          "name": "Site de inspeção"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Token",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.user_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        -144
+      ],
+      "id": "2c48af8d-8479-454c-8657-4c8261f38052",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "umqjV8GZXBZRZZCk",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "23cd099d-4fc0-49a5-99d1-3570c3612c2a",
+              "leftValue": "={{ $json.code }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -144
+      ],
+      "id": "4cdf67c9-c11d-4d2f-89fa-c22231f8ec24",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"Falha ao atualizar ordem de serviço\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        -48
+      ],
+      "id": "5d45010c-3902-48fd-b938-d0ea25494d5a",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1e83984-eedf-44e7-bdff-ffc4b94f91d8",
+              "name": "obs",
+              "value": "={{ $('Webhook1').item.json.body.public_link }}",
+              "type": "string"
+            },
+            {
+              "id": "cc7bf5d3-3be7-4975-8c2e-4c1f0a089799",
+              "name": "body.public_link",
+              "value": "={{ $('Webhook1').item.json.body.public_link }}",
+              "type": "string"
+            },
+            {
+              "id": "781c8ac4-840e-4366-9b1a-a7112c463d7d",
+              "name": "body.",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        -144
+      ],
+      "id": "da06a16c-70af-474b-982f-658fef45cafa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.vhsys.com/v2/ordens-servico/{{ $('Webhook1').item.json.body.ordem_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=access-token",
+              "value": "={{ $('Get a row').item.json.access }}"
+            },
+            {
+              "name": "secret-access-token",
+              "value": "={{ $('Get a row').item.json.secret }}"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "User-Agent",
+              "value": "MinhaAplicacao/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status_pedido",
+              "value": "Atendido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ec65c5f7-9abc-400b-8f3d-51a93f5f5344",
+      "name": "Marcar ordem de serviço como finalizada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -304,
+        -144
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Marcar ordem de serviço como finalizada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar ordem de serviço como finalizada": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.margoauto.com.br",
+            "user-agent": "node",
+            "content-length": "245",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "authorization": "Basic bXc6OWw7NksxWjNRPDx2",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "189.37.81.158",
+            "x-forwarded-host": "webhook.margoauto.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "a60fcd78b7ac",
+            "x-real-ip": "189.37.81.158"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "user_id": 1,
+            "public_link": "https://checkllix.margoauto.com.br/manutencao/public/f72c29c4-52df-4f7a-ba84-ca9f62f570ab",
+            "nome_cliente": "MW T1",
+            "vendedor_id": "0",
+            "vendedor_nome": "João da Silva",
+            "edit_mode": true,
+            "fase": "saida",
+            "ordem_id": 12498382
+          },
+          "webhookUrl": "https://webhook.margoauto.com.br/webhook/atualizar-manutencao",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "e1393114-dc7c-4482-8674-c922c70351fd",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-08-22T17:42:22.719Z",
+      "updatedAt": "2025-08-22T17:42:22.719Z",
+      "role": "workflow:owner",
+      "workflowId": "qlmnareL5zezsYfb",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
