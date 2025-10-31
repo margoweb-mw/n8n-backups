@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-08-26T23:40:37.566Z",
-  "updatedAt": "2025-10-30T20:57:14.662Z",
+  "updatedAt": "2025-10-30T21:01:16.738Z",
   "id": "91yhH81xQ5eeiD1Y",
   "name": "Backups",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -299,58 +299,11 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -960,
-        -192
+        -880,
+        128
       ],
       "id": "4562c584-23af-4897-91b4-d095b6b052cb",
       "name": "Schedule Trigger"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -912,
-        128
-      ],
-      "id": "94792e94-06ff-4807-a820-7325cf47ddde",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
-      "parameters": {
-        "authentication": "oAuth2",
-        "resource": "repository",
-        "operation": "get",
-        "owner": {
-          "__rl": true,
-          "value": "margoweb-mw",
-          "mode": "name"
-        },
-        "repository": {
-          "__rl": true,
-          "value": "n8n-backups",
-          "mode": "list",
-          "cachedResultName": "n8n-backups",
-          "cachedResultUrl": "https://github.com/margoweb-mw/n8n-backups"
-        }
-      },
-      "type": "n8n-nodes-base.github",
-      "typeVersion": 1,
-      "position": [
-        -368,
-        -224
-      ],
-      "id": "f6bd1049-cf4a-4c9d-924d-15528f4c9424",
-      "name": "GitHub1",
-      "alwaysOutputData": true,
-      "webhookId": "0070831e-5bd6-43e9-b726-f2c12c744202",
-      "credentials": {
-        "githubOAuth2Api": {
-          "id": "Xm1uOGoeNL0gHFj4",
-          "name": "GitHub account OAuth"
-        }
-      },
-      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -480,11 +433,6 @@
     },
     "Schedule Trigger": {
       "main": [
-        []
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
         [
           {
             "node": "Informações gerais",
@@ -498,13 +446,17 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7e7971c0-06ad-4e1d-b6e0-cad99a2971da",
-  "triggerCount": 0,
+  "versionId": "05fd3ffa-a16d-479f-814d-bd879ef6cf43",
+  "triggerCount": 1,
   "shared": [
     {
       "createdAt": "2025-08-26T23:40:37.566Z",
