@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-02T14:32:27.977Z",
-  "updatedAt": "2025-10-24T21:57:44.616Z",
+  "updatedAt": "2025-10-31T18:56:46.003Z",
   "id": "zA2nKyyslxNF6DOP",
   "name": "💫 Automação PRINCIPAL EXPO CANADA",
   "active": true,
@@ -40,8 +40,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        752,
-        1776
+        816,
+        1680
       ],
       "id": "f536c0ea-496a-472c-b2b1-4cb774bb1aee",
       "name": "When clicking ‘Execute workflow’"
@@ -945,7 +945,9 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "timeout": 5000
+        }
       },
       "id": "a6e6220b-e977-48cd-a6c1-10ee15837e3b",
       "name": "Enviar Imagem [Evolution]6",
@@ -1266,8 +1268,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        656,
-        1024
+        -672,
+        1264
       ],
       "id": "05fdd0f6-8df8-41b5-a6b0-f27d3a56fe57",
       "name": "Respond to Webhook3"
@@ -1348,7 +1350,9 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "timeout": 5000
+        }
       },
       "id": "93f2a617-b799-41b8-90ae-c8112595eddd",
       "name": "Msg de inscrição confirmada",
@@ -1383,8 +1387,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        1200,
-        1776
+        1520,
+        1472
       ],
       "id": "8fbfe8bc-1471-44ac-8559-158091c31f40",
       "name": "Get a row4",
@@ -1412,8 +1416,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1408,
-        1776
+        1728,
+        1472
       ],
       "id": "3557fd53-10c7-468c-9b1c-6de8cd5535db",
       "name": "Edit Fields3"
@@ -1451,6 +1455,107 @@
       ],
       "id": "edf35bad-34e8-439d-bccf-af3dddf79699",
       "name": "If2"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "status_geral",
+              "value": "={{\n  (() => {\n    if ($('Msg de inscrição confirmada').item.json.error || $('Enviar Imagem [Evolution]6').item.json.error) {\n      return '❌ Erro na inscrição ou imagem';\n    }\n\n    if ($('Send email').item.json.response?.includes('250')) {\n      return '✅ Disparo completo';\n    }\n\n    return '❌ Erro ao enviar o e-mail';\n  })()\n}}"
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        1168
+      ],
+      "id": "88d4deaf-b0e0-4bc2-bf32-78ee26ca4eeb",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "status_geral",
+              "value": "={{\n  (() => {\n    if ($('Msg de inscrição confirmada').item.json.error || $('Enviar Imagem [Evolution]6').item.json.error) {\n      return '❌ Erro na inscrição ou imagem';\n    }\n\n    if ($('Send email').item.json.response?.includes('250')) {\n      return '✅ Disparo completo';\n    }\n\n    return '❌ Erro ao enviar o e-mail';\n  })()\n}}"
+            },
+            {
+              "key": "status_wpp",
+              "value": "={{ $('Msg de inscrição confirmada').item.json.error || $('Enviar Imagem [Evolution]6').item.json.error  ? '🔴 Não enviado' : '🟢 Enviado' }}"
+            },
+            {
+              "key": "status_email",
+              "value": "={{ $('Send email').item.json.response?.includes('250') ? '🟢 Enviado' : '🔴 Não enviado' }}"
+            },
+            {
+              "key": "nome",
+              "value": "={{ $('Update a row1').item.json.nome }}"
+            },
+            {
+              "key": "email",
+              "value": "={{ $('Create a row').item.json.email }}"
+            },
+            {
+              "key": "telefone",
+              "value": "={{ $('Create a row').item.json.telefone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        1392
+      ],
+      "id": "39e0e0e3-0aa9-4b28-be06-fe0ff19fa3f0",
+      "name": "Execution Data1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.margoauto.com.br/message/sendText/ExpoCanada",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=5534996389988"
+            },
+            {
+              "name": "text",
+              "value": "=OPA BÃO"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "ede0b4f1-a31d-461a-9b8c-14b608a5bac6",
+      "name": "Msg de inscrição confirmada1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        1664
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GjdvxtGf9Oss20Bh",
+          "name": "Evolution header auth"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -1469,7 +1574,7 @@
       "main": [
         [
           {
-            "node": "Get a row4",
+            "node": "Msg de inscrição confirmada1",
             "type": "main",
             "index": 0
           }
@@ -1753,7 +1858,7 @@
       "main": [
         [
           {
-            "node": "Enviar Imagem [Evolution]6",
+            "node": "Respond to Webhook3",
             "type": "main",
             "index": 0
           }
@@ -1902,7 +2007,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook3",
+            "node": "Execution Data1",
             "type": "main",
             "index": 0
           }
@@ -1952,12 +2057,23 @@
           }
         ]
       ]
+    },
+    "Respond to Webhook3": {
+      "main": [
+        [
+          {
+            "node": "Enviar Imagem [Evolution]6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "executionTimeout": 300
+    "executionTimeout": 60
   },
   "staticData": null,
   "meta": {
@@ -2116,33 +2232,26 @@
         "json": {
           "headers": {
             "host": "webhook.margoauto.com.br",
-            "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23A355 Instagram 403.0.0.28.80 (iPhone12,8; iOS 26_0_1; pt_BR; pt; scale=2.00; 750x1334; IABMV/1; 808786605)",
-            "content-length": "126",
-            "accept": "*/*",
-            "accept-encoding": "gzip, deflate, br",
-            "accept-language": "pt-BR,pt;q=0.9",
+            "user-agent": "axios/1.8.3",
+            "content-length": "137",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, compress, deflate, br",
             "content-type": "application/json",
-            "origin": "https://expocanada.org",
-            "priority": "u=3, i",
-            "referer": "https://expocanada.org/",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "cross-site",
-            "x-forwarded-for": "189.41.87.83",
+            "x-forwarded-for": "172.18.0.1",
             "x-forwarded-host": "webhook.margoauto.com.br",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
             "x-forwarded-server": "001506f2c741",
-            "x-real-ip": "189.41.87.83"
+            "x-real-ip": "172.18.0.1"
           },
           "params": {},
           "query": {},
           "body": {
-            "nome": "Vinicius",
-            "email": "vinicius.arduini.pro@gmail.com",
-            "telefone": "34997892249",
-            "cidade": "2, Uberaba - MG",
-            "origem": "ec"
+            "nome": "Renato Freitas",
+            "email": "renatofb64@gmail.com",
+            "telefone": "34996389988",
+            "cidade": "1, Uberlândia - MG",
+            "origem": "ci"
           },
           "webhookUrl": "https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
           "executionMode": "production"
@@ -2150,7 +2259,7 @@
       }
     ]
   },
-  "versionId": "63c33a5c-2ab2-40a2-9f84-22b2b0a6da27",
+  "versionId": "c8094c7f-3ed3-4ec2-8a41-5cc0b9c83aa8",
   "triggerCount": 2,
   "shared": [
     {
