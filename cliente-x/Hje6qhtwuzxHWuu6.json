@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-10-27T18:51:09.436Z",
-  "updatedAt": "2025-10-30T20:58:09.121Z",
+  "updatedAt": "2025-11-01T23:08:30.913Z",
   "id": "Hje6qhtwuzxHWuu6",
   "name": "[EM ANDAMENTO] CRON JOB 🟡 Disparo de QR Codes v1",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -5661,7 +5661,7 @@
       }
     ]
   },
-  "versionId": "5258d3a1-7610-4d61-8909-693490273008",
+  "versionId": "02e257c7-f1e8-4ed8-b930-408abaaa385a",
   "triggerCount": 1,
   "shared": [
     {
