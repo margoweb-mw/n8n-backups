@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-02T14:32:27.977Z",
-  "updatedAt": "2025-10-31T18:56:46.003Z",
+  "updatedAt": "2025-11-05T16:28:50.240Z",
   "id": "zA2nKyyslxNF6DOP",
   "name": "💫 Automação PRINCIPAL EXPO CANADA",
   "active": true,
@@ -100,8 +100,8 @@
       "name": "Create a row",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       },
       "onError": "continueErrorOutput"
@@ -165,8 +165,8 @@
       "name": "Get a row1",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -376,8 +376,8 @@
       "name": "Atualiza o campo booleano",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -685,8 +685,8 @@
       "name": "Update a row1",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -997,8 +997,8 @@
       "name": "Update a row2",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -1204,8 +1204,8 @@
       "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -1326,8 +1326,8 @@
       "name": "Get a row2",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -1394,8 +1394,8 @@
       "name": "Get a row4",
       "credentials": {
         "supabaseApi": {
-          "id": "oB0ah3zt3sjdBABC",
-          "name": "Supabase account nova"
+          "id": "WtU7BEhOWcpG5ado",
+          "name": "Supabase conta MW"
         }
       }
     },
@@ -2259,7 +2259,7 @@
       }
     ]
   },
-  "versionId": "c8094c7f-3ed3-4ec2-8a41-5cc0b9c83aa8",
+  "versionId": "c03fd03f-1ff8-4323-9617-ad16be208fd6",
   "triggerCount": 2,
   "shared": [
     {
