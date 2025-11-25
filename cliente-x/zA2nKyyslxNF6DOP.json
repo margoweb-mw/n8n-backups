@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-02T14:32:27.977Z",
-  "updatedAt": "2025-11-17T15:27:17.613Z",
+  "updatedAt": "2025-11-25T00:28:49.294Z",
   "id": "zA2nKyyslxNF6DOP",
   "name": "💫 Automação PRINCIPAL EXPO CANADA",
   "active": true,
@@ -1107,7 +1107,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "EXPOCanada <no-reply@expocanada.org>",
+        "fromEmail": "EXPOCanada <expocanada@canadainmigracion.com.mx>",
         "toEmail": "={{ $('Create a row').item.json.email }}",
         "subject": "Bem-vindo(a) a maior feira de imigração e estudo no Brasil!",
         "html": "=<html><head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no\">\n<title>EXPOCanada 2025</title>\n<style>\n  .imageye-selected {\n    outline: 2px solid black !important;\n    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;\n  }\n</style></head>\n<body cz-shortcut-listen=\"true\">\n<div style=\"margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4; min-height: 100%; align-content: center;\">\n  <div style=\"width: calc(100% - 15%); max-width: 820px; background-color: #ffffff; border: 1px solid #e0e0e0; padding: 10px; margin: 5% auto; margin-top: 40px;\">\n    <div style=\"background-color: #ffffff; text-align: center; padding: 0 0 20px 0;\"> <a href=\"https://expocanada.org\" target=\"_blank\"><img src=\"{{ $json.url }}\" style=\"width: 100%;\" alt=\"Seja bem-vindo(a)\"></a> </div>\n    <div style=\"padding: 5%; color: #333333; line-height: 22px;\"><span style=\"font-size: 20px; color: #3a466c; font-size:1.3em;\"><b>EXPOCanada 2025.</b><br> Sua jornada começa agora!</span><br><br><h2 style=\"margin-bottom: 30px; font-size:1.2em;\">Olá {{ $('Create a row').item.json.nome.split(' ')[0] }}, tudo bem?</h2><p style=\"margin-bottom: 30px;\">É com grande entusiasmo que damos as boas-vindas a você à <b>EXPOCanada 2025</b>, o principal evento voltado para carreira, imigração e estudo no Canadá!<br><br>\n\n\t\t<b>Data:</b> {{ $json.data }}<br>\n\t\t<b>Local:</b> {{ $('Get a row2').item.json.endereco }}<br><br>Prepare-se para explorar palestras exclusivas, workshops práticos e conexões diretas com especialistas e instituições canadenses.<br><br>Em breve, você receberá mais informações sobre a programação completa e instruções para acesso ao evento.<br><br>\n\nEstamos muito felizes por estar conosco nessa jornada rumo a novas oportunidades!<br><br>\n\nAtenciosamente,<br>\n\t\t<b>Equipe EXPOCanada</b><br>\n\t\t<a href=\"mailto:edsantos@imigrarparaocanada.com.br\">edsantos@imigrarparaocanada.com.br</a><br><br>\n\n\t\texpocanada.org<br>\n\t  </p>\n\n      </div>\n    <div style=\"background-color: #eeeeee; text-align: center; padding: 20px;\">\n\t  <p style=\"font-size: 12px; color: #777777;\"><a style=\"color: #777777; text-decoration: none;\" href=\"https://expocanada.org\" target=\"_blank\"><img src=\"https://expocanada.org/aut-imgs/expocanada_registro.png\" alt=\"Logo\" width=\"100\"></a></p>\n      <div class=\"social-icons\">\n                    <ul class='medium-icon dark' style='list-style: none; padding: 0; text-align: center;'><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='facebook' href='https://www.facebook.com/ExpoCanadaBRA/' target='_blank'><img src=\"https://expocanada.org/aut-imgs/fb-ico.png\" width=\"25\" alt=\"Ícone do Facebook\"></a></li> <li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='instagram' href='https://www.instagram.com/expocanadabra/' target='_blank'><img src=\"https://expocanada.org/aut-imgs/ig-ico-2.png\" width=\"25\" alt=\"Ícone do Instagram\"></a></li><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='youtube' href='https://www.youtube.com/watch?v=SXIRle8FvnU' target='_blank'><img src=\"https://expocanada.org/aut-imgs/yt-ico-2.png\" width=\"25\" alt=\"Ícone do YouTube\"></a></li><li class='my-0' style='margin: 0 10px; display: inline-block;'><a class='whatsapp' href='https://wa.me/16478183011' target='_blank'><img src=\"https://expocanada.org/aut-imgs/wpp-ico.png\" width=\"25\" alt=\"Ícone do WhatsApp\"></a></li></ul></div><p style=\"font-size: 12px; color: #777777;\">© 2025 by EXPOCanada®. Proudly created in Canada.</p></div></div></div></body></html>",
@@ -2232,26 +2232,33 @@
         "json": {
           "headers": {
             "host": "webhook.margoauto.com.br",
-            "user-agent": "axios/1.8.3",
+            "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7.2 Mobile/15E148 Safari/604.1",
             "content-length": "137",
-            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
-            "accept-encoding": "gzip, compress, deflate, br",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br",
+            "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
             "content-type": "application/json",
-            "x-forwarded-for": "172.18.0.1",
+            "origin": "https://expocanada.org",
+            "priority": "u=3, i",
+            "referer": "https://expocanada.org/",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "189.63.40.132",
             "x-forwarded-host": "webhook.margoauto.com.br",
             "x-forwarded-port": "443",
             "x-forwarded-proto": "https",
-            "x-forwarded-server": "001506f2c741",
-            "x-real-ip": "172.18.0.1"
+            "x-forwarded-server": "6fa1d7172a12",
+            "x-real-ip": "189.63.40.132"
           },
           "params": {},
           "query": {},
           "body": {
-            "nome": "Renato Freitas",
-            "email": "renatofb64@gmail.com",
-            "telefone": "34996389988",
-            "cidade": "1, Uberlândia - MG",
-            "origem": "ci"
+            "nome": "Ana Flávia Melo",
+            "email": "anaflaviafariademelo75@gmail.com",
+            "telefone": "62993390975",
+            "cidade": "3, Goiânia - GO",
+            "origem": "ec"
           },
           "webhookUrl": "https://webhook.margoauto.com.br/webhook/expo-canada-dados-leads",
           "executionMode": "production"
@@ -2259,7 +2266,7 @@
       }
     ]
   },
-  "versionId": "8c8632d9-61f8-45f4-96e0-664fc5a0ba96",
+  "versionId": "84222707-f974-4509-b812-d9d692e2a3b4",
   "triggerCount": 2,
   "shared": [
     {
