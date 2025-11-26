@@ -1,0 +1,28 @@
+{
+  "createdAt": "2025-11-25T16:40:04.825Z",
+  "updatedAt": "2025-11-25T16:40:04.825Z",
+  "id": "QXZaBsqtMF0qQOTs",
+  "name": "[CRON JOB] -> Envio de emails",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "8a9967fb-e393-48d9-b3f4-a6619e6c4ef0",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-25T16:40:04.825Z",
+      "updatedAt": "2025-11-25T16:40:04.825Z",
+      "role": "workflow:owner",
+      "workflowId": "QXZaBsqtMF0qQOTs",
+      "projectId": "eFLtZ3IVlO5kB2x1"
+    }
+  ],
+  "tags": []
+}
